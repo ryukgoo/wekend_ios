@@ -217,7 +217,6 @@ extension MailBoxViewController: Observerable {
         NotificationCenter.default.addObserver(self, selector: #selector(MailBoxViewController.handleAddSendMailNotification(_:)),
                                                name: Notification.Name(rawValue: SendMailManager.NewRemoteNotification),
                                                object: nil)
-        
     }
     
     func handleAddReceiveMailNotification(_ notification: Notification) {
@@ -228,7 +227,6 @@ extension MailBoxViewController: Observerable {
                 self.loadMails()
             }
         }
-        
     }
     
     func handleChangeReceiveMailNotification(_ notification: Notification) {

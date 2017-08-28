@@ -78,14 +78,6 @@ class AmazonClientManager: NSObject {
                 fatalError("AmazonClientManager > getUserTask > result Error")
             }
             
-            guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
-                fatalError("AmazonClientManager > didFinishingLaunching > get UserInfo Failed")
-            }
-            
-            UserDefaults.NotificationCount.set(userInfo.NewLikeCount, forKey: .like)
-            UserDefaults.NotificationCount.set(userInfo.NewSendCount, forKey: .sendMail)
-            UserDefaults.NotificationCount.set(userInfo.NewReceiveCount, forKey: .receiveMail)
-            
             let isRegistered = UserDefaults.RemoteNotification.bool(forKey: .isRegistered)
             self.printLog("isRegistered : \(isRegistered)")
             

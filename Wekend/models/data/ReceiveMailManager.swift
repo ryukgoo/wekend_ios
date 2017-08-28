@@ -43,9 +43,9 @@ class ReceiveMailManager: NSObject {
         
         printLog("comeNewNotification")
         
-        var newCount = UserDefaults.NotificationCount.integer(forKey: .receiveMail)
-        newCount += 1
-        UserDefaults.NotificationCount.set(newCount, forKey: .receiveMail)
+        let newCount = UserDefaults.NotificationCount.integer(forKey: .receiveMail)
+//        newCount += 1
+//        UserDefaults.NotificationCount.set(newCount, forKey: .receiveMail)
         
         NotificationCenter.default.post(name: Notification.Name(rawValue: ReceiveMailManager.NewRemoteNotification),
                                         object: nil,

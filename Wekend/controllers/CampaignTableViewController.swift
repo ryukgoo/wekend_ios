@@ -23,7 +23,7 @@ class CampaignTableViewController: UIViewController {
     var dropDownMenu: DropDownMenu!
     var selectedMenuCell: FilterMenuCell?
     
-    var sortMode: SortMode = .like
+    var sortMode: SortMode = .date
     
     // MARK: IBOutlet
     

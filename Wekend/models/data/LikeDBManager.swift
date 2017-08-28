@@ -15,7 +15,8 @@ class LikeDBManager : NSObject {
     static let DeleteNotification = "com.entuition.wekend.Notification.Like.Delete"
     static let ReadNotification = "com.entution.wekend.Notification.Like.Read"
     static let NewRemoteNotification = "com.entuition.wekend.Notification.Remote"
-    static let FriendReadNotification = "com.entuition.weekend.Notification.Friend.Read"
+    static let FriendReadNotification = "com.entuition.wekend.Notification.Friend.Read"
+    static let RefreshNotification = "com.entuition.wekend.Notification.Refresh"
     
     static let NotificationDataUserId = "com.entuition.wekend.Notification.Data.UserId"
     static let NotificationDataProductId = "com.entuition.wekend.Notification.Data.ProductId"
@@ -42,10 +43,6 @@ class LikeDBManager : NSObject {
         
         printLog("comeNewNotification > id : \(id)")
         
-        var likeBadgeCount = UserDefaults.NotificationCount.integer(forKey: .like)
-        likeBadgeCount += 1
-        UserDefaults.NotificationCount.set(likeBadgeCount, forKey: .like)
-        
         if let removeIndex = datas?.index(where: { $0.ProductId == id }) {
             if let element = datas?.remove(at: removeIndex) {
                 element.ReadTime = nil
@@ -56,8 +53,7 @@ class LikeDBManager : NSObject {
         
         NotificationCenter.default.post(name: Notification.Name(rawValue: LikeDBManager.NewRemoteNotification),
                                         object: nil,
-                                        userInfo: [LikeDBManager.NotificationDataProductId : id,
-                                                   LikeDBManager.NotificationDataCount : likeBadgeCount])
+                                        userInfo: [LikeDBManager.NotificationDataProductId : id])
         
     }
     

@@ -316,7 +316,7 @@ enum SortMode: Int, EnumCollection {
 
 struct FilterOptions {
     
-    var sortMode: SortMode = .like
+    var sortMode: SortMode = .date
     var category: Category = .category
     var region: ProductRegion = .none
     var food: Food?

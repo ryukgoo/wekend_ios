@@ -17,6 +17,7 @@ class ProductInfoManager : NSObject {
         self.mapper = AWSDynamoDBObjectMapper.default()
         self.datas = []
         self.likeStates = []
+        self.filterOptions = FilterOptions()
         super.init()
     }
     

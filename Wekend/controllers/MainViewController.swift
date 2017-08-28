@@ -96,6 +96,9 @@ extension MainViewController: Observerable {
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleMailNotification(_:)),
                                                name: Notification.Name(SendMailManager.NewRemoteNotification),
                                                object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.displayTabbarBadge),
+                                               name: Notification.Name(AppDelegate.WillEnterForeground), object: nil)
     }
     
     func handleLikeRemoteNotification(_ notification: Notification) {
@@ -104,11 +107,8 @@ extension MainViewController: Observerable {
             return
         }
         
-        guard let newCount = notification.userInfo![LikeDBManager.NotificationDataCount] as? Int else {
-            return
-        }
-        
-        likeTab.badgeValue = String(newCount)
+        let newCount = UserDefaults.NotificationCount.integer(forKey: .like)
+        likeTab.badgeValue = newCount == 0 ? nil : String(newCount)
     }
     
     func handleMailNotification(_ notification: Notification) {
@@ -123,9 +123,7 @@ extension MainViewController: Observerable {
         let sendCount = UserDefaults.NotificationCount.integer(forKey: .sendMail)
         let badgeCount = receiveCount + sendCount
         
-        if badgeCount > 0 {
-            mailTab.badgeValue = String(badgeCount)
-        }
+        mailTab.badgeValue = badgeCount == 0 ? nil : String(badgeCount)
     }
     
 }
@@ -160,7 +158,7 @@ extension MainViewController: UITabBarControllerDelegate {
             })
             UserDefaults.NotificationCount.set(0, forKey: .receiveMail)
             UserDefaults.NotificationCount.set(0, forKey: .sendMail)
-            self.displayTabbarBadge()
+            displayTabbarBadge()
             break
             
         case .drawer:

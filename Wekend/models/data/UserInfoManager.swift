@@ -34,11 +34,16 @@ class UserInfoManager: NSObject {
         return getUserInfo(userId: userId).continueWith(executor: AWSExecutor.mainThread(), block: {
             (task: AWSTask) -> Any! in
             
-            guard let result = task.result else {
+            guard let userInfo = task.result as? UserInfo else {
                 fatalError("UserInfoManager > getOwnedUserInfo Failed")
             }
             
-            self.userInfo = result as? UserInfo
+            self.userInfo = userInfo
+            
+            UserDefaults.NotificationCount.set(userInfo.NewLikeCount, forKey: .like)
+            UserDefaults.NotificationCount.set(userInfo.NewSendCount, forKey: .sendMail)
+            UserDefaults.NotificationCount.set(userInfo.NewReceiveCount, forKey: .receiveMail)
+            
             return nil
         })
     }

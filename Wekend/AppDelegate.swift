@@ -13,8 +13,10 @@ import GoogleMaps
 import FBSDKCoreKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    static let WillEnterForeground = "com.entuition.wekend.applicationWillEnterForeground"
+    
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -90,12 +92,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
      * update data from notification..
      */
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        printLog("application > didReceiveRemoteNotification > comes Messages : \(userInfo)")
         
-//        guard let aps = userInfo[NotificationDataKey.aps.rawValue] as? NSDictionary else {
-//            printLog("didReceiveRemoteNotification > aps Error")
-//            return
-//        }
+        printLog("application > didReceiveRemoteNotification > comes Messages : \(userInfo)")
         
         guard let type = userInfo[NotificationDataKey.type.rawValue] as? String,
             let productId = userInfo[NotificationDataKey.productId.rawValue] as? Int,
@@ -111,20 +109,58 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             printLog("didReceiveRemoteNotification > notificationType Error")
             return
         }
-        
+        /*
         switch notificationKey {
-            
         case .like:
-            LikeDBManager.sharedInstance.comeNewNotification(id: productId)
+            var likeBadgeCount = UserDefaults.NotificationCount.integer(forKey: .like)
+            likeBadgeCount += 1
+            UserDefaults.NotificationCount.set(likeBadgeCount, forKey: .like)
+            
+            UserDefaults.NewComeNotification.set(true, forKey: .like)
             break
             
         case .receiveMail:
-            ReceiveMailManager.sharedInstance.comeNewNotification()
+            var newCount = UserDefaults.NotificationCount.integer(forKey: .receiveMail)
+            newCount += 1
+            UserDefaults.NotificationCount.set(newCount, forKey: .receiveMail)
+            
+            UserDefaults.NewComeNotification.set(true, forKey: .receive)
             break
             
         case .sendMail:
-            SendMailManager.sharedInstance.comeNewNotification()
+            var newCount = UserDefaults.NotificationCount.integer(forKey: .sendMail)
+            newCount += 1
+            UserDefaults.NotificationCount.set(newCount, forKey: .sendMail)
+            
+            UserDefaults.NewComeNotification.set(true, forKey: .send)
             break
+        }*/
+        
+        let applicationState = application.applicationState
+        
+        if applicationState == .active {
+            switch notificationKey {
+            case .like:
+                var likeBadgeCount = UserDefaults.NotificationCount.integer(forKey: .like)
+                likeBadgeCount += 1
+                UserDefaults.NotificationCount.set(likeBadgeCount, forKey: .like)
+                LikeDBManager.sharedInstance.comeNewNotification(id: productId)
+                break
+                
+            case .receiveMail:
+                var newCount = UserDefaults.NotificationCount.integer(forKey: .receiveMail)
+                newCount += 1
+                UserDefaults.NotificationCount.set(newCount, forKey: .receiveMail)
+                ReceiveMailManager.sharedInstance.comeNewNotification()
+                break
+                
+            case .sendMail:
+                var newCount = UserDefaults.NotificationCount.integer(forKey: .sendMail)
+                newCount += 1
+                UserDefaults.NotificationCount.set(newCount, forKey: .sendMail)
+                SendMailManager.sharedInstance.comeNewNotification()
+                break
+            }
         }
         
         let newLikeCount = UserDefaults.NotificationCount.integer(forKey: .like)
@@ -169,9 +205,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func applicationWillResignActive(_ application: UIApplication) {
         
         printLog("applicationWillResignActive")
-        
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+        
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -187,6 +223,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         printLog("applicationWillEnterForeground")
         
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+        
+        
+        /*
+        NotificationCenter.default.post(name: Notification.Name(rawValue: AppDelegate.WillEnterForeground),
+                                        object: nil,
+                                        userInfo: nil)
+        
+        if UserDefaults.NewComeNotification.bool(forKey: .like) {
+            NotificationCenter.default.post(name: Notification.Name(rawValue: LikeDBManager.RefreshNotification),
+                                            object: nil, userInfo: nil)
+        }
+        
+        if UserDefaults.NewComeNotification.bool(forKey: .receive) {
+            NotificationCenter.default.post(name: Notification.Name(rawValue: ReceiveMailManager.NewRemoteNotification),
+                                            object: nil, userInfo: nil)
+        }
+        
+        if UserDefaults.NewComeNotification.bool(forKey: .send) {
+            NotificationCenter.default.post(name: Notification.Name(rawValue: SendMailManager.NewRemoteNotification),
+                                            object: nil, userInfo: nil)
+        }
+ */
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
@@ -194,6 +252,55 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         printLog("applicationDidBecomeActive")
         
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        
+        guard let userId = UserInfoManager.sharedInstance.userInfo?.userid else {
+            
+            printLog("applicationDidBecomeActive > userId is nil")
+            
+            return
+        }
+        
+        let likeCount = UserDefaults.NotificationCount.integer(forKey: .like)
+        let receiveCount = UserDefaults.NotificationCount.integer(forKey: .receiveMail)
+        let sendCount = UserDefaults.NotificationCount.integer(forKey: .sendMail)
+        
+        printLog("applicationDidBecomeActive > likeCount : \(likeCount)")
+        printLog("applicationDidBecomeActive > receiveCount : \(receiveCount)")
+        printLog("applicationDidBecomeActive > sendCount : \(sendCount)")
+        
+        UserInfoManager.sharedInstance.getOwnedUserInfo(userId: userId).continueWith(block:  {
+            (task: AWSTask) -> Any? in
+            
+            guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
+                self.printLog("applicationDidBecomeActive > userInfo is nil")
+                return nil
+            }
+            
+            self.printLog("applicationDidBecomeActive > NewLikeCount : \(userInfo.NewLikeCount)")
+            self.printLog("applicationDidBecomeActive > NewReceiveCount : \(userInfo.NewReceiveCount)")
+            self.printLog("applicationDidBecomeActive > NewSendCount : \(userInfo.NewSendCount)")
+            
+            NotificationCenter.default.post(name: Notification.Name(rawValue: AppDelegate.WillEnterForeground),
+                                            object: nil,
+                                            userInfo: nil)
+            
+            if userInfo.NewLikeCount > likeCount {
+                NotificationCenter.default.post(name: Notification.Name(rawValue: LikeDBManager.RefreshNotification),
+                                                object: nil, userInfo: nil)
+            }
+            
+            if userInfo.NewReceiveCount > receiveCount {
+                NotificationCenter.default.post(name: Notification.Name(rawValue: ReceiveMailManager.NewRemoteNotification),
+                                                object: nil, userInfo: nil)
+            }
+            
+            if userInfo.NewSendCount > sendCount {
+                NotificationCenter.default.post(name: Notification.Name(rawValue: SendMailManager.NewRemoteNotification),
+                                                object: nil, userInfo: nil)
+            }
+            
+            return nil
+        })
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -202,6 +309,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // unregister Store Transaction observer
 //        SKPaymentQueue.default().remove()
     }
+    
+    
+}
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
     
     @available(iOS 10.0, *)
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive respone: UNNotificationResponse, withCompletionHandler completionHandler : @escaping () -> Void) {
@@ -212,6 +324,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         
         completionHandler()
     }
-
+    
+    @available(iOS 10.0, *)
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        
+        print(#function)
+        
+        completionHandler([])
+    }
 }
 

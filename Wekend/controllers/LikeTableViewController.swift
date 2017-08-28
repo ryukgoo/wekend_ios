@@ -140,6 +140,10 @@ extension LikeTableViewController: Observerable {
         NotificationCenter.default.addObserver(self, selector: #selector(LikeTableViewController.handleDeleteNotification(_:)),
                                                name: Notification.Name(rawValue: LikeDBManager.DeleteNotification),
                                                object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(LikeTableViewController.refresh(_:)),
+                                               name: Notification.Name(rawValue: LikeDBManager.RefreshNotification),
+                                               object: nil)
     }
     
     func handleAddLikeNotification(_ notification: Notification) {
