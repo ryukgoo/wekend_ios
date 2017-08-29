@@ -109,32 +109,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             printLog("didReceiveRemoteNotification > notificationType Error")
             return
         }
-        /*
-        switch notificationKey {
-        case .like:
-            var likeBadgeCount = UserDefaults.NotificationCount.integer(forKey: .like)
-            likeBadgeCount += 1
-            UserDefaults.NotificationCount.set(likeBadgeCount, forKey: .like)
-            
-            UserDefaults.NewComeNotification.set(true, forKey: .like)
-            break
-            
-        case .receiveMail:
-            var newCount = UserDefaults.NotificationCount.integer(forKey: .receiveMail)
-            newCount += 1
-            UserDefaults.NotificationCount.set(newCount, forKey: .receiveMail)
-            
-            UserDefaults.NewComeNotification.set(true, forKey: .receive)
-            break
-            
-        case .sendMail:
-            var newCount = UserDefaults.NotificationCount.integer(forKey: .sendMail)
-            newCount += 1
-            UserDefaults.NotificationCount.set(newCount, forKey: .sendMail)
-            
-            UserDefaults.NewComeNotification.set(true, forKey: .send)
-            break
-        }*/
         
         let applicationState = application.applicationState
         
@@ -224,27 +198,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
         
-        
-        /*
-        NotificationCenter.default.post(name: Notification.Name(rawValue: AppDelegate.WillEnterForeground),
-                                        object: nil,
-                                        userInfo: nil)
-        
-        if UserDefaults.NewComeNotification.bool(forKey: .like) {
-            NotificationCenter.default.post(name: Notification.Name(rawValue: LikeDBManager.RefreshNotification),
-                                            object: nil, userInfo: nil)
-        }
-        
-        if UserDefaults.NewComeNotification.bool(forKey: .receive) {
-            NotificationCenter.default.post(name: Notification.Name(rawValue: ReceiveMailManager.NewRemoteNotification),
-                                            object: nil, userInfo: nil)
-        }
-        
-        if UserDefaults.NewComeNotification.bool(forKey: .send) {
-            NotificationCenter.default.post(name: Notification.Name(rawValue: SendMailManager.NewRemoteNotification),
-                                            object: nil, userInfo: nil)
-        }
- */
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {

@@ -31,8 +31,9 @@ class AgreementViewController: UIViewController {
         
         buttonConfirm.setBackgroundImage(UIImage(color: UIColor(netHex: 0xdadada)), for: .disabled)
         buttonConfirm.isEnabled = false
-
-        // Do any additional setup after loading the view.
+        
+        textViewTermsOfUse.text = loadTextFile(filename: "AgreementTermsOfUse")
+        textViewPrivacy.text = loadTextFile(filename: "AgreementPrivacy")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -63,6 +64,24 @@ class AgreementViewController: UIViewController {
         })
     }
 
+    @IBAction func onCancelTapped(_ sender: Any) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    private func loadTextFile(filename: String) -> String {
+        let agreementUseFileUrl = Bundle.main.path(forResource: filename, ofType: "txt")
+        var readString = ""
+        do {
+            readString = try String(contentsOfFile: agreementUseFileUrl!, encoding: String.Encoding.utf8)
+        } catch let error as NSError {
+            printLog("Failed to read from file")
+            print(error)
+        }
+        
+        return readString
+    }
+
+    
     /*
     // MARK: - Navigation
 

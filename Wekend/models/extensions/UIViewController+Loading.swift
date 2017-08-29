@@ -17,11 +17,18 @@ extension UIViewController {
         self.present(alertController, animated: true, completion: nil)
     }
     
-    func startLoading(completion: (() -> Void)? = nil) {
+    func startLoading(message: String? = nil, completion: (() -> Void)? = nil) {
         
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
-        let alertView = UIAlertController(title: nil, message: "\(Constants.Title.Message.LOADING)\n\n", preferredStyle: .alert)
+        var loadingMessage = ""
+        if message != nil {
+            loadingMessage = message!;
+        } else {
+            loadingMessage = Constants.Title.Message.LOADING
+        }
+        
+        let alertView = UIAlertController(title: nil, message: "\(loadingMessage)\n\n", preferredStyle: .alert)
         
         let spinnerIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135, y: 65)

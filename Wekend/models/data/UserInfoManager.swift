@@ -31,11 +31,20 @@ class UserInfoManager: NSObject {
     }
     
     func getOwnedUserInfo(userId: String) -> AWSTask<AnyObject> {
-        return getUserInfo(userId: userId).continueWith(executor: AWSExecutor.mainThread(), block: {
+        
+        let getOwnedUserInfoTask = AWSTaskCompletionSource<AnyObject>()
+        
+        getUserInfo(userId: userId).continueWith(executor: AWSExecutor.mainThread(), block: {
             (task: AWSTask) -> Any! in
             
+            if let error = task.error {
+                getOwnedUserInfoTask.set(error: error)
+                return nil
+            }
+            
             guard let userInfo = task.result as? UserInfo else {
-                fatalError("UserInfoManager > getOwnedUserInfo Failed")
+                self.printLog("UserInfoManager > getOwnedUserInfo Failed")
+                return nil
             }
             
             self.userInfo = userInfo
@@ -44,8 +53,12 @@ class UserInfoManager: NSObject {
             UserDefaults.NotificationCount.set(userInfo.NewSendCount, forKey: .sendMail)
             UserDefaults.NotificationCount.set(userInfo.NewReceiveCount, forKey: .receiveMail)
             
+            getOwnedUserInfoTask.set(result: userInfo)
+            
             return nil
         })
+        
+        return getOwnedUserInfoTask.task
     }
     
     func getUserInfo(userId: String) -> AWSTask<AnyObject> {
@@ -56,7 +69,8 @@ class UserInfoManager: NSObject {
             (task: AWSTask) -> Any! in
             
             guard let result = task.result else {
-                fatalError("UserInfoManager > getUserInfo Failed")
+                getUserTask.set(error: LoginError.notFoundUser)
+                return nil
             }
             
             getUserTask.set(result: result as? UserInfo)

@@ -23,7 +23,7 @@ class CampaignTableViewCell: UITableViewCell {
         
         campaignHeart.setBackgroundImage(#imageLiteral(resourceName: "img_heart_n"), for: .normal)
         campaignHeart.setBackgroundImage(#imageLiteral(resourceName: "img_heart_s"), for: .selected)
-        campaignHeart.setTitleColor(.white, for: .normal)
+        campaignHeart.setTitleColor(UIColor(netHex: Constants.ColorInfo.Text.Mail.DEFAULT), for: .normal)
         campaignHeart.setTitleColor(.white, for: .selected)
         campaignHeart.tintColor = .clear
     }

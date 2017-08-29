@@ -46,18 +46,8 @@ class AmazonClientManager: NSObject {
                 self.credentialsProvider?.clearKeychain()
             }
             
-            DispatchQueue.main.async {
-                let loginStoryBoard = Constants.StoryboardName.Login
-                let loginboard = UIStoryboard(name: loginStoryBoard.rawValue, bundle: nil)
-                
-                guard let loginVC = loginboard.instantiateViewController(withIdentifier: loginStoryBoard.identifier) as? UINavigationController,
-                    let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-                        fatalError("AmazonClientManager > didFinishLaunching > get VC and AppDelegate Error")
-                }
-                appDelegate.window!.rootViewController = loginVC
-                appDelegate.window!.makeKeyAndVisible()
-            }
-                        
+            self.gotoLoginViewController()
+            
             return true
         }
         
@@ -74,8 +64,9 @@ class AmazonClientManager: NSObject {
             
             print("Fetch UserInfo Complete")
             
-            if getUserTask.error != nil {
-                fatalError("AmazonClientManager > getUserTask > result Error")
+            if getUserTask.error != nil || getUserTask.result == nil {
+                self.gotoLoginViewController()
+                return nil
             }
             
             let isRegistered = UserDefaults.RemoteNotification.bool(forKey: .isRegistered)
@@ -85,18 +76,7 @@ class AmazonClientManager: NSObject {
                 UserInfoManager.sharedInstance.registEndpointARN()
             }
             
-            DispatchQueue.main.async {
-                let mainStoryboard = Constants.StoryboardName.Main
-                let storyboard = UIStoryboard(name: mainStoryboard.rawValue, bundle: nil)
-                
-                guard let mainVC = storyboard.instantiateViewController(withIdentifier: mainStoryboard.identifier) as? MainViewController,
-                    let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-                        fatalError("AmazonClientManager > didFinishLaunching > get MainVC and AppDelegate Error")
-                }
-                
-                appDelegate.window!.rootViewController = mainVC
-                appDelegate.window!.makeKeyAndVisible()
-            }
+            self.gotoMainViewController()
             
             return nil
         })
@@ -106,6 +86,35 @@ class AmazonClientManager: NSObject {
         printLog("didFinishLaunching > finished")
         
         return true
+    }
+    
+    private func gotoMainViewController() {
+        DispatchQueue.main.async {
+            let mainStoryboard = Constants.StoryboardName.Main
+            let storyboard = UIStoryboard(name: mainStoryboard.rawValue, bundle: nil)
+            
+            guard let mainVC = storyboard.instantiateViewController(withIdentifier: mainStoryboard.identifier) as? MainViewController,
+                let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+                    fatalError("AmazonClientManager > didFinishLaunching > get MainVC and AppDelegate Error")
+            }
+            
+            appDelegate.window!.rootViewController = mainVC
+            appDelegate.window!.makeKeyAndVisible()
+        }
+    }
+    
+    private func gotoLoginViewController() {
+        DispatchQueue.main.async {
+            let loginStoryBoard = Constants.StoryboardName.Login
+            let loginboard = UIStoryboard(name: loginStoryBoard.rawValue, bundle: nil)
+            
+            guard let loginVC = loginboard.instantiateViewController(withIdentifier: loginStoryBoard.identifier) as? UINavigationController,
+                let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+                    fatalError("AmazonClientManager > didFinishLaunching > get VC and AppDelegate Error")
+            }
+            appDelegate.window!.rootViewController = loginVC
+            appDelegate.window!.makeKeyAndVisible()
+        }
     }
     
 }

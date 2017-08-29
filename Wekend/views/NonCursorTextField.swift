@@ -22,6 +22,19 @@ class NonCursorTextField: UITextField {
         initView()
     }
     
+    override var isEnabled: Bool {
+        didSet {
+            switch isEnabled {
+            case true:
+                self.textColor = .black
+                break
+            case false:
+                self.textColor = UIColor(netHex: 0x9b9b9b)
+                break
+            }
+        }
+    }
+    
     func initView() {
         
         self.borderStyle = .none

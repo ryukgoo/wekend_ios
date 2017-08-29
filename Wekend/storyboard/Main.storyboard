@@ -933,17 +933,28 @@ New+</string>
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="검색결과가 없습니다" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a5m-gC-KV0">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.2901960784" green="0.2901960784" blue="0.2901960784" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstAttribute="trailing" secondItem="a5m-gC-KV0" secondAttribute="trailing" id="4Ro-no-FP1"/>
                             <constraint firstItem="nMN-tE-Osf" firstAttribute="top" secondItem="h2S-1Q-mWg" secondAttribute="bottom" id="8tQ-FG-Ugv"/>
                             <constraint firstItem="h2S-1Q-mWg" firstAttribute="leading" secondItem="vZy-7i-snh" secondAttribute="leading" id="FOs-f1-AgT"/>
+                            <constraint firstItem="a5m-gC-KV0" firstAttribute="top" secondItem="vZy-7i-snh" secondAttribute="top" id="Ggc-cC-jmO"/>
+                            <constraint firstItem="a5m-gC-KV0" firstAttribute="leading" secondItem="vZy-7i-snh" secondAttribute="leading" id="UCf-kR-shV"/>
                             <constraint firstAttribute="trailing" secondItem="h2S-1Q-mWg" secondAttribute="trailing" id="knk-fs-CbA"/>
                             <constraint firstItem="h2S-1Q-mWg" firstAttribute="top" secondItem="V24-N9-xDJ" secondAttribute="bottom" id="mxD-Ei-yDS"/>
+                            <constraint firstAttribute="bottom" secondItem="a5m-gC-KV0" secondAttribute="bottom" id="whp-wb-n4u"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="전체보기" id="cnQ-dx-8gd"/>
                     <connections>
+                        <outlet property="noResultLabel" destination="a5m-gC-KV0" id="Ii8-jZ-Rdg"/>
                         <outlet property="tableView" destination="h2S-1Q-mWg" id="TzL-7P-fwx"/>
                     </connections>
                 </viewController>
@@ -2089,7 +2100,7 @@ New+</string>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="62T-ay-VcA">
-                                                <rect key="frame" x="329" y="337" width="34" height="26"/>
+                                                <rect key="frame" x="323" y="330" width="40" height="33"/>
                                                 <state key="normal" image="btn_icon_photo"/>
                                                 <connections>
                                                     <action selector="onEditPhotoButtonTapped:" destination="0M7-u3-nHy" eventType="touchUpInside" id="U0h-ms-dlL"/>
@@ -2223,7 +2234,7 @@ New+</string>
         <image name="btn_icon_home_s" width="27" height="27"/>
         <image name="btn_icon_mail_n" width="27" height="27"/>
         <image name="btn_icon_mail_s" width="27" height="27"/>
-        <image name="btn_icon_photo" width="34" height="26"/>
+        <image name="btn_icon_photo" width="40" height="33"/>
         <image name="btn_icon_store_n" width="27" height="27"/>
         <image name="btn_icon_store_s" width="27" height="27"/>
         <image name="img_bg_thumb_default" width="115" height="115"/>

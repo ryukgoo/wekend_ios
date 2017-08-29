@@ -126,7 +126,12 @@ class InsertPhoneViewController: UIViewController {
                 }
                 
                 DispatchQueue.main.async {
-                    self.alert(message: "인증번호가 발송되었습니다", title: "인증번호 발송")
+                    self.requestCodeButton.isEnabled = false
+                    self.alert(message: "인증번호가 발송되었습니다", title: "인증번호 발송", completion: {
+                        action -> Void in
+                        self.inputCodeText.becomeFirstResponder()
+                    })
+                    
                 }
                 
                 self.verficationCode = result as String
@@ -147,8 +152,6 @@ class InsertPhoneViewController: UIViewController {
         if inputVerificationCode != verficationCode {
             alert(message: "인증번호가 맞지 않습니다", title: "인증번호 확인")
             return
-        } else {
-            startLoading()
         }
         
         guard let username = self.username else {
@@ -174,6 +177,8 @@ class InsertPhoneViewController: UIViewController {
         guard let phone = self.inputPhoneText.text else {
             fatalError("InsertPhoneViewController > register > phone Error")
         }
+        
+        startLoading(message: "가입중입니다")
         
         AmazonClientManager.sharedInstance.devIdentityProvider?.register(username: username, password: password, nickname: nickname, gender: gender, birth: birth, phone: phone).continueWith(executor: AWSExecutor.mainThread(), block: {
             (task: AWSTask) -> Any! in

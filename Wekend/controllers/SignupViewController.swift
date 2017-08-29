@@ -60,11 +60,20 @@ class SignupViewController: UIViewController {
         
         printLog("nextButtonTapped")
         
-        startLoading()
-        
-        guard let username = usernameInputText.text else {
-            fatalError("nextButtonTapped > NextButton is enabled, username is nil")
+        guard let username = usernameInputText.text,
+              let password = passwordInputText.text,
+              let confirm = confirmInputText.text else {
+//            fatalError("nextButtonTapped > NextButton is enabled, username is nil")
+                printLog("nextButtonTapped > NextButton is enabled, username is nil")
+                return;
         }
+        
+        if password != confirm {
+            alert(message: "비밀번호가 일치하지 않습니다")
+            return
+        }
+        
+        startLoading(message: "중복 확인중 입니다")
         
         UserInfoManager.sharedInstance.isUsernameAvailable(username: username).continueWith(block: {
             (task: AWSTask) -> Any! in
@@ -195,7 +204,11 @@ extension SignupViewController: UITextFieldDelegate {
     
     func doneKeyboard(_ sender: Any) {
         
-        self.view.endEditing(true)
+        guard let textField = activeTextField else {
+            return
+        }
+        
+        validateEditingText(textField)
         
     }
     
@@ -205,15 +218,7 @@ extension SignupViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
-        textField.resignFirstResponder()
-        
-        if textField == usernameInputText {
-            passwordInputText.becomeFirstResponder()
-        } else if textField == passwordInputText {
-            confirmInputText.becomeFirstResponder()
-        } else if textField == confirmInputText {
-            nextButtonTapped(textField)
-        }
+        validateEditingText(textField)
         
         return true
     }
@@ -242,5 +247,44 @@ extension SignupViewController: UITextFieldDelegate {
         }
         
         return username.isValidEmailAddress() && password.isValidPassword() && passwordConfirm.isValidPassword()
+    }
+    
+    private func validateEditingText(_ textField: UITextField) {
+        textField.resignFirstResponder()
+        
+        if textField == usernameInputText {
+            
+            if let username = usernameInputText.text {
+                if username.isValidEmailAddress() {
+                    passwordInputText.becomeFirstResponder()
+                    return
+                }
+            }
+            
+            alert(message: "형식에 맞지 않는 이메일 주소입니다")
+            
+        } else if textField == passwordInputText {
+            
+            if let password = passwordInputText.text {
+                if password.isValidPassword() {
+                    confirmInputText.becomeFirstResponder()
+                    return
+                }
+            }
+            
+            alert(message: "비밀번호는 영문과 숫자의 조합 6자리이상 입력해주세요")
+            
+        } else if textField == confirmInputText {
+            
+            if let passwordConfirm = confirmInputText.text {
+                if passwordConfirm.isValidPassword() {
+                    view.endEditing(true)
+                    return
+                }
+            }
+            
+            alert(message: "비밀번호는 영문과 숫자의 조합 6자리이상 입력해주세요")
+            
+        }
     }
 }

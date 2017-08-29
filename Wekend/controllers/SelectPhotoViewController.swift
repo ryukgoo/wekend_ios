@@ -45,9 +45,21 @@ class SelectPhotoViewController: UIViewController, UIImagePickerControllerDelega
     
     @IBAction func nextButtonTapped(_ sender: Any) {
         
+        guard let selectedPhoto = self.selectedPhoto else {
+            DispatchQueue.main.async {
+                self.endLoading()
+                
+                let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                let mainViewController = storyboard.instantiateViewController(withIdentifier: MainViewController.className)
+                
+                self.present(mainViewController, animated: true, completion: nil)
+            }
+            return
+        }
+        
         let fileName = ProcessInfo.processInfo.globallyUniqueString.appending(".jpg")
         let fileURL = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
-        let imageData = UIImageJPEGRepresentation(selectedPhoto!, 0.7)
+        let imageData = UIImageJPEGRepresentation(selectedPhoto, 0.7)
         
         do {
             try imageData?.write(to: fileURL!, options: .atomicWrite)

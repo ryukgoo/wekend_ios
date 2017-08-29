@@ -26,7 +26,7 @@ class CampaignTableViewController: UIViewController {
     var sortMode: SortMode = .date
     
     // MARK: IBOutlet
-    
+    @IBOutlet weak var noResultLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
     
     // MARK: override Functions
@@ -108,6 +108,8 @@ extension CampaignTableViewController {
         tableView.dataSource = self
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 260
+        
+        noResultLabel.isHidden = true
     }
     
     func initRefreshControl() {
@@ -144,9 +146,18 @@ extension CampaignTableViewController {
                 
                 DispatchQueue.main.async {
                     UIApplication.shared.isNetworkActivityIndicatorVisible = false
-                    self.tableView.reloadData()
                     self.refreshControl.endRefreshing()
                     self.endLoading()
+                    
+                    if let count = ProductInfoManager.sharedInstance.datas?.count {
+                        if count == 0 {
+                            self.noResultLabel.isHidden = false
+                        } else {
+                            self.noResultLabel.isHidden = true
+                        }
+                    }
+                    
+                    self.tableView.reloadData()
                     
                     if startFromBeginning {
                         self.tableView.beginUpdates()
@@ -331,6 +342,7 @@ extension CampaignTableViewController: DropDownMenuDelegate {
     func getCategoryCell() -> FilterMenuCell {
         let categoryCell = FilterMenuCell(data: Array(Category.toStrings()))
         categoryCell.tag = 1
+        categoryCell.setEnabled(true)
         categoryCell.delegate = self
         
         return categoryCell
@@ -339,6 +351,7 @@ extension CampaignTableViewController: DropDownMenuDelegate {
     func getSubCategoryCell() -> FilterMenuCell {
         let subCategoryCell = FilterMenuCell(data: [Food.category.toString])
         subCategoryCell.tag = 2
+        subCategoryCell.setEnabled(false)
         subCategoryCell.delegate = self
         
         return subCategoryCell
@@ -347,6 +360,7 @@ extension CampaignTableViewController: DropDownMenuDelegate {
     func getRegionCell() -> FilterMenuCell {
         let regionCell = FilterMenuCell(data: [ProductRegion.none.toString])
         regionCell.tag = 3
+        regionCell.setEnabled(false)
         regionCell.delegate = self
         
         return regionCell
@@ -436,24 +450,42 @@ extension CampaignTableViewController: FilterMenuCellDelegate {
             case 0:
                 subCategoryCell.data = [Food.category.toString]
                 regionCell.data = [ProductRegion.none.toString]
+                subCategoryCell.selectedRow = 0
                 regionCell.selectedRow = 0
+                subCategoryCell.setEnabled(false)
+                regionCell.setEnabled(false)
                 break
             case 1:
                 subCategoryCell.data = Array(Food.toStrings())
                 regionCell.data = Array(ProductRegion.toStrings())
+                subCategoryCell.selectedRow = 0
+                regionCell.selectedRow = 0
+                subCategoryCell.setEnabled(true)
+                regionCell.setEnabled(true)
                 break
             case 2:
                 subCategoryCell.data = Array(Concert.toStrings())
                 regionCell.data = Array(ProductRegion.toStrings())
+                subCategoryCell.selectedRow = 0
+                regionCell.selectedRow = 0
+                subCategoryCell.setEnabled(true)
+                regionCell.setEnabled(true)
                 break
             case 3:
                 subCategoryCell.data = Array(Leisure.toStrings())
                 regionCell.data = Array(ProductRegion.toStrings())
+                subCategoryCell.selectedRow = 0
+                regionCell.selectedRow = 0
+                subCategoryCell.setEnabled(true)
+                regionCell.setEnabled(true)
                 break
             default:
                 subCategoryCell.data = [Food.category.toString]
                 regionCell.data = [ProductRegion.none.toString]
+                subCategoryCell.selectedRow = 0
                 regionCell.selectedRow = 0
+                subCategoryCell.setEnabled(false)
+                regionCell.setEnabled(false)
                 break
             }
         }

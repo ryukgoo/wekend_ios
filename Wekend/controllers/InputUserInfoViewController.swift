@@ -21,8 +21,8 @@ class InputUserInfoViewController: UIViewController {
     
     @IBOutlet weak var nicknameInputText: UITextField!
     @IBOutlet weak var nicknameConfirmButton: RoundedButton!
-    @IBOutlet weak var maleButton: RoundedButton!
-    @IBOutlet weak var femaleButton: RoundedButton!
+    @IBOutlet weak var maleButton: SelectableButton!
+    @IBOutlet weak var femaleButton: SelectableButton!
     @IBOutlet weak var nextButton: RoundedButton!
     @IBOutlet weak var birthPickerView: UIPickerView!
     
@@ -35,8 +35,8 @@ class InputUserInfoViewController: UIViewController {
         initPickerView()
         
         nicknameConfirmButton.isEnabled = false
-        maleButton.isEnabled = false
-        femaleButton.isEnabled = true
+        maleButton.isSelected = true
+        femaleButton.isSelected = false
         nextButton.isEnabled = false
     }
 
@@ -93,13 +93,13 @@ class InputUserInfoViewController: UIViewController {
     }
     
     @IBAction func maleButtonTapped(_ sender: Any) {
-        maleButton.isEnabled = false
-        femaleButton.isEnabled = true
+        maleButton.isSelected = true
+        femaleButton.isSelected = false
     }
     
     @IBAction func femaleButtonTapped(_ sender: Any) {
-        maleButton.isEnabled = true
-        femaleButton.isEnabled = false
+        maleButton.isSelected = false
+        femaleButton.isSelected = true
     }
     
     // MARK: - Navigation
@@ -126,7 +126,7 @@ class InputUserInfoViewController: UIViewController {
             
             destination.username = username
             destination.password = password
-            destination.gender = self.maleButton.isEnabled ? "female" : "male"
+            destination.gender = self.maleButton.isSelected ? "male" : "female"
             destination.birth = yearArray[self.birthPickerView.selectedRow(inComponent: 0)]
             destination.nickname = self.nicknameInputText.text
         }

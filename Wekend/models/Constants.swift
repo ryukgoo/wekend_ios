@@ -67,7 +67,8 @@ struct Constants {
         }
         
         struct Message {
-            static let LOADING = "Please wait"
+            static let LOADING = "Loading.."
+            static let PLEASE_WAIT = "Please wait"
         }
         
         enum Price: String, EnumCollection {

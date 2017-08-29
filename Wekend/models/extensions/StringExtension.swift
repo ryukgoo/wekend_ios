@@ -50,7 +50,7 @@ extension String {
     }
     
     func isValidPassword() -> Bool {
-        let passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$"
+        let passwordRegex = "^(?=.*[0-9])(?=.*[A-Za-z])(?=\\S+$).{6,}$"
         
         let passwordTest = NSPredicate(format:"SELF MATCHES %@", passwordRegex)
         return passwordTest.evaluate(with: self)

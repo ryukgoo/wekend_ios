@@ -168,7 +168,7 @@ enum ProductRegion: Int, EnumCollection {
     var toString: String {
         switch self {
         case .none:
-            return "지역선택"
+            return "전체 지역"
         case .seoul1:
             return "압구정/청담/신사"
         case .seoul2:
@@ -213,7 +213,7 @@ enum Category: Int, EnumCollection {
     var toString: String {
         switch self {
         case .category:
-            return "카테고리"
+            return "전체 카테고리"
         case .food:
             return "맛집"
         case .concert:
@@ -238,7 +238,7 @@ enum Food: Int, EnumCollection {
     var toString: String {
         switch self {
         case .category:
-            return "세부 카테고리"
+            return "전체 세부 카테고리"
         case .western:
             return "양식"
         case .japanese:
@@ -268,7 +268,7 @@ enum Concert: Int, EnumCollection {
     var toString: String {
         switch self {
         case .category:
-            return "세부 카테고리"
+            return "전체 세부 카테고리"
         case .exhibition:
             return "전시회"
         case .classic:
@@ -290,7 +290,7 @@ enum Leisure: Int, EnumCollection {
     var toString: String {
         switch self {
         case .category:
-            return "세부 카테고리"
+            return "전체 세부 카테고리"
         case .leisure:
             return "레저"
         case .sports:

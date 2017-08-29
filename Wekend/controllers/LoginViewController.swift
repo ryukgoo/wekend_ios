@@ -113,8 +113,6 @@ class LoginViewController: UIViewController {
     
     func login() {
         
-        startLoading()
-        
         guard let username = usernameInputText.text else {
             fatalError("LoginViewController > login > username Input Error")
         }
@@ -132,6 +130,8 @@ class LoginViewController: UIViewController {
             printLog("login > password is not valid")
             alert(message: "패스워드는 영문과 숫자 조합 6자리 이상이어야 합니다", title: "Password 오류")
         }
+        
+        startLoading(message: "로그인중입니다")
         
         AmazonClientManager.sharedInstance.devIdentityProvider?.loginUser(username: username, password: password).continueWith(block: {
             (task: AWSTask) -> Any! in

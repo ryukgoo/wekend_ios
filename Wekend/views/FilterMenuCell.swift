@@ -14,7 +14,7 @@ protocol FilterMenuCellDelegate {
     func editingDidEnd(tag: Int, index: Int)
 }
 
-class FilterMenuCell: DropDownMenuCell, UIPickerViewDelegate, UIPickerViewDataSource {
+class FilterMenuCell: DropDownMenuCell {
 
     var delegate: FilterMenuCellDelegate?
     
@@ -36,7 +36,7 @@ class FilterMenuCell: DropDownMenuCell, UIPickerViewDelegate, UIPickerViewDataSo
             textField.text = data[0]
         }
     }
-    
+
     override init() {
         super.init()
         
@@ -64,20 +64,6 @@ class FilterMenuCell: DropDownMenuCell, UIPickerViewDelegate, UIPickerViewDataSo
         
         initPicker()
         initTextField()
-    }
-    
-    func initPicker() {
-        
-        self.pickerView = UIPickerView()
-        
-        guard let picker = self.pickerView else {
-            fatalError("FilterMenuCell > initPicker > Error")
-        }
-        
-        picker.showsSelectionIndicator = true
-        picker.delegate = self
-        picker.dataSource = self
-        picker.backgroundColor = .white
     }
     
     func initTextField() {
@@ -116,28 +102,11 @@ class FilterMenuCell: DropDownMenuCell, UIPickerViewDelegate, UIPickerViewDataSo
         
         textField.inputAccessoryView = toolbar
     }
+    
+    func setEnabled(_ isEnabled: Bool) {
+        self.textField?.isEnabled = isEnabled
+    }
 
-    // MARK: UIPIckerView Data Source
-    
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return data.count
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return data[row]
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        printLog("pickerView > didSelectRow : \(row)")
-        
-//        self.textField?.text = data[row]
-        self.selectedRow = row
-    }
-    
     func done(_ sender: Any) {
         printLog("done clicked")
         self.accessoryType = .none
@@ -165,4 +134,41 @@ class FilterMenuCell: DropDownMenuCell, UIPickerViewDelegate, UIPickerViewDataSo
         delegate?.editingDidBegin(tag: self.tag)
     }
     
+}
+
+extension FilterMenuCell: UIPickerViewDelegate, UIPickerViewDataSource {
+    
+    func initPicker() {
+        
+        self.pickerView = UIPickerView()
+        
+        guard let picker = self.pickerView else {
+            fatalError("FilterMenuCell > initPicker > Error")
+        }
+        
+        picker.showsSelectionIndicator = true
+        picker.delegate = self
+        picker.dataSource = self
+        picker.backgroundColor = .white
+    }
+    
+    // MARK: UIPIckerView Data Source
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return data.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return data[row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        printLog("pickerView > didSelectRow : \(row)")
+        
+        //        self.textField?.text = data[row]
+        self.selectedRow = row
+    }
 }
