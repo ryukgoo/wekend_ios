@@ -77,10 +77,10 @@ class UserInfo: AWSDynamoDBObjectModel, AWSDynamoDBModeling {
 enum BillingPoint: Int, EnumCollection {
     
     case price1 = 1000
-    case price2 = 3000
-    case price3 = 5000
-    case price4 = 10000
-    case price5 = 30000
+    case price2 = 3500
+    case price3 = 6000
+    case price4 = 12500
+    case price5 = 38500
     
     init(id: String) {
         switch id {

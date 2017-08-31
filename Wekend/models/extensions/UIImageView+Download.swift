@@ -44,6 +44,7 @@ extension UIImageView {
     }
     
     func downloadedFrom(link: String, defaultImage: UIImage, contentMode mode: UIViewContentMode = .scaleAspectFill, reload: Bool = false) {
+        printLog(#function)
         if let cachedImage = imageCache.object(forKey: link as AnyObject) {
             self.contentMode = mode
             self.image = cachedImage

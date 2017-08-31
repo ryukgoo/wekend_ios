@@ -112,7 +112,7 @@ class FriendProfileViewController: UIViewController, PagerViewDelegate, UIScroll
         printLog("initViews > photos.count : \(photos.count)")
         
         pagerView.delegate = self
-        pagerView.pageCount = photos.count
+        pagerView.pageCount = max(photos.count, 1)
         
         scrollView.delegate = self
         
@@ -254,7 +254,7 @@ class FriendProfileViewController: UIViewController, PagerViewDelegate, UIScroll
         let imageName = userInfo.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(page)
         let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + imageName
         
-        imageView.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "bg_default_logo_gray"))
+        imageView.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "default_profile"))
         
     }
     

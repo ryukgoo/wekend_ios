@@ -12,6 +12,8 @@ import StoreKit
 class StoreCollectionViewController: UICollectionViewController {
 
     var priceArray: [String] = Array(Constants.Title.Price.toStrings())
+    var pointArray: [String] = Array(Constants.Title.Point.toStrings())
+    var bonusArray: [String] = Array(Constants.Title.Bonus.toStrings())
     
     var products = [SKProduct]()
     
@@ -80,6 +82,8 @@ class StoreCollectionViewController: UICollectionViewController {
             if task.error == nil {
                 DispatchQueue.main.async {
                     self.alert(message: "상품을 구매하였습니다")
+                    self.collectionView?.reloadData()
+                    
                 }
             }
             
@@ -140,8 +144,19 @@ extension StoreCollectionViewController: UICollectionViewDelegateFlowLayout {
         
         let cell = collectionView.dequeueReusableCell(for: indexPath) as StoreCollectionViewCell
         
-        let product = products[indexPath.row]
+        let index = indexPath.row
+        let product = products[index]
         cell.product = product
+        
+        let point = pointArray[index]
+        let bonus = bonusArray[index]
+        
+        if bonus.isEmpty {
+            cell.pointLabel.text = "\(point)P"
+        } else {
+            cell.pointLabel.text = "\(point)P + \(bonus)P"
+        }
+        
         
         return cell
     }
@@ -154,7 +169,7 @@ extension StoreCollectionViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 
-        return CGSize(width: UIScreen.main.bounds.width/3, height: UIScreen.main.bounds.width/3 + 30.0)
+        return CGSize(width: UIScreen.main.bounds.width/3, height: UIScreen.main.bounds.width/3 + 35.0)
         
     }
     

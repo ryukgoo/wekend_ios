@@ -83,6 +83,30 @@ struct Constants {
                 return self.rawValue
             }
         }
+        
+        enum Point: String, EnumCollection {
+            case point0 = "1000"
+            case point1 = "3000"
+            case point2 = "5000"
+            case point3 = "10000"
+            case point4 = "30000"
+            
+            var toString: String {
+                return self.rawValue
+            }
+        }
+        
+        enum Bonus: String, EnumCollection {
+            case bonus0 = ""
+            case bonus1 = "500"
+            case bonus2 = "1000"
+            case bonus3 = "2500"
+            case bonus4 = "8500"
+            
+            var toString: String {
+                return self.rawValue
+            }
+        }
     }
 }
 

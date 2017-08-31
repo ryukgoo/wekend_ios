@@ -147,7 +147,7 @@ class MyProfileViewController: UIViewController {
         
         pagerView.delegate = self
         if let photos = userInfo.photos as? Set<String> {
-            pagerView.pageCount = photos.count
+            pagerView.pageCount = max(photos.count, 1)
         } else {
             pagerView.pageCount = 1
         }
@@ -368,7 +368,7 @@ extension MyProfileViewController: PagerViewDelegate, UIScrollViewDelegate {
         let imageName = userInfo.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(page)
         let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + imageName
         
-        imageView.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "bg_default_logo_gray")/*, contentMode: .scaleAspectFit*/)
+        imageView.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "default_profile")/*, contentMode: .scaleAspectFit*/)
     }
     
     func onPageTapped(page: Int) {
@@ -457,7 +457,7 @@ extension MyProfileViewController: UIImagePickerControllerDelegate, UINavigation
     
     func upload(uploadRequest: AWSS3TransferManagerUploadRequest) {
         
-        startLoading()
+        startLoading(message: "저장중...")
         
         let transferManager = AWSS3TransferManager.default()
         

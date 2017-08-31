@@ -27,6 +27,7 @@ class MailBoxViewController: UIViewController {
     
     @IBOutlet weak var segmentControl: UISegmentedControl!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var noResultLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -78,6 +79,8 @@ class MailBoxViewController: UIViewController {
                 tableView.reloadData()
                 refreshControl.endRefreshing()
                 UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                
+                handleNoResultLabel()
                 return
             }
             
@@ -89,11 +92,14 @@ class MailBoxViewController: UIViewController {
                 }
                 
                 DispatchQueue.main.async {
-                    self.tableView.reloadData()
                     self.refreshControl.endRefreshing()
                     UIApplication.shared.isNetworkActivityIndicatorVisible = false
                     
                     self.endLoading()
+                    self.tableView.reloadData()
+                    
+                    self.handleNoResultLabel()
+                    
                     self.isNeedRefreshReceiveMail = false
                 }
                 
@@ -108,6 +114,8 @@ class MailBoxViewController: UIViewController {
                 tableView.reloadData()
                 refreshControl.endRefreshing()
                 UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                
+                handleNoResultLabel()
                 return
             }
             
@@ -119,11 +127,14 @@ class MailBoxViewController: UIViewController {
                 }
                 
                 DispatchQueue.main.async {
-                    self.tableView.reloadData()
                     self.refreshControl.endRefreshing()
                     UIApplication.shared.isNetworkActivityIndicatorVisible = false
                     
                     self.endLoading()
+                    self.tableView.reloadData()
+                    
+                    self.handleNoResultLabel()
+                    
                     self.isNeedRefreshSendMail = false
                 }
                 
@@ -269,7 +280,6 @@ extension MailBoxViewController {
         tableView.delegate = self
         tableView.dataSource = self
         
-        
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to Refresh")
         refreshControl.addTarget(self, action: #selector(self.refresh(_:)), for: .valueChanged)
         
@@ -279,6 +289,7 @@ extension MailBoxViewController {
             tableView.addSubview(refreshControl)
         }
         
+        noResultLabel.isHidden = true
     }
     
     func initSegmentControl() {
@@ -296,6 +307,29 @@ extension MailBoxViewController {
         isNeedRefreshSendMail = true
         isNeedRefreshReceiveMail = true
         loadMails()
+    }
+    
+    func handleNoResultLabel() {
+        switch segmentControl.selectedSegmentIndex {
+        case Mode.receive.rawValue:
+            if ReceiveMailManager.sharedInstance.datas.count == 0 {
+                self.noResultLabel.text = "받은 메일이 없습니다"
+                self.noResultLabel.isHidden = false
+            } else {
+                self.noResultLabel.isHidden = true
+            }
+            break
+        case Mode.send.rawValue:
+            if SendMailManager.sharedInstance.datas.count == 0 {
+                self.noResultLabel.text = "보낸 메일이 없습니다"
+                self.noResultLabel.isHidden = false
+            } else {
+                self.noResultLabel.isHidden = true
+            }
+            break
+        default:
+            break
+        }
     }
 }
 
@@ -472,6 +506,7 @@ extension MailBoxViewController: UITableViewDelegate {
                         ReceiveMailManager.sharedInstance.datas.remove(at: indexPath.row)
                         DispatchQueue.main.async {
                             self.tableView.deleteRows(at: [indexPath], with: .fade)
+                            self.handleNoResultLabel()
                         }
                     }
                     return nil
@@ -487,6 +522,7 @@ extension MailBoxViewController: UITableViewDelegate {
                         SendMailManager.sharedInstance.datas.remove(at: indexPath.row)
                         DispatchQueue.main.async {
                             self.tableView.deleteRows(at: [indexPath], with: .fade)
+                            self.handleNoResultLabel()
                         }
                     }
                     return nil

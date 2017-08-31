@@ -40,7 +40,7 @@ class LikeItem: AWSDynamoDBObjectModel, AWSDynamoDBModeling {
     var UpdatedTime: String?
     var ReadTime: String?
     var LikeId: String?
-    var isRead: Bool = true
+    var isRead: Bool = false
     var productLikedTime: String = ""
     
     // AWSDynamoDBModeling functions

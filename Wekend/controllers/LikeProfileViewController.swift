@@ -99,7 +99,7 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
     
     private func loadProfileInfo() {
         
-        startLoading()
+//        startLoading()
         
         isLoading = true
         self.containerView.alpha = 0.0
@@ -125,7 +125,7 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
                 
                 DispatchQueue.main.async {
                     self.initViews()
-                    self.endLoading()
+//                    self.endLoading()
                     
                     UIView.animate(withDuration: 0.3, animations: {
                         self.containerView.alpha = 1.0
@@ -193,7 +193,7 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
         }
         
         pagerView.delegate = self
-        pagerView.pageCount = photos.count
+        pagerView.pageCount = max(photos.count, 1)
         
         scrollView.delegate = self
         
@@ -289,7 +289,7 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
     // MARK: Delegates
     
     func loadPageViewItem(imageView: UIImageView, page: Int) {
-        
+        printLog(#function)
         guard let userInfo = self.friendUserInfo else {
             fatalError("ProfileViewController > loadPageViewItem > userInfo Error")
         }
@@ -297,7 +297,7 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
         let imageName = userInfo.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(page)
         let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + imageName
         
-        imageView.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "bg_default_logo_gray"))
+        imageView.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "default_profile"))
     }
     
     func onPageTapped(page: Int) {

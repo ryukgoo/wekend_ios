@@ -14,6 +14,7 @@ class StoreCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var bgImage: UIImageView!
     @IBOutlet weak var iconImage: UIImageView!
     @IBOutlet weak var priceLabel: UILabel!
+    @IBOutlet weak var pointLabel: UILabel!
     
     static let priceFormatter: NumberFormatter = {
         let formatter = NumberFormatter()

@@ -628,11 +628,11 @@ extension CampaignViewController: FBSDKSharingDelegate {
         let imageName = String(productInfo.ProductId) + "/" + Configuration.S3.PRODUCT_IMAGE_NAME(0)
         let imageUrl = Configuration.S3.PRODUCT_IMAGE_URL + imageName
         
-        let properties = [
+        let properties: [AnyHashable : Any] = [
             "fb:app_id": "553669081498489",
             "og:type": "article",
-            "og:title": "Wekend",
-            "og:description": "This is a test game to test Fb share functionality",
+            "og:title": productInfo.TitleKor ?? "Wekend",
+            "og:description": productInfo.Description ?? "",
             "og:image" : imageUrl,
             "og:url" : "https://fb.me/673785809486815"
         ]
@@ -660,49 +660,6 @@ extension CampaignViewController: FBSDKSharingDelegate {
             printLog("dialog can show")
             dialog.show()
         }
-        
-//        let content: FBSDKShareOpenGraphObject
-        
-//        let content: FBSDKShareLinkContent = FBSDKShareLinkContent()
-//        content.contentURL = URL(string: "https://fb.me/673369249528471")
-//        content.contentTitle = "Wekend"
-//        content.quote = "game"
-//        content.contentDescription = "Test Facebook sharing"
-//        content.imageURL = URL(string: imageUrl)
-        
-        /*
-        if SLComposeViewController.isAvailable(forServiceType: SLServiceTypeFacebook) {
-            
-            printLog("shareFacebookTapped > SLCompseViewController is Available")
-            
-            let post = SLComposeViewController(forServiceType: SLServiceTypeFacebook)!
-            
-            post.setInitialText("Wekend")
-            post.add(URL(string: "https://fb.me/673369249528471"))
-            
-            if let image = pagerView.getPageItem(0)?.image {
-                post.add(image)
-            }
-            
-            if presentedViewController != nil {
-                dismiss(animated: true, completion: nil)
-            }
-            
-            present(post, animated: true, completion: nil)
-            
-        } else {
-            let alert = UIAlertController(title: "Error", message: "You are not connected Facebook", preferredStyle: .alert)
-            let action = UIAlertAction(title: "Dismiss", style: .cancel, handler: nil)
-            
-            alert.addAction(action)
-            
-            if presentedViewController != nil {
-                dismiss(animated: true, completion: nil)
-            }
-            
-            present(alert, animated: true, completion: nil)
-        }
-        */
     }
     
     func sharer(_ sharer: FBSDKSharing!, didCompleteWithResults results: [AnyHashable : Any]!) {
