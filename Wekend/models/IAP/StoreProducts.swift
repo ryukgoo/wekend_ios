@@ -10,11 +10,11 @@ import Foundation
 
 class StoreProducts {
     
-    public static let Price1 = "com.entuition.wekend.billing.price.1"
-    public static let Price2 = "com.entuition.wekend.billing.price.2"
-    public static let Price3 = "com.entuition.wekend.billing.price.3"
-    public static let Price4 = "com.entuition.wekend.billing.price.4"
-    public static let Price5 = "com.entuition.wekend.billing.price.5"
+    public static let Price1 = "com.entuition.wekend.purchase.point.1"
+    public static let Price2 = "com.entuition.wekend.purchase.point.2"
+    public static let Price3 = "com.entuition.wekend.purchase.point.3"
+    public static let Price4 = "com.entuition.wekend.purchase.point.4"
+    public static let Price5 = "com.entuition.wekend.purchase.point.5"
     
     fileprivate static let productIdentifiers: Set<ProductIdentifier> = [StoreProducts.Price1,
                                                                          StoreProducts.Price2,
