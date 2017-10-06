@@ -11,6 +11,8 @@ import DropDownMenuKit
 
 class CampaignTableViewController: UIViewController {
     
+    static var isFirstLoad: Bool = true
+    
     // MARK: Properties
     
     var isLoading: Bool = false
@@ -62,6 +64,7 @@ class CampaignTableViewController: UIViewController {
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
         navigationController?.navigationBar.shadowImage = nil
         navigationController?.navigationBar.tintColor = .black
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -134,7 +137,7 @@ extension CampaignTableViewController {
         isLoading = true
 
         if startFromBeginning {
-            startLoading()
+            self.tabBarController?.startLoading()
         }
         
         ProductInfoManager.sharedInstance.loadData(startFromBeginning: startFromBeginning).continueWith(block: {
@@ -147,7 +150,7 @@ extension CampaignTableViewController {
                 DispatchQueue.main.async {
                     UIApplication.shared.isNetworkActivityIndicatorVisible = false
                     self.refreshControl.endRefreshing()
-                    self.endLoading()
+                    self.tabBarController?.endLoading()
                     
                     if let count = ProductInfoManager.sharedInstance.datas?.count {
                         if count == 0 {

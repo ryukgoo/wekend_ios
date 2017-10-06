@@ -14,8 +14,18 @@ protocol SlideMenuDelegate {
     func onCloseSlideMenu()
 }
 
+protocol Slidable {
+    func slideIn()
+    func slideOut()
+}
+
 class DrawerViewController: UIViewController {
 
+//    static func storyboardInstance() -> DrawerViewController? {
+//        let storyboard = UIStoryboard(name: className, bundle: nil)
+//        return storyboard.instantiateInitialViewController() as? DrawerViewController
+//    }
+    
     // MARK: menuString -> to enum
     let menuString = ["공지사항", "도움말", "프로필", "고객센터", "알림설정", "로그아웃"]
     let menuIcons : [UIImage] = [#imageLiteral(resourceName: "img_icon_noti_n"), #imageLiteral(resourceName: "img_icon_help_n"), #imageLiteral(resourceName: "img_icon_profile_n"), #imageLiteral(resourceName: "img_icon_cc_n"), #imageLiteral(resourceName: "img_icon_setting_n"), #imageLiteral(resourceName: "img_icon_logout_n")]
@@ -26,6 +36,7 @@ class DrawerViewController: UIViewController {
     
     // MARK: IBOutlet
     
+    @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var overlayCloseButton: UIButton!
     @IBOutlet weak var menuTableView: UITableView!
     @IBOutlet weak var profileImageView: UIImageView!
@@ -77,18 +88,7 @@ class DrawerViewController: UIViewController {
     // MARK: Button Click Event
     
     @IBAction func onCloseButtonTapped(_ sender: Any) {
-        
-        UIView.animate(withDuration: 0.3, animations: { () -> Void in
-            self.view.frame = CGRect(x: UIScreen.main.bounds.size.width, y: 0, width: UIScreen.main.bounds.size.width,height: UIScreen.main.bounds.size.height)
-            self.view.layoutIfNeeded()
-            self.view.backgroundColor = UIColor.clear
-            
-            self.delegate?.onCloseSlideMenu()
-        }, completion: { (finished) -> Void in
-            self.view.removeFromSuperview()
-            self.removeFromParentViewController()
-        })
-        
+        slideOut()
     }
     
     func onProfileImageTapped(_ gestureRecognizer: UITapGestureRecognizer) {
@@ -152,7 +152,13 @@ extension DrawerViewController: UITableViewDataSource, UITableViewDelegate {
             break
             
         case 1:
-            performSegue(withIdentifier: NoticeTableViewController.className, sender: "Help")
+            
+            let guideVC: GuideViewController = GuideViewController.nibInstance()
+            guideVC.modalPresentationStyle = .overCurrentContext
+            guideVC.modalTransitionStyle = .crossDissolve
+            guideVC.isShowButtons = false
+            
+            self.present(guideVC, animated: true, completion: nil)
             
             break
             
@@ -165,8 +171,6 @@ extension DrawerViewController: UITableViewDataSource, UITableViewDelegate {
             break
             
         case 4:
-//            performSegue(withIdentifier: AlarmSettingTableViewController.className, sender: cell)
-            
             if let appSettings = URL(string: UIApplicationOpenSettingsURLString) {
                 if UIApplication.shared.canOpenURL(appSettings) {
                     if #available(iOS 10.0, *) {
@@ -177,7 +181,6 @@ extension DrawerViewController: UITableViewDataSource, UITableViewDelegate {
                     }
                 }
             }
-            
             break
             
         case 5:
@@ -279,5 +282,42 @@ extension DrawerViewController: Observerable {
             self.profileImageView.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "img_bg_thumb_male"), contentMode: .scaleAspectFill, reload: true)
             self.profileImageView.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_default_2"))
         }
+    }
+}
+
+extension DrawerViewController: Slidable {
+    
+    func slideIn() {
+        
+        let screenWidth = UIScreen.main.bounds.width
+        let containerWidth = containerView.frame.size.width
+        let containerHeight = containerView.frame.size.height
+        
+        self.containerView.frame = CGRect(x: screenWidth, y: 0, width: containerWidth, height: containerHeight)
+        self.overlayCloseButton?.backgroundColor = UIColor(red:0.0, green: 0.0, blue: 0.0, alpha: 0.0)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            () -> Void in
+            self.containerView.frame = CGRect(x: screenWidth - containerWidth, y: 0, width: containerWidth, height: containerHeight)
+            self.overlayCloseButton?.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4)
+        })
+    }
+    
+    func slideOut() {
+        
+        let screenWidth = UIScreen.main.bounds.width
+        let containerWidth = containerView.frame.size.width
+        let containerHeight = containerView.frame.size.height
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            () -> Void in
+            self.containerView.frame = CGRect(x: screenWidth, y: 0, width: containerWidth, height: containerHeight)
+            self.overlayCloseButton?.backgroundColor = UIColor(red:0.0, green: 0.0, blue: 0.0, alpha: 0.0)
+        }, completion: { (finished) -> Void in
+            self.view.removeFromSuperview()
+            self.removeFromParentViewController()
+            
+            self.delegate?.onCloseSlideMenu()
+        })
     }
 }

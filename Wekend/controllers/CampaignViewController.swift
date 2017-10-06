@@ -601,6 +601,14 @@ extension CampaignViewController: FBSDKSharingDelegate {
         self.view.startLoading()
         KLKTalkLinkCenter.shared().sendDefault(with: template, success: { (warningMsg, argumentMsg) in
             
+//            UserInfoManager.sharedInstance.chargePoint(point: 500).continueWith(block: {
+//                (task: AWSTask) -> Any? in
+//                
+//                self.view.stopLoading()
+//                
+//                return nil
+//            })
+            
             // 성공
             self.view.stopLoading()
             self.printLog("warning message: \(String(describing: warningMsg))")

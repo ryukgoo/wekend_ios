@@ -67,6 +67,7 @@ extension UserDefaults {
             case userId
             case deviceUid
             case deviceKey
+            case isNoMoreGuide
         }
     }
     

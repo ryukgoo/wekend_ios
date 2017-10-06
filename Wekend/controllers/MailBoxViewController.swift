@@ -37,7 +37,7 @@ class MailBoxViewController: UIViewController {
         initTableView()
         initSegmentControl()
         
-        startLoading()
+        self.tabBarController?.startLoading()
         loadMails()
         
         addNotificationObservers()
@@ -130,7 +130,7 @@ class MailBoxViewController: UIViewController {
                     self.refreshControl.endRefreshing()
                     UIApplication.shared.isNetworkActivityIndicatorVisible = false
                     
-                    self.endLoading()
+                    self.tabBarController?.endLoading()
                     self.tableView.reloadData()
                     
                     self.handleNoResultLabel()

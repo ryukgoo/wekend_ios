@@ -47,7 +47,7 @@ class StoreCollectionViewController: UICollectionViewController {
         
         printLog("reload")
         
-        startLoading()
+        self.tabBarController?.startLoading()
         
         products = []
         
@@ -61,7 +61,7 @@ class StoreCollectionViewController: UICollectionViewController {
             if success {
                 self.products = products!
                 self.collectionView?.reloadData()
-                self.endLoading()
+                self.tabBarController?.endLoading()
             }
         }
     }
@@ -70,7 +70,7 @@ class StoreCollectionViewController: UICollectionViewController {
         
         printLog("handlePurchaseNotification > notification : \(notification)")
         
-        endLoading()
+        self.tabBarController?.endLoading()
         
         guard let productId = notification.object as? String else { return }
         
@@ -105,7 +105,7 @@ class StoreCollectionViewController: UICollectionViewController {
     }
 
     func handlePurchaseFailNotification(_ notification: Notification) {
-        endLoading()
+        self.tabBarController?.endLoading()
         alert(message: "상품구매에 실패하였습니다.\n다시 시도해주세요")
     }
     
@@ -164,7 +164,7 @@ extension StoreCollectionViewController: UICollectionViewDelegateFlowLayout {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let product = products[indexPath.row]
         StoreProducts.store.buyProduct(product)
-        startLoading()
+        self.tabBarController?.startLoading()
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

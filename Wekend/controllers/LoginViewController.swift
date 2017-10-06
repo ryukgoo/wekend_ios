@@ -104,10 +104,6 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func signupButtonTapped(_ sender: Any) {
-        
-        // TODO: - show Agreement!!
-        
-//        performSegue(withIdentifier: SignupViewController.className, sender: self)
         showAgreementViewController()
     }
     

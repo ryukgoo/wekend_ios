@@ -24,7 +24,7 @@ class NoticeTableViewController: UITableViewController {
             
             self.title = "공지사항"
             
-            SettingViewModel.sharedInstance.loadNotices().continueWith(block: {
+            SettingViewModel.sharedInstance.loadHelps().continueWith(block: {
                 (task: AWSTask) -> Any? in
                 
                 guard let result = task.result else {

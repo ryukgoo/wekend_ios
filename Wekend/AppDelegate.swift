@@ -41,7 +41,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 if granted {
                     self.printLog("UNUserNotificationCenter is granted")
-                    UIApplication.shared.registerForRemoteNotifications()
+                    DispatchQueue.main.async {
+                        UIApplication.shared.registerForRemoteNotifications()
+                    }
+                    
                 } else {
                     self.printLog("UNUserNotificationCenter not granted")
                 }

@@ -10,13 +10,11 @@ import UIKit
 
 class MainViewController: UITabBarController {
 
-    var overlayBackground: UIView?
+    static var isFirstLoad: Bool = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        printLog("MainViewController > viewDidLoad")
-        
         delegate = self
         
         tabBar.tintColor = UIColor(netHex: Constants.ColorInfo.MAIN)
@@ -44,6 +42,18 @@ class MainViewController: UITabBarController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if (MainViewController.isFirstLoad) {
+            
+            printLog("MainViewController.isFirstLoad : \(MainViewController.isFirstLoad)")
+            
+            MainViewController.isFirstLoad = false
+            showGuide()
+        }
     }
     
     func displayTabbarBadge() {
@@ -217,13 +227,7 @@ extension MainViewController: SlideMenuDelegate {
     
     func onDrawerTapped(_ sender: Any) {
         
-        overlayBackground = UIView(frame: self.view.frame)
-        overlayBackground?.backgroundColor = UIColor.clear
-        self.view.addSubview(overlayBackground!)
-        
-        let identifier = DrawerViewController.className
-        
-        guard let drawerViewController = self.storyboard!.instantiateViewController(withIdentifier: identifier) as? DrawerViewController else {
+        guard let drawerViewController: DrawerViewController = DrawerViewController.storyboardInstance() else {
             fatalError("MainViewController > onDrawerTapped > drawerVC from storyBoard Error")
         }
         
@@ -233,21 +237,7 @@ extension MainViewController: SlideMenuDelegate {
         addChildViewController(drawerViewController)
         
         drawerViewController.view.layoutIfNeeded()
-        
-        let screenWidth = UIScreen.main.bounds.size.width
-        let screenHeight = UIScreen.main.bounds.size.height
-        
-        drawerViewController.view.frame = CGRect(x: screenWidth, y: 0, width: screenWidth, height: screenHeight);
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            () -> Void in
-            drawerViewController.view.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
-        })
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            () -> Void in
-            self.overlayBackground?.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4)
-        })
+        drawerViewController.slideIn()
     }
     
     func slideMenuItemSelectedAtIndex(_ index: Int) {
@@ -256,14 +246,34 @@ extension MainViewController: SlideMenuDelegate {
     
     func onCloseSlideMenu() {
         
-        UIView.animate(withDuration: 0.3, animations: {
-            () -> Void in
-            self.overlayBackground?.backgroundColor = UIColor(red:0.0, green: 0.0, blue: 0.0, alpha: 0.0)
-        }, completion: {
-            (finished) -> Void in
-            self.overlayBackground?.removeFromSuperview()
-        })
-        
-        overlayBackground?.removeFromSuperview()
     }
+}
+
+extension MainViewController {
+    
+    func showGuide() {
+    
+        printLog("UserDefaults.Account.bool(forKey: .isNoMoreGuide) : \(UserDefaults.Account.bool(forKey: .isNoMoreGuide))")
+        
+        if (UserDefaults.Account.bool(forKey: .isNoMoreGuide)) { return }
+        
+        if let presentingVC = self.presentedViewController as? UIAlertController {
+            printLog("presenting ViewController is dismissed")
+            presentingVC.dismiss(animated: false, completion: {
+                let guideVC: GuideViewController = GuideViewController.nibInstance()
+                guideVC.modalPresentationStyle = .overCurrentContext
+                guideVC.modalTransitionStyle = .crossDissolve
+                
+                self.present(guideVC, animated: true, completion: nil)
+            })
+        } else {
+            let guideVC: GuideViewController = GuideViewController.nibInstance()
+            guideVC.modalPresentationStyle = .overCurrentContext
+            guideVC.modalTransitionStyle = .crossDissolve
+            
+            self.present(guideVC, animated: true, completion: nil)
+        }
+        
+    }
+    
 }

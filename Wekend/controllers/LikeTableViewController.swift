@@ -21,7 +21,7 @@ class LikeTableViewController: UIViewController {
         printLog("viewDidLoad")
         
         initTableView()
-        startLoading()
+        self.tabBarController?.startLoading()
         refreshList(true)
         addNotificationObservers()
     }
@@ -87,7 +87,7 @@ class LikeTableViewController: UIViewController {
                 UIApplication.shared.isNetworkActivityIndicatorVisible = false
                 self.tableView.reloadData()
                 self.refreshControlView.endRefreshing()
-                self.endLoading()
+                self.tabBarController?.endLoading()
                 
                 self.handleNoResultLabel()
             }

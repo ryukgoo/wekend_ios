@@ -10,13 +10,6 @@ import Foundation
 
 extension UIViewController {
     
-    func alert(message: String, title: String = "", completion: ((UIAlertAction) -> Void)? = nil) {
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let OKAction = UIAlertAction(title: "OK", style: .default, handler: completion)
-        alertController.addAction(OKAction)
-        self.present(alertController, animated: true, completion: nil)
-    }
-    
     func startLoading(message: String? = nil, completion: (() -> Void)? = nil) {
         
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
