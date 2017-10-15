@@ -69,12 +69,7 @@ class AmazonClientManager: NSObject {
                 return nil
             }
             
-            let isRegistered = UserDefaults.RemoteNotification.bool(forKey: .isRegistered)
-            self.printLog("isRegistered : \(isRegistered)")
-            
-            if !UserDefaults.RemoteNotification.bool(forKey: .isRegistered) {
-                UserInfoManager.sharedInstance.registEndpointARN()
-            }
+            UserInfoManager.sharedInstance.registEndpointARN()
             
             self.gotoMainViewController()
             

@@ -88,7 +88,6 @@ extension UserDefaults {
     struct RemoteNotification: ValueUserDefaultable {
         enum ValueDefaultKey: String {
             case deviceToken
-            case isRegistered
         }
     }
 }

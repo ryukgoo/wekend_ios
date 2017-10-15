@@ -73,12 +73,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let token = deviceToken.reduce("") { $0 + String(format: "%02.2hhx", $1) }
         printLog("didRegisterForRemoteNotificationsWithDeviceToken > deviceToken : \(token)")
         
-        let cachedToken = UserDefaults.RemoteNotification.string(forKey: .deviceToken)
-        
-        if token != cachedToken {
-            UserDefaults.RemoteNotification.set(false, forKey: .isRegistered)
-        }
-        
         // Forward the token to your provider, using a custom method
         UserDefaults.RemoteNotification.set(token, forKey: .deviceToken)
         
@@ -209,6 +203,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         
+        refreshNotification()
+    }
+
+    func applicationWillTerminate(_ application: UIApplication) {
+        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+        
+        // unregister Store Transaction observer
+//        SKPaymentQueue.default().remove()
+    }
+    
+    func refreshNotification() {
         guard let userId = UserInfoManager.sharedInstance.userInfo?.userid else {
             
             printLog("applicationDidBecomeActive > userId is nil")
@@ -258,15 +263,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return nil
         })
     }
-
-    func applicationWillTerminate(_ application: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-        
-        // unregister Store Transaction observer
-//        SKPaymentQueue.default().remove()
-    }
-    
-    
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
@@ -286,7 +282,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         print(#function)
         
+        // slient push notification handle... TBD
+        refreshNotification()
+        
         completionHandler([])
     }
 }
-

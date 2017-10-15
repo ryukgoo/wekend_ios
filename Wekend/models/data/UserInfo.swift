@@ -54,6 +54,7 @@ class UserInfo: AWSDynamoDBObjectModel, AWSDynamoDBModeling {
     var birth: Any?
     var phone: String?
     var photos: Any?
+    var photosArr: [String] = []
     var balloon: Any?
     var EndpointARN: String?
     var NewLikeCount: Int = 0
@@ -69,7 +70,7 @@ class UserInfo: AWSDynamoDBObjectModel, AWSDynamoDBModeling {
     }
     
     static func ignoreAttributes() -> [String] {
-        return []
+        return ["photosArr"]
     }
     
 }
@@ -84,19 +85,19 @@ enum BillingPoint: Int, EnumCollection {
     
     init(id: String) {
         switch id {
-            case "com.entuition.wekend.billing.price.1":
+            case "com.entuition.wekend.purchase.point.1":
                 self = .price1
             break
-            case "com.entuition.wekend.billing.price.2":
+            case "com.entuition.wekend.purchase.point.2":
                 self = .price2
             break
-            case "com.entuition.wekend.billing.price.3":
+            case "com.entuition.wekend.purchase.point.3":
                 self = .price3
             break
-            case "com.entuition.wekend.billing.price.4":
+            case "com.entuition.wekend.purchase.point.4":
                 self = .price4
             break
-            case "com.entuition.wekend.billing.price.5":
+            case "com.entuition.wekend.purchase.point.5":
                 self = .price5
             break
         default:
@@ -108,15 +109,15 @@ enum BillingPoint: Int, EnumCollection {
     var toString: String {
         switch self {
         case .price1:
-            return "com.entuition.wekend.billing.price.1"
+            return "com.entuition.wekend.purchase.point.1"
         case .price2:
-            return "com.entuition.wekend.billing.price.2"
+            return "com.entuition.wekend.purchase.point.2"
         case .price3:
-            return "com.entuition.wekend.billing.price.3"
+            return "com.entuition.wekend.purchase.point.3"
         case .price4:
-            return "com.entuition.wekend.billing.price.4"
+            return "com.entuition.wekend.purchase.point.4"
         case .price5:
-            return "com.entuition.wekend.billing.price.5"
+            return "com.entuition.wekend.purchase.point.5"
         }
     }
     

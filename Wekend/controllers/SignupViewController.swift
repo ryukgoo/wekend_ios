@@ -34,13 +34,11 @@ class SignupViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: .UIKeyboardWillHide, object: nil)
+        addKeyboardObserver()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
+        removeKeyboardObserver()
     }
     
     override func viewWillLayoutSubviews() {
@@ -97,42 +95,6 @@ class SignupViewController: UIViewController {
             }
             
             return nil
-        })
-    }
-    
-    func keyboardWillShow(_ notification: Notification) {
-        var info: Dictionary = notification.userInfo!
-        
-        if let keyboardSize = (info[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-            
-            guard let textField = self.activeTextField else {
-                printLog("keyboardWillShow > activeTextField is nil")
-                return
-            }
-            
-            let point = textField.convert(textField.frame.origin, to: self.view)
-            
-            let textFieldBottomY = point.y + self.view.frame.origin.y
-            let keyboardY = self.view.frame.height - keyboardSize.height
-            let moveY = textFieldBottomY - keyboardY
-            
-            UIView.animate(withDuration: 0.1, animations: {
-                () -> Void in
-                
-                if moveY > 0 {
-                    self.view.frame.origin.y -= moveY
-                }
-                
-            })
-        }
-    }
-    
-    func keyboardWillHide(_ notification: Notification) {
-        UIView.animate(withDuration: 0.1, animations: {
-            () -> Void in
-            if self.view.frame.origin.y != 0 {
-                self.view.frame.origin.y = 0
-            }
         })
     }
 
@@ -286,5 +248,58 @@ extension SignupViewController: UITextFieldDelegate {
             alert(message: "비밀번호는 영문과 숫자의 조합 6자리이상 입력해주세요")
             
         }
+    }
+}
+
+extension SignupViewController {
+    
+    func addKeyboardObserver() {
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(self.keyboardWillShow(_:)),
+                                               name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(self.keyboardWillHide(_:)),
+                                               name: .UIKeyboardWillHide, object: nil)
+    }
+    
+    func removeKeyboardObserver() {
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
+    }
+    
+    func keyboardWillShow(_ notification: Notification) {
+        var info: Dictionary = notification.userInfo!
+        
+        if let keyboardSize = (info[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            
+            guard let textField = self.activeTextField else {
+                printLog("keyboardWillShow > activeTextField is nil")
+                return
+            }
+            
+            let point = textField.convert(textField.frame.origin, to: self.view)
+            
+            let textFieldBottomY = point.y + self.view.frame.origin.y
+            let keyboardY = self.view.frame.height - keyboardSize.height
+            let moveY = textFieldBottomY - keyboardY
+            
+            UIView.animate(withDuration: 0.1, animations: {
+                () -> Void in
+                
+                if moveY > 0 {
+                    self.view.frame.origin.y -= moveY
+                }
+                
+            })
+        }
+    }
+    
+    func keyboardWillHide(_ notification: Notification) {
+        UIView.animate(withDuration: 0.1, animations: {
+            () -> Void in
+            if self.view.frame.origin.y != 0 {
+                self.view.frame.origin.y = 0
+            }
+        })
     }
 }

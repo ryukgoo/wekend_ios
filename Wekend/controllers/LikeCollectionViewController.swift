@@ -227,7 +227,7 @@ extension LikeCollectionViewController: UICollectionViewDelegateFlowLayout {
         
         cell.likeImageView.frame = CGRect(x: 5.0, y: 5.0, width: UIScreen.main.bounds.size.width/3.0 - 10.0, height: UIScreen.main.bounds.size.width/3.0 - 10.0)
         
-        cell.likeImageView.downloadedFrom(link: imageUrl, defaultImage: defaultImage)
+        cell.likeImageView.downloadedFrom(link: imageUrl, defaultImage: defaultImage, contentMode: .scaleAspectFill, reload: true)
         cell.likeImageView.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_s_2"))
         
         cell.likeNickname.text = data.Nickname

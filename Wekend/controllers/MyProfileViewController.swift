@@ -27,18 +27,27 @@ class MyProfileViewController: UIViewController {
             editLayoutStackView.isHidden = !isEditingMode
             editPhoneButton.isHidden = !isEditingMode
             editPhotoButton.isHidden = !isEditingMode
+//            editNicknameButton.isHidden = !isEditingMode
+            
+//            editPhoneButton.isEnabled = false
+//            editNicknameButton.isEnabled = false
             
             requestCodeButton.isEnabled = !isEditingMode
             confirmCodeButton.isEnabled = !isEditingMode
             
             phoneTextField.isEnabled = isEditingMode
+            nicknameTextField.isEnabled = isEditingMode
             codeTextField.isEnabled = isEditingMode
             
             guard let phoneNumber = UserInfoManager.sharedInstance.userInfo?.phone?.toPhoneFormat() else {
                 fatalError("phoneNumber is nil")
             }
+            phoneTextField.text = isEditingMode ? "" : phoneNumber
             
-            phoneTextField.text = phoneNumber
+//            guard let nickname = UserInfoManager.sharedInstance.userInfo?.nickname else {
+//                fatalError("nickname is nil")
+//            }
+//            nicknameTextField.text = isEditingMode ? "" : nickname
             
 //            editButton.isEnabled = !isEditingMode
             
@@ -70,7 +79,7 @@ class MyProfileViewController: UIViewController {
     @IBOutlet weak var ageStackView: UIStackView!
     @IBOutlet weak var phoneStackView: UIStackView!
     
-    @IBOutlet weak var nicknameLabel: UILabel!
+    @IBOutlet weak var nicknameTextField: UITextField!
     @IBOutlet weak var ageLabel: UILabel!
     @IBOutlet weak var phoneTextField: UITextField!
     @IBOutlet weak var pointLabel: UILabel!
@@ -84,6 +93,7 @@ class MyProfileViewController: UIViewController {
     @IBOutlet weak var editPhoneButton: WhiteRoundedButton!
     @IBOutlet weak var requestCodeButton: WhiteRoundedButton!
     @IBOutlet weak var confirmCodeButton: WhiteRoundedButton!
+    @IBOutlet weak var editNicknameButton: WhiteRoundedButton!
     @IBOutlet weak var codeTextField: UITextField!
     @IBOutlet weak var editLayoutStackView: UIStackView!
     @IBOutlet weak var editPhotoButton: UIButton!
@@ -108,13 +118,7 @@ class MyProfileViewController: UIViewController {
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.tintColor = .white
         
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)),
-                                               name: .UIKeyboardWillShow,
-                                               object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)),
-                                               name: .UIKeyboardWillHide,
-                                               object: nil)
+        addKeyboardObserver()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -126,8 +130,7 @@ class MyProfileViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
-        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
+        removeKeyboardObserver()
     }
 
     override func didReceiveMemoryWarning() {
@@ -163,7 +166,7 @@ class MyProfileViewController: UIViewController {
         let components = calendar.dateComponents([.year], from: date)
         let year = components.year
         
-        nicknameLabel.text = userInfo.nickname
+        nicknameTextField.text = userInfo.nickname
         ageLabel.text = String(year! - birth) + "세"
 
         if let point = userInfo.balloon as! Int! {
@@ -171,10 +174,6 @@ class MyProfileViewController: UIViewController {
         } else {
             self.pointLabel.text = "보유포인트 : 0P"
         }
-        
-        phoneTextField.attributedPlaceholder =
-            NSAttributedString(string: "'-'를 제외한 숫자만 입력해주세요",
-                               attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 14.0)])
         
         initTextFields()
         
@@ -211,9 +210,58 @@ class MyProfileViewController: UIViewController {
     }
     
     @IBAction func onEditPhoneButtonTapped(_ sender: Any) {
-        printLog("onEditPhoneButtonTapped")
-        
+        printLog(#function)
         phoneTextField.becomeFirstResponder()
+    }
+    
+    @IBAction func onEditNicknameButtonTapped(_ sender: Any) {
+        printLog(#function)
+//        nicknameTextField.becomeFirstResponder()
+        
+        view.endEditing(true)
+        
+        guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
+            return
+        }
+        
+        if let inputNickname = nicknameTextField.text {
+            if !inputNickname.isEmpty && userInfo.nickname != inputNickname {
+                startLoading(message: "수정중..")
+                
+                UserInfoManager.sharedInstance.isNicknameAvailable(nickname: inputNickname).continueWith(executor: AWSExecutor.mainThread(), block: {
+                    (task: AWSTask) -> Any? in
+                    
+                    guard let isAvailable = task.result as? Bool else {
+                        DispatchQueue.main.async {
+                            self.alert(message: "사용중인 닉네임입니다.", title: "닉네임 중복확인")
+                        }
+                        return nil
+                    }
+                    
+                    if isAvailable {
+                        
+                        userInfo.nickname = inputNickname
+                        
+                        UserInfoManager.sharedInstance.saveUserInfo(userInfo: userInfo).continueWith(executor: AWSExecutor.mainThread(), block: {
+                            (task:AWSTask) -> Any? in
+                            
+                            self.endLoading()
+                            
+                            if task.error != nil {
+                                self.alert(message: "닉네임 변경에 실패하였습니다")
+                            } else {
+                                self.alert(message: "닉네임이 변경되었습니다")
+                            }
+                            
+                            return nil
+                        })
+                    }
+                    
+                    return nil
+                })
+                
+            }
+        }
     }
     
     // MARK: IBAction
@@ -267,6 +315,8 @@ class MyProfileViewController: UIViewController {
             self.alert(message: "전화번호를 정확히 입력해주세요", title: "전화번호 입력오류")
             return
         }
+        
+        printLog("\(#function) > onRequestCodeButtonTapped > phoneNumber : \(phoneNumber)")
         
         UserInfoManager.sharedInstance.sendVerificationCode(phoneNumber: phoneNumber).continueWith(block: {
             (task: AWSTask) -> Any! in
@@ -322,8 +372,10 @@ class MyProfileViewController: UIViewController {
                         return nil
                     }
                     
-                    self.endLoading()
-                    self.isEditingMode = false
+                    DispatchQueue.main.async {
+                        self.endLoading()
+                        self.isEditingMode = false
+                    }
                     
                     return nil
                 })
@@ -496,21 +548,32 @@ extension MyProfileViewController: UITextFieldDelegate {
     
     func initTextFields() {
         
+        let toolbar = getToolbar()
+        
+        phoneTextField.attributedPlaceholder =
+            NSAttributedString(string: "'-'를 제외한 숫자만 입력해주세요",
+                               attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 14.0)])
+        
         phoneTextField.keyboardType = .phonePad
         phoneTextField.delegate = self
         phoneTextField.addTarget(self, action: #selector(self.phoneDidChanged(_:)), for: .editingChanged)
+        phoneTextField.inputAccessoryView = toolbar
+        phoneTextField.isEnabled = false
+        
+        nicknameTextField.attributedPlaceholder = NSAttributedString(string: "새로운 닉네임을 입력해주세요", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 14.0)])
+        
+        nicknameTextField.keyboardType = .default
+        nicknameTextField.delegate = self
+        nicknameTextField.addTarget(self, action: #selector(self.nicknameDidChanged(_:)), for: .editingChanged)
+        nicknameTextField.inputAccessoryView = toolbar
+        nicknameTextField.isEnabled = false
         
         codeTextField.keyboardType = .numberPad
         codeTextField.delegate = self
         codeTextField.addTarget(self, action: #selector(self.codeDidChanged(_:)), for: .editingChanged)
-        
-        let toolbar = getToolbar()
-        phoneTextField.inputAccessoryView = toolbar
         codeTextField.inputAccessoryView = toolbar
-        
         codeTextField.layer.addBorder(edge: .bottom, color: UIColor(netHex: 0x909090), thickness: 1.0)
         
-        phoneTextField.isEnabled = false
     }
     
     func getToolbar() -> UIToolbar {
@@ -535,7 +598,7 @@ extension MyProfileViewController: UITextFieldDelegate {
     func doneKeyboard(_ sender: Any) {
         view.endEditing(true)
         
-        validateInputPhoneNumber()
+//        validateInputPhoneNumber()
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -544,9 +607,8 @@ extension MyProfileViewController: UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        
         textField.resignFirstResponder()
-        validateInputPhoneNumber()
+//        validateInputPhoneNumber()
         return true
     }
     
@@ -558,41 +620,8 @@ extension MyProfileViewController: UITextFieldDelegate {
         confirmCodeButton.isEnabled = codeTextField.text!.characters.count == 6
     }
     
-    func keyboardWillShow(_ notification: Notification) {
-        
-        var info: Dictionary = notification.userInfo!
-        
-        if let keyboardSize = (info[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-            
-            guard let textField = self.activeTextField else {
-                printLog("keyboardWillShow > activeTextField is nil")
-                return
-            }
-            
-            let point = textField.convert(textField.frame.origin, to: self.view)
-            
-            let textFieldBottomY = point.y + textField.frame.size.height
-            let keyboardY = self.view.frame.height - keyboardSize.height
-            let moveY = textFieldBottomY - keyboardY
-            
-            UIView.animate(withDuration: 0.1, animations: {
-                () -> Void in
-                
-                if moveY > 0 {
-                    self.view.frame.origin.y -= moveY
-                }
-                
-            })
-        }
-    }
-    
-    func keyboardWillHide(_ notification: Notification) {
-        UIView.animate(withDuration: 0.1, animations: {
-            () -> Void in
-            if self.view.frame.origin.y != 0 {
-                self.view.frame.origin.y = 0
-            }
-        })
+    func nicknameDidChanged(_ textField: UITextField) {
+        editNicknameButton.isEnabled = nicknameTextField.text!.characters.count > 1
     }
     
     func validateInputPhoneNumber() {
@@ -611,5 +640,67 @@ extension MyProfileViewController: UITextFieldDelegate {
             return
         }
         phoneTextField.text = oldPhoneNumber
+    }
+}
+
+extension MyProfileViewController {
+    
+    func addKeyboardObserver() {
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)),
+                                               name: .UIKeyboardWillShow,
+                                               object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)),
+                                               name: .UIKeyboardWillHide,
+                                               object: nil)
+    }
+    
+    func removeKeyboardObserver() {
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
+    }
+    
+    func keyboardWillShow(_ notification: Notification) {
+        printLog(#function)
+        var info: Dictionary = notification.userInfo!
+        
+        if let keyboardSize = (info[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            
+            printLog("\(#function) > keyboardSize : \(keyboardSize)")
+            
+            guard let textField = self.activeTextField else {
+                printLog("keyboardWillShow > activeTextField is nil")
+                return
+            }
+            
+            let point = textField.convert(textField.frame.origin, to: self.view)
+            
+            let textFieldBottomY = point.y + textField.frame.size.height
+            let keyboardY = self.view.frame.height - keyboardSize.height
+            let moveY = textFieldBottomY - keyboardY
+            
+            printLog("\(#function) > textFieldBottomY : \(textFieldBottomY)")
+            printLog("\(#function) > keyboardY : \(keyboardY)")
+            printLog("\(#function) > moveY : \(moveY)")
+            
+            UIView.animate(withDuration: 0.1, animations: {
+                () -> Void in
+                
+                if moveY > 0 {
+                    self.view.frame.origin.y -= moveY
+                }
+                
+            })
+        }
+    }
+    
+    func keyboardWillHide(_ notification: Notification) {
+        printLog(#function)
+        UIView.animate(withDuration: 0.1, animations: {
+            () -> Void in
+            if self.view.frame.origin.y != 0 {
+                self.view.frame.origin.y = 0
+            }
+        })
     }
 }

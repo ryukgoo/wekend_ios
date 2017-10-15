@@ -22,20 +22,30 @@ class GuideViewController: UIViewController {
         super.viewDidLoad()
         
         printLog("GuideViewController > viewDidLoad")
-        initView()
+        
         // Do any additional setup after loading the view.
         
         checkBox.isHidden = !isShowButtons
         noMoreShowText.isHidden = !isShowButtons
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.overlayBackground.alpha = 0.5
-        })
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.overlayBackground.alpha = 0.5
+        })
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        initView()
     }
     
     private func initView() {
@@ -58,9 +68,9 @@ class GuideViewController: UIViewController {
 extension GuideViewController: PagerViewDelegate {
     func loadPageViewItem(imageView: UIImageView, page: Int) {
         if let image = UIImage(named: "Help_0" + page.description) {
-            imageView.image = image
             imageView.backgroundColor = UIColor.clear
             imageView.contentMode = .scaleAspectFit
+            imageView.image = image
         }
     }
     

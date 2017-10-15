@@ -305,6 +305,12 @@ class LikeDBManager : NSObject {
                                 item.productLikedTime = readItem.MaleLikeTime ?? ""
                             }
                             
+                            if let updatedTime = item.UpdatedTime {
+                                if (updatedTime > item.productLikedTime) {
+                                    item.productLikedTime = updatedTime
+                                }
+                            }
+                            
                             break
                         }
                     }

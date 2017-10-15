@@ -238,6 +238,7 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
         switch proposeStatus {
         case .made:
             
+            phoneLabel.text = friendUserInfo?.phone?.toPhoneFormat()
             phoneStackView.isHidden = false
             scrollableHeight += phoneLabel.frame.height
             
@@ -297,7 +298,7 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
         let imageName = userInfo.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(page)
         let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + imageName
         
-        imageView.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "default_profile"))
+        imageView.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "default_profile"), contentMode: .scaleAspectFill, reload: true)
     }
     
     func onPageTapped(page: Int) {
@@ -402,7 +403,7 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
                 })
                 
             } else if task.error is PurchaseError {
-                self.alert(message: "포인트가 충분하지 않습니다", title: "포인트 부족")
+                self.alert(message: "포인트를 충분하지 않습니다", title: "포인트 부족")
             }
             
             return nil

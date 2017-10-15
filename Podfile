@@ -18,7 +18,7 @@ target :'Wekend' do
 	pod 'UICKeyChainStore'
 	pod 'CommonCrypto'
 	pod 'KRWordWrapLabel'
-	pod 'DropDownMenuKit'
+	pod 'DropDownMenuKit', '0.8.2'
 	pod 'GoogleMaps'
 	pod 'GooglePlaces'
 end

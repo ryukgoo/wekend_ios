@@ -260,20 +260,19 @@ extension MainViewController {
         if let presentingVC = self.presentedViewController as? UIAlertController {
             printLog("presenting ViewController is dismissed")
             presentingVC.dismiss(animated: false, completion: {
-                let guideVC: GuideViewController = GuideViewController.nibInstance()
-                guideVC.modalPresentationStyle = .overCurrentContext
-                guideVC.modalTransitionStyle = .crossDissolve
-                
-                self.present(guideVC, animated: true, completion: nil)
+                self.presentGuide()
             })
         } else {
-            let guideVC: GuideViewController = GuideViewController.nibInstance()
-            guideVC.modalPresentationStyle = .overCurrentContext
-            guideVC.modalTransitionStyle = .crossDissolve
-            
-            self.present(guideVC, animated: true, completion: nil)
+            presentGuide()
         }
+    }
+    
+    private func presentGuide() {
+        let guideVC: GuideViewController = GuideViewController.nibInstance()
+        guideVC.modalPresentationStyle = .overCurrentContext
+        guideVC.modalTransitionStyle = .crossDissolve
         
+        self.present(guideVC, animated: true, completion: nil)
     }
     
 }

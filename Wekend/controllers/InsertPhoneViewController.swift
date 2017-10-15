@@ -65,7 +65,7 @@ class InsertPhoneViewController: UIViewController {
         
         var info: Dictionary = notification.userInfo!
         
-        if let keyboardSize = (info[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+        if let keyboardSize = (info[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             
             guard let textField = self.activeTextField else {
                 printLog("keyboardWillShow > activeTextField is nil")

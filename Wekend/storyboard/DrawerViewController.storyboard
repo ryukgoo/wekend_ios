@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Sv4-tZ-gGJ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Sv4-tZ-gGJ">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
@@ -244,7 +245,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="공지사항" id="CZN-VK-Vci">
                         <barButtonItem key="leftBarButtonItem" image="btn_icon_back_r" id="iRk-ve-z10">
-                            <color key="tintColor" red="0.94901960780000005" green="0.47450980390000003" blue="0.48627450979999998" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <action selector="cancel:" destination="zXQ-0z-A5M" id="jhk-bz-S9g"/>
                             </connections>
@@ -380,7 +381,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JaY-NU-90E">
-                                            <rect key="frame" x="45" y="24" width="49" height="21"/>
+                                            <rect key="frame" x="45" y="24" width="48" height="21"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="21" id="7cA-Rj-49T"/>
                                             </constraints>
@@ -413,7 +414,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="알람설정" id="iLH-iz-G2L">
                         <barButtonItem key="leftBarButtonItem" image="btn_icon_back_r" id="ZiP-Tw-PZS">
-                            <color key="tintColor" red="0.94901960780000005" green="0.47450980390000003" blue="0.48627450979999998" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <action selector="onBackButtonTapped:" destination="aCt-1s-fhR" id="Nzo-uy-3Vb"/>
                             </connections>
@@ -430,7 +431,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="WLd-2L-YRc" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="xVb-cY-A6d">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -501,15 +502,30 @@
                                                                 <color key="textColor" red="0.29411764709999999" green="0.29411764709999999" blue="0.29411764709999999" alpha="1" colorSpace="calibratedRGB"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qgg-hl-H2s">
+                                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="LdH-18-o1s">
                                                                 <rect key="frame" x="54" y="0.0" width="291" height="80"/>
+                                                                <color key="textColor" red="0.2901960784" green="0.2901960784" blue="0.2901960784" alpha="1" colorSpace="calibratedRGB"/>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                                                <color key="textColor" red="0.29411764709999999" green="0.29411764709999999" blue="0.29411764709999999" alpha="1" colorSpace="calibratedRGB"/>
-                                                                <nil key="highlightedColor"/>
-                                                            </label>
+                                                                <textInputTraits key="textInputTraits"/>
+                                                            </textField>
+                                                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FP7-sa-U66" customClass="WhiteRoundedButton" customModule="Wekend" customModuleProvider="target">
+                                                                <rect key="frame" x="345" y="26.5" width="57" height="27"/>
+                                                                <color key="backgroundColor" red="0.94901960780000005" green="0.47450980390000003" blue="0.48627450979999998" alpha="1" colorSpace="calibratedRGB"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="57" id="4gU-SG-bav"/>
+                                                                    <constraint firstAttribute="height" constant="27" id="HMr-2W-48r"/>
+                                                                </constraints>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                                <state key="normal" title="수정">
+                                                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                                </state>
+                                                                <connections>
+                                                                    <action selector="onEditNicknameButtonTapped:" destination="LIN-IX-neB" eventType="touchUpInside" id="gQQ-bQ-E2g"/>
+                                                                </connections>
+                                                            </button>
                                                         </subviews>
                                                         <constraints>
-                                                            <constraint firstItem="DMq-fX-sja" firstAttribute="height" secondItem="Qgg-hl-H2s" secondAttribute="height" id="63L-ed-sQ3"/>
+                                                            <constraint firstItem="DMq-fX-sja" firstAttribute="height" secondItem="LdH-18-o1s" secondAttribute="height" id="tRX-da-pgp"/>
                                                         </constraints>
                                                     </stackView>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FZy-JX-uvp">
@@ -742,7 +758,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="eAb-Mw-q2R">
                         <barButtonItem key="leftBarButtonItem" image="btn_icon_back_r" id="2ag-4P-jmq">
-                            <color key="tintColor" red="0.94901960780000005" green="0.47450980390000003" blue="0.48627450979999998" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <action selector="onBackButtonTapped:" destination="LIN-IX-neB" id="n4L-aZ-OVb"/>
                             </connections>
@@ -758,10 +774,11 @@
                         <outlet property="containerView" destination="bai-Cx-VCW" id="Geb-7I-kj8"/>
                         <outlet property="containerViewHeight" destination="nyF-vI-vzI" id="xSy-EV-rvS"/>
                         <outlet property="editLayoutStackView" destination="nWL-cC-jAT" id="feB-I3-oRo"/>
+                        <outlet property="editNicknameButton" destination="FP7-sa-U66" id="xMB-fb-VSU"/>
                         <outlet property="editPhoneButton" destination="6TO-04-g4u" id="EQK-45-dfR"/>
                         <outlet property="editPhotoButton" destination="oTM-h6-nbD" id="znA-e8-kO4"/>
-                        <outlet property="nicknameLabel" destination="Qgg-hl-H2s" id="aDn-qZ-tR5"/>
                         <outlet property="nicknameStackView" destination="8w6-yp-bp1" id="yod-xb-WP2"/>
+                        <outlet property="nicknameTextField" destination="LdH-18-o1s" id="ci9-Se-dNC"/>
                         <outlet property="pagerView" destination="P3H-q6-oAx" id="NKA-qt-hQA"/>
                         <outlet property="pagerViewOffsetY" destination="44z-mi-tWB" id="ndX-PW-DdG"/>
                         <outlet property="phoneStackView" destination="XrI-st-Ua4" id="hvk-pA-ypK"/>
@@ -782,7 +799,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="6ZG-m3-NhJ" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="XQg-lF-GcJ">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -800,7 +817,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="iOB-7O-E5o" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="MFD-WS-rZ2">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>

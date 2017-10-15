@@ -48,6 +48,9 @@ class UserInfoManager: NSObject {
             }
             
             self.userInfo = userInfo
+            if let photoSet = userInfo.photos as? Set<String> {
+                self.userInfo?.photosArr = photoSet.sorted(by: <)
+            }
             
             UserDefaults.NotificationCount.set(userInfo.NewLikeCount, forKey: .like)
             UserDefaults.NotificationCount.set(userInfo.NewSendCount, forKey: .sendMail)
@@ -68,12 +71,16 @@ class UserInfoManager: NSObject {
         self.mapper.load(UserInfo.self, hashKey: userId, rangeKey: nil).continueWith(executor: AWSExecutor.mainThread(), block: {
             (task: AWSTask) -> Any! in
             
-            guard let result = task.result else {
+            guard let result = task.result as? UserInfo else {
                 getUserTask.set(error: LoginError.notFoundUser)
                 return nil
             }
             
-            getUserTask.set(result: result as? UserInfo)
+            if let photoSet = result.photos as? Set<String> {
+                self.userInfo?.photosArr = photoSet.sorted(by: <)
+            }
+            
+            getUserTask.set(result: result)
             
             return nil
         })
@@ -260,8 +267,6 @@ class UserInfoManager: NSObject {
                 }
                 
                 self.userInfo?.EndpointARN = response.endpointARN
-                UserDefaults.RemoteNotification.set(true, forKey: .isRegistered)
-                
                 self.printLog("registerARN > endpoint : \(String(describing: response.endpointARN))")
                 
             }

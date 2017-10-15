@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="GuideViewController" customModule="Wekend" customModuleProvider="target">
             <connections>
                 <outlet property="checkBox" destination="7oL-Hr-am4" id="5XI-sd-CdG"/>
+                <outlet property="closeButton" destination="0Di-i5-HyS" id="T5R-dY-3lD"/>
                 <outlet property="noMoreShowText" destination="SS5-Yv-h1a" id="ofK-Xg-lgl"/>
                 <outlet property="overlayBackground" destination="wbS-9g-dtL" id="0ZI-Af-ma2"/>
                 <outlet property="pagerView" destination="fjm-ip-hMq" id="9ue-Ci-g5w"/>
@@ -49,9 +51,8 @@
                         <action selector="onCheckBoxTapped:" destination="-1" eventType="touchUpInside" id="frd-IH-iXF"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Di-i5-HyS">
-                    <rect key="frame" x="309" y="617" width="46" height="30"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Di-i5-HyS">
+                    <rect key="frame" x="325" y="617" width="30" height="30"/>
                     <state key="normal" title="닫기">
                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
@@ -66,6 +67,7 @@
                 <constraint firstAttribute="trailing" secondItem="SS5-Yv-h1a" secondAttribute="trailing" constant="20" id="3fB-s2-f8e"/>
                 <constraint firstItem="fjm-ip-hMq" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="20" id="8er-CS-yB7"/>
                 <constraint firstAttribute="bottom" secondItem="wbS-9g-dtL" secondAttribute="bottom" id="9Uj-zo-hPa"/>
+                <constraint firstItem="0Di-i5-HyS" firstAttribute="top" secondItem="fjm-ip-hMq" secondAttribute="bottom" id="9zM-Eg-RIa"/>
                 <constraint firstItem="SS5-Yv-h1a" firstAttribute="top" secondItem="fjm-ip-hMq" secondAttribute="bottom" id="DLT-D6-qai"/>
                 <constraint firstItem="7oL-Hr-am4" firstAttribute="top" secondItem="fjm-ip-hMq" secondAttribute="bottom" id="HQU-QY-XMs"/>
                 <constraint firstItem="wbS-9g-dtL" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Kyn-nn-naI"/>
@@ -75,6 +77,7 @@
                 <constraint firstAttribute="bottom" secondItem="SS5-Yv-h1a" secondAttribute="bottom" constant="20" id="hWd-y2-aAl"/>
                 <constraint firstAttribute="trailing" secondItem="fjm-ip-hMq" secondAttribute="trailing" constant="20" id="ptS-yn-ks1"/>
                 <constraint firstItem="7oL-Hr-am4" firstAttribute="height" secondItem="SS5-Yv-h1a" secondAttribute="height" id="qlS-Nk-zWM"/>
+                <constraint firstAttribute="trailing" secondItem="0Di-i5-HyS" secondAttribute="trailing" constant="20" id="rzG-Et-4oE"/>
                 <constraint firstItem="wbS-9g-dtL" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="sZw-0v-gkd"/>
                 <constraint firstItem="SS5-Yv-h1a" firstAttribute="leading" secondItem="7oL-Hr-am4" secondAttribute="trailing" id="zUn-8m-hyE"/>
             </constraints>

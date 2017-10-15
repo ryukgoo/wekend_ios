@@ -64,7 +64,7 @@ class LoginViewController: UIViewController {
     func keyboardWillShow(_ notification: Notification) {
         var info: Dictionary = notification.userInfo!
         
-        if let keyboardSize = (info[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+        if let keyboardSize = (info[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             
             guard let textField = self.activeTextField else {
                 printLog("keyboardWillShow > activeTextField is nil")
@@ -159,9 +159,7 @@ class LoginViewController: UIViewController {
                         fatalError("LoginViewController > getUserTask > result Error")
                     }
                     
-                    if !UserDefaults.RemoteNotification.bool(forKey: .isRegistered) {
-                        UserInfoManager.sharedInstance.registEndpointARN()
-                    }
+                    UserInfoManager.sharedInstance.registEndpointARN()
                     
                     DispatchQueue.main.async {
                         let mainStoryboard = Constants.StoryboardName.Main

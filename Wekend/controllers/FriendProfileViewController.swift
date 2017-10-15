@@ -127,14 +127,7 @@ class FriendProfileViewController: UIViewController, PagerViewDelegate, UIScroll
         
         nicknameLabel.text = userInfo.nickname
         ageLabel.text = String(year! - birth) + "세"
-        
-        let phoneString = String(userInfo.phone!)
-        let phonePrefix = phoneString?.substring(to: (phoneString?.index((phoneString?.startIndex)!, offsetBy: 3))!)
-        let phoneMiddle = phoneString?.substring(with: (phoneString?.index((phoneString?.startIndex)!, offsetBy: 3))!..<(phoneString?.index((phoneString?.endIndex)!, offsetBy: -4))!)
-        let phoneSuffix = phoneString?.substring(from: (phoneString?.index((phoneString?.endIndex)!, offsetBy: -4))!)
-        let formattedString = String(format: "%@-%@-%@", phonePrefix!, phoneMiddle!, phoneSuffix!)
-        
-        phoneLabel.text = formattedString
+        phoneLabel.text = userInfo.phone?.toPhoneFormat()
         
         guard let productInfo = self.productInfo else {
             fatalError("FriendProfileViewController > initViews > productInfo Error")
@@ -254,7 +247,7 @@ class FriendProfileViewController: UIViewController, PagerViewDelegate, UIScroll
         let imageName = userInfo.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(page)
         let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + imageName
         
-        imageView.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "default_profile"))
+        imageView.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "default_profile"), contentMode: .scaleAspectFill, reload: true)
         
     }
     
