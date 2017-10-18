@@ -9,8 +9,13 @@
 import UIKit
 
 class MainViewController: UITabBarController {
-
+    
     static var isFirstLoad: Bool = true
+    
+    deinit {
+        removeNotificationObservers()
+        printLog("deinit")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -108,7 +113,19 @@ extension MainViewController: Observerable {
                                                object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.displayTabbarBadge),
-                                               name: Notification.Name(AppDelegate.WillEnterForeground), object: nil)
+                                               name: Notification.Name(AppDelegate.WillEnterForeground),
+                                               object: nil)
+    }
+    
+    func removeNotificationObservers() {
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.NewRemoteNotification),
+                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: ReceiveMailManager.NewRemoteNotification),
+                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(SendMailManager.NewRemoteNotification),
+                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(AppDelegate.WillEnterForeground),
+                                                  object: nil)
     }
     
     func handleLikeRemoteNotification(_ notification: Notification) {

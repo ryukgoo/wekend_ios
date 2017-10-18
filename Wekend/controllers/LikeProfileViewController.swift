@@ -15,6 +15,11 @@ import KRWordWrapLabel
 @available(iOS 9.0, *)
 class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollViewDelegate {
 
+    deinit {
+        removeNotificationObservers()
+        printLog("deinit")
+    }
+    
     let minimumAlpha: CGFloat = 0.1
     
     // MARK: Properties
@@ -67,6 +72,10 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        if #available(iOS 11.0, *) {
+            scrollView.contentInsetAdjustmentBehavior = .never
+        }
         
         UIApplication.shared.isStatusBarHidden = true
         
@@ -298,7 +307,9 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
         let imageName = userInfo.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(page)
         let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + imageName
         
-        imageView.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "default_profile"), contentMode: .scaleAspectFill, reload: true)
+        imageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "default_profile"), options: .cacheMemoryOnly) {
+            (image, error, cachedType, url) in
+        }
     }
     
     func onPageTapped(page: Int) {
@@ -424,12 +435,16 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
 
 }
 
-@available(iOS 9.0, *)
 extension LikeProfileViewController: Observerable {
     func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(LikeProfileViewController.handleUpdatePointNotification(_:)),
                                                name: Notification.Name(rawValue: UserInfoManager.UpdatePointNotification),
                                                object: nil)
+    }
+    
+    func removeNotificationObservers() {
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: UserInfoManager.UpdatePointNotification),
+                                                  object: nil)
     }
     
     func handleUpdatePointNotification(_ notification: Notification) {

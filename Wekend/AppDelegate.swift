@@ -21,8 +21,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        print("AppDelegate > application > didFinishLaunchingWithOptions Start")
-        
         let storyboard = UIStoryboard(name: Constants.StoryboardName.LaunchScreen.rawValue, bundle: nil)
         let launchScreen = storyboard.instantiateViewController(withIdentifier: Constants.StoryboardName.LaunchScreen.identifier)
         
@@ -145,31 +143,77 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     /*
      * For FaceBook AppLnk & KakaoLink
+     * Not work
      */
     
     func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
         
+        printLog(#function)
+        
         if KLKTalkLinkCenter.shared().isTalkLinkCallback(url) {
             let params = url.query
             print("params : \(String(describing: params))")
-            self.window?.rootViewController?.alert(message: "카카오링크 메시지 액션\n\(String(describing: params))")
+//            self.window?.rootViewController?.alert(message: "카카오링크 메시지 액션\n\(String(describing: params))")
             return true
         } else {
+            printLog("FB link")
+            /*
+            //Take care of handling url for Facebook login
             return FBSDKApplicationDelegate.sharedInstance().application(
                 application,
                 open: url,
                 sourceApplication: sourceApplication,
                 annotation: annotation)
+             */
         }
+        
+        return false
     }
     
+    /*
+     * For FaceBook AppLnk & KakaoLink
+     * Work HERE!!
+     */
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        
+        printLog(#function)
+        printLog(url.description)
+        printLog(options.description)
+        
         if KLKTalkLinkCenter.shared().isTalkLinkCallback(url) {
             let params = url.query
             print("params : \(String(describing: params))")
-            self.window?.rootViewController?.alert(message: "카카오링크 메시지 액션\n\(String(describing: params))")
+            
+            guard let productId = Int((params?.components(separatedBy: "=")[1])!) else {
+                printLog("Error ajdfkahdjkgahjkdlaghjkaldgjkl;djfkl")
+                return false
+            }
+            
+            let mainStoryboard = Constants.StoryboardName.Main
+            let storyboard = UIStoryboard(name: mainStoryboard.rawValue, bundle: nil)
+            
+            guard let detailVC = storyboard.instantiateViewController(withIdentifier: "CampaignViewController") as? CampaignViewController else {
+                printLog("detailVC Error")
+                return false
+            }
+            
+            detailVC.productId = productId
+            
+//            self.window!.rootViewController = detailVC
+//            self.window?.makeKeyAndVisible()
+            
+            UIApplication.topViewController()?.present(detailVC, animated: true, completion: nil)
+            
             return true
+        } else {
+            if let bfurl = BFURL.init(url: url).targetURL {
+                printLog(bfurl.description)
+                if let queryString = bfurl.query {
+                    printLog("queryString : \(queryString)")
+                }
+            }
         }
+        
         return false
     }
 

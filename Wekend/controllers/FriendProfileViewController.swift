@@ -68,6 +68,10 @@ class FriendProfileViewController: UIViewController, PagerViewDelegate, UIScroll
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        if #available(iOS 11.0, *) {
+            scrollView.contentInsetAdjustmentBehavior = .never
+        }
+        
         UIApplication.shared.isStatusBarHidden = true
         
         var colors = [UIColor]()
@@ -247,8 +251,9 @@ class FriendProfileViewController: UIViewController, PagerViewDelegate, UIScroll
         let imageName = userInfo.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(page)
         let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + imageName
         
-        imageView.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "default_profile"), contentMode: .scaleAspectFill, reload: true)
-        
+        imageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "default_profile"), options: .cacheMemoryOnly) {
+            (image, error, cacheType, imageURL) in
+        }
     }
     
     func onPageTapped(page: Int) {

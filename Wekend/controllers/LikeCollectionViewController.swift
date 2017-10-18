@@ -10,6 +10,11 @@ import UIKit
 
 class LikeCollectionViewController: UICollectionViewController {
 
+    deinit {
+        removeNotificationObservers()
+        printLog("deinit")
+    }
+    
     // MARK: Properties
     
     let refreshControl = UIRefreshControl()
@@ -80,6 +85,7 @@ class LikeCollectionViewController: UICollectionViewController {
         })
     }
 
+    /*
     // MARK: - Navigation
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -127,8 +133,8 @@ class LikeCollectionViewController: UICollectionViewController {
         } else {
             // Fallback on earlier versions
         }
-        
     }
+     */
 }
 
 extension LikeCollectionViewController {
@@ -165,6 +171,11 @@ extension LikeCollectionViewController: Observerable {
                                                name: Notification.Name(rawValue: LikeDBManager.FriendReadNotification),
                                                object: nil)
         
+    }
+    
+    func removeNotificationObservers() {
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.FriendReadNotification),
+                                                  object: nil)
     }
     
     func handleReadFriendNotification(_ notification: Notification) {
@@ -227,8 +238,10 @@ extension LikeCollectionViewController: UICollectionViewDelegateFlowLayout {
         
         cell.likeImageView.frame = CGRect(x: 5.0, y: 5.0, width: UIScreen.main.bounds.size.width/3.0 - 10.0, height: UIScreen.main.bounds.size.width/3.0 - 10.0)
         
-        cell.likeImageView.downloadedFrom(link: imageUrl, defaultImage: defaultImage, contentMode: .scaleAspectFill, reload: true)
-        cell.likeImageView.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_s_2"))
+        cell.likeImageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: defaultImage, options: .cacheMemoryOnly) {
+            (image, error, cacheType, imageURL) in
+            cell.likeImageView.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_s_2"))
+        }
         
         cell.likeNickname.text = data.Nickname
         cell.newIcon.isHidden = data.isRead
@@ -240,4 +253,30 @@ extension LikeCollectionViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: UIScreen.main.bounds.width/3, height: UIScreen.main.bounds.width/3)
     }
     
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        guard let profileViewController: LikeProfileViewController = LikeProfileViewController.storyboardInstance(from: "SubItems") as? LikeProfileViewController else {
+            fatalError()
+        }
+        
+        guard let selectedLike = datas?[indexPath.row] else {
+            fatalError("LikeCollectionViewController > get data Error")
+        }
+        
+        guard let userId = UserInfoManager.sharedInstance.userInfo?.userid else {
+            fatalError("LikeCollectionViewController > get UserId Error")
+        }
+        
+        guard let likeId = selectedLike.LikeId else {
+            fatalError("LikeCollectionViewController > LikeId is nil")
+        }
+        
+        profileViewController.friendUserId = selectedLike.UserId
+        profileViewController.productId = selectedLike.ProductId
+        
+        // TODO: - Check Friend Read
+        
+        navigationController?.pushViewController(profileViewController, animated: true)
+        LikeDBManager.sharedInstance.updateReadState(id: likeId, userId: userId, productId: selectedLike.ProductId, likeUserId: selectedLike.UserId)
+    }
 }

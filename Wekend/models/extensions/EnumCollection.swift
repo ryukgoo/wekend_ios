@@ -27,19 +27,6 @@ extension EnumCollection {
         }
     }
     
-    static func toStrings() -> AnySequence<String> {
-        typealias S = Self
-        return AnySequence { () -> AnyIterator<String> in
-            var raw = 0
-            return AnyIterator {
-                let current : Self = withUnsafePointer(to: &raw) { $0.withMemoryRebound(to: S.self, capacity: 1) { $0.pointee } }
-                guard current.hashValue == raw else { return nil }
-                raw += 1
-                return current.toString
-            }
-        }
-    }
-    
     static func iterateEnum<T: Hashable>(_: T.Type) -> AnyIterator<T> {
         var i = 0
         return AnyIterator {
@@ -48,5 +35,13 @@ extension EnumCollection {
             i += 1
             return next
         }
+    }
+    
+    static var allValues: [Self] {
+        return Array(self.cases())
+    }
+    
+    static var allStrings: [String] {
+        return self.cases().map { $0.toString }
     }
 }

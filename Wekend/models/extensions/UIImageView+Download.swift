@@ -8,6 +8,7 @@
 
 import Foundation
 
+/*
 let imageCache = NSCache<AnyObject, UIImage>()
 
 extension UIImageView {
@@ -108,7 +109,8 @@ extension UIImageView {
         imageCache.removeObject(forKey: forKey)
     }
 }
-
+*/
+ 
 // MARK: UIImageView + Mask
 
 extension UIImageView {

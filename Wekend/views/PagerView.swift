@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol PagerViewDelegate {
+protocol PagerViewDelegate: class {
     func loadPageViewItem(imageView: UIImageView, page: Int)
     func onPageTapped(page: Int)
 }
@@ -19,7 +19,7 @@ class PagerView: UIView, UIScrollViewDelegate {
     var pageControl : UIPageControl = UIPageControl(frame:CGRect(x: 0, y: 0, width: 0, height: 0))
     
     var pageViews : [UIImageView?] = []
-    var delegate : PagerViewDelegate?
+    weak var delegate : PagerViewDelegate?
     
     var pageCount = 0 {
         didSet {

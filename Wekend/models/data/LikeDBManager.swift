@@ -138,6 +138,7 @@ class LikeDBManager : NSObject {
         })
     }
     
+    /*
     func addLikeAtDetail(userInfo: UserInfo, productInfo: ProductInfo) {
         
         guard let likeItem = LikeItem() else {
@@ -194,6 +195,7 @@ class LikeDBManager : NSObject {
             return nil
         })
     }
+ */
     
     func deleteLike(item : LikeItem) -> AWSTask<AnyObject> {
         

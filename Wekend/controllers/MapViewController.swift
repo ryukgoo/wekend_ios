@@ -47,6 +47,7 @@ class MapViewController: UIViewController {
         
         self.navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
         self.navigationController?.navigationBar.shadowImage = nil
+        self.navigationController?.navigationBar.tintColor = .black
     }
 
     override func didReceiveMemoryWarning() {

@@ -9,14 +9,14 @@
 import UIKit
 import DropDownMenuKit
 
-protocol FilterMenuCellDelegate {
+protocol FilterMenuCellDelegate: class {
     func editingDidBegin(tag: Int)
     func editingDidEnd(tag: Int, index: Int)
 }
 
 class FilterMenuCell: DropDownMenuCell {
 
-    var delegate: FilterMenuCellDelegate?
+    weak var delegate: FilterMenuCellDelegate?
     
     var textField: NonCursorTextField?
     var pickerView: UIPickerView?
@@ -40,6 +40,8 @@ class FilterMenuCell: DropDownMenuCell {
     override init() {
         super.init()
         
+        printLog("override init")
+        
         data = [String]()
         
         initPicker()
@@ -49,6 +51,8 @@ class FilterMenuCell: DropDownMenuCell {
     convenience init(data: [String]) {
         self.init()
         self.data = data
+        
+        printLog("\(#function) > data : \(data)")
         
         self.pickerView?.reloadComponent(0)
         
@@ -61,6 +65,8 @@ class FilterMenuCell: DropDownMenuCell {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        
+        printLog("required init")
         
         initPicker()
         initTextField()

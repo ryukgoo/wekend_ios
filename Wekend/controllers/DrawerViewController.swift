@@ -20,11 +20,11 @@ protocol Slidable {
 }
 
 class DrawerViewController: UIViewController {
-
-//    static func storyboardInstance() -> DrawerViewController? {
-//        let storyboard = UIStoryboard(name: className, bundle: nil)
-//        return storyboard.instantiateInitialViewController() as? DrawerViewController
-//    }
+    
+    deinit {
+        removeNotificationObservers()
+        printLog("deinit")
+    }
     
     // MARK: menuString -> to enum
     let menuString = ["공지사항", "도움말", "프로필", "고객센터", "알림설정", "로그아웃"]
@@ -74,8 +74,17 @@ class DrawerViewController: UIViewController {
         profileImageView.isUserInteractionEnabled = true
         profileImageView.addGestureRecognizer(tapGestureRecognizer)
         
-        profileImageView.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "img_bg_thumb_male"))
-        profileImageView.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_default_2"))
+        let defaultImage : UIImage
+        if userInfo.gender == UserInfo.RawValue.GENDER_MALE {
+            defaultImage = #imageLiteral(resourceName: "img_bg_thumb_s_default_male")
+        } else {
+            defaultImage = #imageLiteral(resourceName: "img_bg_thumb_s_default_Female")
+        }
+        
+        profileImageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: defaultImage, options: .cacheMemoryOnly) {
+            (image, error, cacheType, imageURL) in
+            self.profileImageView.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_default_2"))
+        }
         
         nicknameLabel.text = userInfo.nickname!
         usernameLabel.text = userInfo.username!
@@ -258,6 +267,13 @@ extension DrawerViewController: Observerable {
                                                object: nil)
     }
     
+    func removeNotificationObservers() {
+        NotificationCenter.default.removeObserver(self, name:Notification.Name(rawValue: UserInfoManager.UpdatePointNotification),
+                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: UserInfoManager.UpdateUserInfoNotification),
+                                                  object: nil)
+    }
+    
     func handleUpdatePointNotification(_ notification: Notification) {
         guard let point = notification.userInfo![UserInfoManager.NotificationDataPoint] as? Int else {
             return
@@ -275,11 +291,18 @@ extension DrawerViewController: Observerable {
             fatalError("DrawerViewController > viewDidLoad > userInfo Error")
         }
         
+        let defaultImage : UIImage
+        if userInfo.gender == UserInfo.RawValue.GENDER_MALE {
+            defaultImage = #imageLiteral(resourceName: "img_bg_thumb_s_default_male")
+        } else {
+            defaultImage = #imageLiteral(resourceName: "img_bg_thumb_s_default_Female")
+        }
+        
         let imageName = userInfo.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(0)
         let imageUrl  = Configuration.S3.PROFILE_IMAGE_URL + imageName
         
-        DispatchQueue.main.async {
-            self.profileImageView.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "img_bg_thumb_male"), contentMode: .scaleAspectFill, reload: true)
+        profileImageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: defaultImage, options: .cacheMemoryOnly) {
+            (image, error, cacheType, imageURL) in
             self.profileImageView.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_default_2"))
         }
     }

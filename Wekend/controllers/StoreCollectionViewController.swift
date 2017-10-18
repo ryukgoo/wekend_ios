@@ -11,9 +11,14 @@ import StoreKit
 
 class StoreCollectionViewController: UICollectionViewController {
 
-    var priceArray: [String] = Array(Constants.Title.Price.toStrings())
-    var pointArray: [String] = Array(Constants.Title.Point.toStrings())
-    var bonusArray: [String] = Array(Constants.Title.Bonus.toStrings())
+    deinit {
+        removeNotificationObservers()
+        printLog("deinit")
+    }
+    
+    var priceArray: [String] = Array(Constants.Title.Price.allStrings)
+    var pointArray: [String] = Array(Constants.Title.Point.allStrings)
+    var bonusArray: [String] = Array(Constants.Title.Bonus.allStrings)
     
     var products = [SKProduct]()
     
@@ -204,5 +209,12 @@ extension StoreCollectionViewController: Observerable {
         NotificationCenter.default.addObserver(self, selector: #selector(StoreCollectionViewController.handlePurchaseFailNotification(_:)),
                                                name: Notification.Name(rawValue: IAPHelper.IAPHelperFailNotification),
                                                object: nil)
+    }
+    
+    func removeNotificationObservers() {
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: IAPHelper.IAPHelperPurchaseNotification),
+                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: IAPHelper.IAPHelperFailNotification),
+                                                  object: nil)
     }
 }

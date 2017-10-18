@@ -156,7 +156,7 @@ class UserInfoManager: NSObject {
                 let imageName = userInfo.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(0)
                 let imageUrl  = Configuration.S3.PROFILE_IMAGE_URL + imageName
                 
-                UIImageView.removeObjectFromCache(forKey: imageUrl as AnyObject)
+//                UIImageView.removeObjectFromCache(forKey: imageUrl as AnyObject)
                 NotificationCenter.default.post(name: Notification.Name(UserInfoManager.UpdateUserInfoNotification), object: nil)
             }
             return nil

@@ -8,6 +8,7 @@
 
 import UIKit
 import AWSS3
+import SDWebImage
 
 @available(iOS 9.0, *)
 class MyProfileViewController: UIViewController {
@@ -108,6 +109,10 @@ class MyProfileViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        if #available(iOS 11.0, *) {
+            scrollView.contentInsetAdjustmentBehavior = .never
+        }
         
         UIApplication.shared.isStatusBarHidden = true
         
@@ -420,7 +425,10 @@ extension MyProfileViewController: PagerViewDelegate, UIScrollViewDelegate {
         let imageName = userInfo.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(page)
         let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + imageName
         
-        imageView.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "default_profile")/*, contentMode: .scaleAspectFit*/)
+        imageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "default_profile"), options: .cacheMemoryOnly) {
+            (image, error, cacheType, imageURL) in
+        }
+        
     }
     
     func onPageTapped(page: Int) {
@@ -526,6 +534,11 @@ extension MyProfileViewController: UIImagePickerControllerDelegate, UINavigation
             
             let photos: Set = [uploadRequest.key!]
             userInfo.photos = photos
+            
+            let imageName = userInfo.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(0)
+            let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + imageName
+            
+            SDImageCache.shared().removeImage(forKey: imageUrl, withCompletion: nil)
             
             UserInfoManager.sharedInstance.saveUserInfo(userInfo: userInfo).continueWith(executor: AWSExecutor.mainThread(), block: {
                 (saveTask: AWSTask) -> Any! in

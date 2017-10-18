@@ -8,10 +8,14 @@
 
 import UIKit
 import DropDownMenuKit
+import SDWebImage
 
 class CampaignTableViewController: UIViewController {
     
-    static var isFirstLoad: Bool = true
+    deinit {
+        removeNotificationObservers()
+        printLog("deinit")
+    }
     
     // MARK: Properties
     
@@ -35,8 +39,6 @@ class CampaignTableViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        printLog("viewDidLoad > device identifier : \(Utilities.getDeviceUUID())")
         
         initTableView()
         initRefreshControl()
@@ -72,6 +74,7 @@ class CampaignTableViewController: UIViewController {
         dropDownMenu.container = self.view
     }
     
+    /*
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == CampaignViewController.className {
             
@@ -91,6 +94,7 @@ class CampaignTableViewController: UIViewController {
             campaignDetailViewController.productId = selectedCampaign?.ProductId
         }
     }
+    */
     
     // MARK: ScrollView Delegate
     
@@ -215,7 +219,10 @@ extension CampaignTableViewController: UITableViewDelegate {
         let imageUrl = Configuration.S3.PRODUCT_IMAGE_URL + imageName
         
         cell.campaignImage.tag = indexPath.row
-        cell.campaignImage.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "bg_default_logo_gray"), index: indexPath.row)
+        
+        cell.campaignImage.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "bg_default_logo_gray"), options: .refreshCached) {
+            (image, error, cacheType, imageURL) in
+        }
         
         cell.campaignHeart.setTitle(String(productInfo.realLikeCount), for: .normal)
         cell.campaignHeart.isSelected = LikeDBManager.sharedInstance.hasLike(productId: productInfo.ProductId)
@@ -248,6 +255,15 @@ extension CampaignTableViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         printLog("tableView > didSelectRowAt > index : \(indexPath.row)")
+        
+        guard let detailVC: CampaignViewController = CampaignViewController.storyboardInstance(from: "SubItems") else {
+            fatalError("CampaignTableViewController > initialize CampaignViewcontroller Error")
+        }
+        
+        let selectedCampaign = ProductInfoManager.sharedInstance.datas?[indexPath.row]
+        detailVC.productId = selectedCampaign?.ProductId
+        
+        navigationController?.pushViewController(detailVC, animated: true)
     }
     
     func heartButtonTapped(_ sender: UIButton) {
@@ -343,7 +359,9 @@ extension CampaignTableViewController: DropDownMenuDelegate {
     }
     
     func getCategoryCell() -> FilterMenuCell {
-        let categoryCell = FilterMenuCell(data: Array(Category.toStrings()))
+        printLog(#function)
+        let categoryCell = FilterMenuCell(data: Category.allStrings)
+        printLog("\(#function) > cases : \(Category.allStrings)")
         categoryCell.tag = 1
         categoryCell.setEnabled(true)
         categoryCell.delegate = self
@@ -459,24 +477,24 @@ extension CampaignTableViewController: FilterMenuCellDelegate {
                 regionCell.setEnabled(false)
                 break
             case 1:
-                subCategoryCell.data = Array(Food.toStrings())
-                regionCell.data = Array(ProductRegion.toStrings())
+                subCategoryCell.data = Array(Food.allStrings)
+                regionCell.data = Array(ProductRegion.allStrings)
                 subCategoryCell.selectedRow = 0
                 regionCell.selectedRow = 0
                 subCategoryCell.setEnabled(true)
                 regionCell.setEnabled(true)
                 break
             case 2:
-                subCategoryCell.data = Array(Concert.toStrings())
-                regionCell.data = Array(ProductRegion.toStrings())
+                subCategoryCell.data = Array(Concert.allStrings)
+                regionCell.data = Array(ProductRegion.allStrings)
                 subCategoryCell.selectedRow = 0
                 regionCell.selectedRow = 0
                 subCategoryCell.setEnabled(true)
                 regionCell.setEnabled(true)
                 break
             case 3:
-                subCategoryCell.data = Array(Leisure.toStrings())
-                regionCell.data = Array(ProductRegion.toStrings())
+                subCategoryCell.data = Array(Leisure.allStrings)
+                regionCell.data = Array(ProductRegion.allStrings)
                 subCategoryCell.selectedRow = 0
                 regionCell.selectedRow = 0
                 subCategoryCell.setEnabled(true)
@@ -649,16 +667,20 @@ extension CampaignTableViewController: Observerable {
     
     func addNotificationObservers() {
         
-        NotificationCenter.default.addObserver(forName: Notification.Name(rawValue: LikeDBManager.AddNotification),
-                                               object: nil,
-                                               queue: nil,
-                                               using: addLikeNotification(_:))
+        NotificationCenter.default.addObserver(self, selector: #selector(self.addLikeNotification(_:)),
+                                               name: Notification.Name(rawValue: LikeDBManager.AddNotification),
+                                               object: nil)
         
-        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: LikeDBManager.DeleteNotification),
-                                               object: nil,
-                                               queue: nil,
-                                               using: deleteLikeNotification(_:))
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.deleteLikeNotification(_:)),
+                                               name: NSNotification.Name(rawValue: LikeDBManager.DeleteNotification),
+                                               object: nil)
+    }
+    
+    func removeNotificationObservers() {
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.AddNotification),
+                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: LikeDBManager.DeleteNotification),
+                                                  object: nil)
     }
     
     func addLikeNotification(_ notification: Notification) -> Void {

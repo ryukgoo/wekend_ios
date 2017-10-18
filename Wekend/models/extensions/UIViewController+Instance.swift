@@ -17,4 +17,9 @@ extension UIViewController {
         let storyboard = UIStoryboard(name: String(describing: self), bundle: nil)
         return storyboard.instantiateInitialViewController() as? T
     }
+    
+    class func storyboardInstance<T: UIViewController>(from filename: String) -> T? {
+        let storyboard = UIStoryboard(name: filename, bundle: nil)
+        return storyboard.instantiateViewController(withIdentifier: String(describing: self)) as? T
+    }
 }

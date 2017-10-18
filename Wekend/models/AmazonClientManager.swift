@@ -112,4 +112,7 @@ class AmazonClientManager: NSObject {
         }
     }
     
+    private func gotoDetailViewController() {
+        
+    }
 }

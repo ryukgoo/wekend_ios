@@ -11,6 +11,11 @@ import AWSDynamoDB
 
 class LikeTableViewController: UIViewController {
     
+    deinit {
+        removeNotificationObservers()
+        printLog("deinit")
+    }
+    
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var noResultLabel: UILabel!
     let refreshControlView = UIRefreshControl()
@@ -96,6 +101,7 @@ class LikeTableViewController: UIViewController {
         })
     }
 
+    /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -127,6 +133,7 @@ class LikeTableViewController: UIViewController {
             LikeDBManager.sharedInstance.updateReadTime(likeItem: selectedLikeItem)
         }
     }
+    */
 }
 
 // MARK: -Observerable
@@ -154,6 +161,19 @@ extension LikeTableViewController: Observerable {
         NotificationCenter.default.addObserver(self, selector: #selector(LikeTableViewController.refresh(_:)),
                                                name: Notification.Name(rawValue: LikeDBManager.RefreshNotification),
                                                object: nil)
+    }
+    
+    func removeNotificationObservers() {
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.AddNotification),
+                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.NewRemoteNotification),
+                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.ReadNotification),
+                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.DeleteNotification),
+                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.RefreshNotification),
+                                                  object: nil)
     }
     
     func handleAddLikeNotification(_ notification: Notification) {
@@ -270,7 +290,12 @@ extension LikeTableViewController: UITableViewDelegate {
         let imageName = String(likeItem.ProductId) + "/" + Configuration.S3.PRODUCT_IMAGE_NAME(0)
         let imageUrl = Configuration.S3.PRODUCT_THUMB_URL + imageName
         
-        cell.likeImage.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "img_bg_thumb_s_logo"))
+//        cell.likeImage.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "img_bg_thumb_s_logo"))
+        
+        cell.likeImage.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "img_bg_thumb_s_logo"), options: .refreshCached) {
+            (image, error, cacheType, imageURL) in
+        }
+        
         cell.likeImage.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_s_2"))
         
         cell.likeTitleLabel.text = likeItem.ProductTitle ?? ""
@@ -279,6 +304,20 @@ extension LikeTableViewController: UITableViewDelegate {
         cell.likeNewIcon.isHidden = likeItem.isRead
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let detailVC: CampaignViewController = CampaignViewController.storyboardInstance(from: "SubItems") else {
+            fatalError("CampaignTableViewController > initialize CampaignViewcontroller Error")
+        }
+        
+        guard let selectedLikeItem = LikeDBManager.sharedInstance.datas?[indexPath.row] else {
+            return
+        }
+        detailVC.productId = selectedLikeItem.ProductId
+        
+        navigationController?.pushViewController(detailVC, animated: true)
+        LikeDBManager.sharedInstance.updateReadTime(likeItem: selectedLikeItem)
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {

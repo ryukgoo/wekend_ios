@@ -13,6 +13,11 @@ import FBSDKShareKit
 
 class CampaignViewController: UIViewController, UIScrollViewDelegate {
     
+    deinit {
+        removeNotificationObservers()
+        printLog("deinit")
+    }
+    
     let minimumAlpha: CGFloat = 0.1
     
     // MARK: Properties
@@ -35,7 +40,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var titleEngLabel: UILabel!
     @IBOutlet weak var subTitleLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
-    @IBOutlet weak var phoneTextView: UITextView!
+    @IBOutlet weak var phoneTextButton: UIButton!
     @IBOutlet weak var locationButton: UIButton!
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var mapView: GMSMapView!
@@ -45,7 +50,6 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var stackViewOffsetY: NSLayoutConstraint!
     @IBOutlet weak var backgroundHeight: NSLayoutConstraint!
     
-    var gradientView: UIView!
     // MARK: UIViewController override functions
     
     override func viewDidLoad() {
@@ -65,6 +69,10 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        if #available(iOS 11.0, *) {
+            scrollView.contentInsetAdjustmentBehavior = .never
+        }
+        
         UIApplication.shared.isStatusBarHidden = true
         
         var colors = [UIColor]()
@@ -73,6 +81,10 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         navigationController?.navigationBar.setGradientBackground(colors: colors)
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.tintColor = .white
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -93,7 +105,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     // Data
     private func loadProductInfo() {
         
-        startLoading()
+//        startLoading()
         
         isLoading = true
         self.containerView.alpha = 0.0
@@ -154,8 +166,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
             descriptionLabel.text! += "\n\n" + "\(ProductInfo.Title.OPERATING_TIME) : " + operatingTime
         }
         
-        phoneTextView.text = productInfo.Telephone
-        phoneTextView.tintColor = UIColor(netHex: 0x202020)
+        phoneTextButton.setTitle(productInfo.Telephone, for: .normal)
         
         let address = "\(productInfo.Address ?? "") \(productInfo.SubAddress ?? "")"
         locationButton.setTitle(address, for: .normal)
@@ -167,7 +178,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         loadButton()
     }
     
-    private func loadButton() {
+    func loadButton() {
         
         likeButton.loadingIndicator(true)
         
@@ -221,7 +232,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     // Scroll
     private func refreshLayout() {
         
-        printLog("refreshLayout")
+        printLog("refreshLayout > pagerViewHeight : \(pagerView.frame.height)")
         
         // 673 => scrolled height
         var scrollableHeight = pagerView.frame.height
@@ -233,7 +244,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         scrollableHeight += 20
         scrollableHeight += descriptionLabel.frame.height
         scrollableHeight += 31
-        scrollableHeight += phoneTextView.frame.height
+        scrollableHeight += phoneTextButton.frame.height
         scrollableHeight += 23
         scrollableHeight += locationButton.frame.height
         scrollableHeight += 32
@@ -276,7 +287,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         
         likeButton.loadingIndicator(true)
         
-        LikeDBManager.sharedInstance.addLikeAtDetail(userInfo: userInfo, productInfo: productInfo)
+        LikeDBManager.sharedInstance.addLike(userInfo: userInfo, productInfo: productInfo)
         
     }
     
@@ -291,12 +302,12 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     
     @IBAction func phoneIconTapped(_ sender: Any) {
         printLog("phoneIconTapped")
-//        callPhone()
+        callPhone()
     }
     
     @IBAction func phoneNumberTapped(_ sender: Any) {
         printLog("phoneNumberTapped")
-//        callPhone()
+        callPhone()
     }
     
     @IBAction func locationIconTapped(_ sender: Any) {
@@ -311,8 +322,6 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     
     func callPhone() {
         
-        printLog("callPhone")
-        
         guard let productInfo = self.productInfo else {
             fatalError("CampaignViewController > callPhone > productInfo Error")
         }
@@ -326,7 +335,6 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
                 UIApplication.shared.openURL(URL(string: phoneNumber)!)
             }
         }
-//        let phoneNumber = "tel://\("01092382541")"
     }
     
     // MARK: - Navigation
@@ -383,26 +391,20 @@ extension CampaignViewController: Observerable {
                                                object: nil)
     }
     
+    func removeNotificationObservers() {
+        NotificationCenter.default.removeObserver(self,
+                                                  name: Notification.Name(rawValue: LikeDBManager.AddNotification),
+                                                  object: nil)
+        NotificationCenter.default.removeObserver(self,
+                                                  name: Notification.Name(rawValue: LikeDBManager.DeleteNotification),
+                                                  object: nil)
+    }
+    
     func handleLikeAddNotification(_ notification: Notification) {
         
-        likeButton.loadingIndicator(false)
-        
-        guard let productId = notification.userInfo![LikeDBManager.NotificationDataProductId] as? Int else {
-            return
-        }
-        
-        if let index = ProductInfoManager.sharedInstance.datas?.index(where: { $0.ProductId == productId }) {
-            
-            guard let friendCount = ProductInfoManager.sharedInstance.datas?[index].realLikeCount else {
-                return
-            }
-            
-            DispatchQueue.main.async {
-                self.likeButton.setTitle("\(Constants.Title.Button.FRIEND_RECOMMEND) : \(friendCount)", for: .normal)
-                self.likeButton.removeTarget(self, action: #selector(self.likeButtonTapped(_:)), for: .touchUpInside)
-                self.likeButton.addTarget(self, action: #selector(self.recommendButtonTapped(_:)), for: .touchUpInside)
-            }
-            
+        DispatchQueue.main.async {
+            self.likeButton.loadingIndicator(false)
+            self.loadButton()
         }
     }
     
@@ -428,12 +430,15 @@ extension CampaignViewController: PagerViewDelegate {
             imageView.image = #imageLiteral(resourceName: "bg_default_logo_gray")
             return
         }
-        
+
         let imageName = String(productInfo.ProductId) + "/" + Configuration.S3.PRODUCT_IMAGE_NAME(page)
         let imageUrl = Configuration.S3.PRODUCT_IMAGE_URL + imageName
-        
+
         imageView.tag = page
-        imageView.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "bg_default_logo_gray"), index: page)
+        
+        imageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "bg_default_logo_gray"), options: .refreshCached, completed: {
+            (image, error, cacheType, imageURL) in
+        })
     }
     
     func onPageTapped(page: Int) {
@@ -591,8 +596,8 @@ extension CampaignViewController: FBSDKSharingDelegate {
             feedTemplateBuilder.addButton(KLKButtonObject.init(builderBlock: { (buttonBuilder) in
                 buttonBuilder.title = "앱으로 보기"
                 buttonBuilder.link = KLKLinkObject.init(builderBlock: { (linkBuilder) in
-                    linkBuilder.iosExecutionParams = "param1=value1&param2=value2"
-                    linkBuilder.androidExecutionParams = "param1=value1&param2=value2"
+                    linkBuilder.iosExecutionParams = "productId=\(productInfo.ProductId)"
+                    linkBuilder.androidExecutionParams = "productId=\(productInfo.ProductId)"
                 })
             }))
         }
@@ -600,14 +605,6 @@ extension CampaignViewController: FBSDKSharingDelegate {
         // 카카오링크 실행
         self.view.startLoading()
         KLKTalkLinkCenter.shared().sendDefault(with: template, success: { (warningMsg, argumentMsg) in
-            
-//            UserInfoManager.sharedInstance.chargePoint(point: 500).continueWith(block: {
-//                (task: AWSTask) -> Any? in
-//                
-//                self.view.stopLoading()
-//                
-//                return nil
-//            })
             
             // 성공
             self.view.stopLoading()
@@ -642,7 +639,7 @@ extension CampaignViewController: FBSDKSharingDelegate {
             "og:title": productInfo.TitleKor ?? "Wekend",
             "og:description": productInfo.Description ?? "",
             "og:image" : imageUrl,
-            "og:url" : "https://fb.me/673785809486815"
+            "og:url" : "https://fb.me/673785809486815?productId=\(productInfo.ProductId)"
         ]
         
         let object: FBSDKShareOpenGraphObject = FBSDKShareOpenGraphObject.init(properties: properties)

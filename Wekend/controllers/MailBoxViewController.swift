@@ -16,6 +16,11 @@ class MailBoxViewController: UIViewController {
         case all
     }
     
+    deinit {
+        removeNotificationObservers()
+        printLog("deinit")
+    }
+    
     // MARK : Properties
     
     var isNeedRefreshSendMail: Bool = true
@@ -149,6 +154,7 @@ class MailBoxViewController: UIViewController {
         }
     }
     
+    /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -204,7 +210,7 @@ class MailBoxViewController: UIViewController {
         }
         
     }
-
+     */
 }
 
 // MARK: Observserable
@@ -228,6 +234,17 @@ extension MailBoxViewController: Observerable {
         NotificationCenter.default.addObserver(self, selector: #selector(MailBoxViewController.handleAddSendMailNotification(_:)),
                                                name: Notification.Name(rawValue: SendMailManager.NewRemoteNotification),
                                                object: nil)
+    }
+    
+    func removeNotificationObservers() {
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: ReceiveMailManager.AddNotification),
+                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: ReceiveMailManager.NewRemoteNotification),
+                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: SendMailManager.AddNotification),
+                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: SendMailManager.NewRemoteNotification),
+                                                  object: nil)
     }
     
     func handleAddReceiveMailNotification(_ notification: Notification) {
@@ -362,6 +379,17 @@ extension MailBoxViewController: UITableViewDelegate {
         
         let cell = tableView.dequeueReusableCell(for: indexPath) as MailTableViewCell
         
+        guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
+            fatalError()
+        }
+        
+        let defaultImage : UIImage
+        if userInfo.gender != UserInfo.RawValue.GENDER_MALE {
+            defaultImage = #imageLiteral(resourceName: "img_bg_thumb_s_default_male")
+        } else {
+            defaultImage = #imageLiteral(resourceName: "img_bg_thumb_s_default_Female")
+        }
+        
         switch segmentControl.selectedSegmentIndex {
         case Mode.receive.rawValue:
             
@@ -369,8 +397,10 @@ extension MailBoxViewController: UITableViewDelegate {
             let imageName = mail.SenderId! + "/" + Configuration.S3.PROFILE_IMAGE_NAME(0)
             let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + imageName
             
-            cell.mailImage.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "img_bg_thumb_s_logo"))
-            cell.mailImage.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_s_2"))
+            cell.mailImage.sd_setImage(with: URL(string: imageUrl), placeholderImage: defaultImage, options: .cacheMemoryOnly) {
+                (image, error, cacheType, imageURL) in
+                cell.mailImage.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_s_2"))
+            }
             
             guard let status = ProposeStatus(rawValue: mail.ProposeStatus!) else {
                 fatalError("MailBoxViewController > receiveMail > ProposeStatus Error")
@@ -397,8 +427,10 @@ extension MailBoxViewController: UITableViewDelegate {
             let imageName = mail.ReceiverId! + "/" + Configuration.S3.PROFILE_IMAGE_NAME(0)
             let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + imageName
             
-            cell.mailImage.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "img_bg_thumb_s_logo"))
-            cell.mailImage.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_s_2"))
+            cell.mailImage.sd_setImage(with: URL(string: imageUrl), placeholderImage: defaultImage, options: .cacheMemoryOnly) {
+                (image, error, cacheType, imageURL) in
+                cell.mailImage.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_s_2"))
+            }
             
             guard let status = ProposeStatus(rawValue: mail.ProposeStatus!) else {
                 fatalError("MailBoxViewController > sendMail > ProposeStatus Error")
@@ -453,23 +485,28 @@ extension MailBoxViewController: UITableViewDelegate {
         
         tableView.deselectRow(at: indexPath, animated: true)
         
-        guard let cell = tableView.cellForRow(at: indexPath) else {
-            fatalError("MailBoxViewController > select Cell Error")
-        }
-        
         switch segmentControl.selectedSegmentIndex {
         case Mode.receive.rawValue:
-            if #available(iOS 9.0, *) {
-                performSegue(withIdentifier: FriendProfileViewController.className, sender: cell)
-            } else {
-                // Fallback on earlier versions
+            guard let receiveVC: FriendProfileViewController = FriendProfileViewController.storyboardInstance(from: "SubItems") as? FriendProfileViewController else {
+                fatalError()
             }
+            
+            let mail = ReceiveMailManager.sharedInstance.datas[indexPath.row]
+            receiveVC.friendUserId = mail.SenderId
+            receiveVC.productId = mail.ProductId as! Int?
+            receiveVC.mail = mail
+            navigationController?.pushViewController(receiveVC, animated: true)
+            
         case Mode.send.rawValue:
-            if #available(iOS 9.0, *) {
-                performSegue(withIdentifier: LikeProfileViewController.className, sender: cell)
-            } else {
-                // Fallback on earlier versions
+            guard let sendVC: LikeProfileViewController = LikeProfileViewController.storyboardInstance(from: "SubItems") as? LikeProfileViewController else {
+                fatalError()
             }
+            let mail = SendMailManager.sharedInstance.datas[indexPath.row]
+            
+            sendVC.friendUserId = mail.ReceiverId
+            sendVC.productId = mail.ProductId as! Int?
+            sendVC.mail = mail
+            navigationController?.pushViewController(sendVC, animated: true)
         default:
             return
         }

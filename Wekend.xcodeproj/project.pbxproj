@@ -107,6 +107,7 @@
 		B8C6C3B51DE42D4F00FBDF6C /* MailBoxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C6C3B41DE42D4F00FBDF6C /* MailBoxViewController.swift */; };
 		B8C6C3BB1DE4355F00FBDF6C /* CampaignTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C6C3BA1DE4355F00FBDF6C /* CampaignTableViewCell.swift */; };
 		B8C6FB111F4470BA0049E4F2 /* StoreHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C6FB101F4470BA0049E4F2 /* StoreHeaderView.swift */; };
+		B8E1E1C41F9625F600355CD7 /* SubItems.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B8E1E1C31F9625F600355CD7 /* SubItems.storyboard */; };
 		B8EA29121E8B992200DEB0B1 /* VerticallyCenteredTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8EA29111E8B992200DEB0B1 /* VerticallyCenteredTextView.swift */; };
 		B8EF62861F5555FF007B0583 /* AgreementPrivacy.txt in Resources */ = {isa = PBXBuildFile; fileRef = B8EF62841F5555FF007B0583 /* AgreementPrivacy.txt */; };
 		B8EF62871F5555FF007B0583 /* AgreementTermsOfUse.txt in Resources */ = {isa = PBXBuildFile; fileRef = B8EF62851F5555FF007B0583 /* AgreementTermsOfUse.txt */; };
@@ -257,6 +258,7 @@
 		B8C6C3B41DE42D4F00FBDF6C /* MailBoxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MailBoxViewController.swift; sourceTree = "<group>"; };
 		B8C6C3BA1DE4355F00FBDF6C /* CampaignTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CampaignTableViewCell.swift; sourceTree = "<group>"; };
 		B8C6FB101F4470BA0049E4F2 /* StoreHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreHeaderView.swift; sourceTree = "<group>"; };
+		B8E1E1C31F9625F600355CD7 /* SubItems.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SubItems.storyboard; sourceTree = "<group>"; };
 		B8EA29111E8B992200DEB0B1 /* VerticallyCenteredTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerticallyCenteredTextView.swift; sourceTree = "<group>"; };
 		B8EF62841F5555FF007B0583 /* AgreementPrivacy.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AgreementPrivacy.txt; sourceTree = "<group>"; };
 		B8EF62851F5555FF007B0583 /* AgreementTermsOfUse.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AgreementTermsOfUse.txt; sourceTree = "<group>"; };
@@ -387,6 +389,7 @@
 				B8893A301E5B241600C135CE /* Main.storyboard */,
 				B88D36241E40C2F000B977E5 /* Login.storyboard */,
 				B89EFADE1F6A6F98000ACF72 /* DrawerViewController.storyboard */,
+				B8E1E1C31F9625F600355CD7 /* SubItems.storyboard */,
 			);
 			path = storyboard;
 			sourceTree = "<group>";
@@ -636,7 +639,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0810;
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "Kim Young-wook";
 				TargetAttributes = {
 					B8C6C3801DE41E7000FBDF6C = {
@@ -699,6 +702,7 @@
 				B89EFADF1F6A6F98000ACF72 /* DrawerViewController.storyboard in Resources */,
 				B8893A311E5B241600C135CE /* LaunchScreen.storyboard in Resources */,
 				B8B5A2871F6BBB7A00D899D5 /* GuideViewController.xib in Resources */,
+				B8E1E1C41F9625F600355CD7 /* SubItems.storyboard in Resources */,
 				B88D36251E40C2F000B977E5 /* Login.storyboard in Resources */,
 				B8C6C38E1DE41E7000FBDF6C /* Assets.xcassets in Resources */,
 				B8EF62861F5555FF007B0583 /* AgreementPrivacy.txt in Resources */,
@@ -914,7 +918,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -922,7 +928,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
@@ -946,7 +956,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -966,7 +976,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -974,7 +986,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
@@ -992,7 +1008,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
