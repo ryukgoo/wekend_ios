@@ -7,9 +7,14 @@
 //
 
 import UIKit
+import AWSCore
 
 class LoginViewController: UIViewController {
 
+    deinit {
+        printLog(#function)
+    }
+    
     // MARK: AlertController with IndicatorView
     
     var activeTextField: UITextField?
@@ -24,10 +29,7 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        printLog("viewDidLoad")
-        
-        // Do any additional setup after loading the view.
+        printLog(#function)
         
         initTextFields()
         
@@ -42,13 +44,11 @@ class LoginViewController: UIViewController {
         navigationController?.navigationBar.tintColor = UIColor.white
         navigationController?.navigationBar.isTranslucent = true
         
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: .UIKeyboardWillHide, object: nil)
+        addNotificationObservers()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
+        removeNotificationObservers()
     }
     
     override func viewWillLayoutSubviews() {
@@ -61,41 +61,7 @@ class LoginViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    func keyboardWillShow(_ notification: Notification) {
-        var info: Dictionary = notification.userInfo!
-        
-        if let keyboardSize = (info[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            
-            guard let textField = self.activeTextField else {
-                printLog("keyboardWillShow > activeTextField is nil")
-                return
-            }
-            
-            let point = textField.convert(textField.frame.origin, to: self.view)
-            
-            let textFieldBottomY = point.y + self.view.frame.origin.y
-            let keyboardY = self.view.frame.height - keyboardSize.height
-            let moveY = textFieldBottomY - keyboardY
-            
-            UIView.animate(withDuration: 0.1, animations: {
-                () -> Void in
-                
-                if moveY > 0 {
-                    self.view.frame.origin.y -= moveY
-                }
-                
-            })
-        }
-    }
     
-    func keyboardWillHide(_ notification: Notification) {
-        UIView.animate(withDuration: 0.1, animations: {
-            () -> Void in
-            if self.view.frame.origin.y != 0 {
-                self.view.frame.origin.y = 0
-            }
-        })
-    }
     
     // MARK: IBAction
     
@@ -109,12 +75,11 @@ class LoginViewController: UIViewController {
     
     func login() {
         
-        guard let username = usernameInputText.text else {
-            fatalError("LoginViewController > login > username Input Error")
-        }
-        
-        guard let password = passwordInputText.text else {
-            fatalError("LoginViewController > login > password Input Error")
+        guard let username = usernameInputText.text,
+              let password = passwordInputText.text else {
+                printLog("LoginViewController > login > username Input Error")
+                alert(message: "이메일 또는 비밀번호가 비어있습니다", title: "로그인 실패")
+                return
         }
         
         if !username.isValidEmailAddress() {
@@ -132,13 +97,22 @@ class LoginViewController: UIViewController {
         AmazonClientManager.sharedInstance.devIdentityProvider?.loginUser(username: username, password: password).continueWith(block: {
             (task: AWSTask) -> Any! in
             
-            if let error = task.error as? LoginError {
+            if let error = task.error as? AuthenticateError {
                 self.printLog("error : \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self.endLoading()
+                    self.alert(message: "등록되지 않은 계정이거나\n비밀번호가 일치하지 않습니다.", title: "로그인실패", completion: nil)
+                }
                 return nil
             }
             
             guard let enabled = task.result else {
-                fatalError("LoginViewController > login > enabled Error")
+                DispatchQueue.main.async {
+                    self.endLoading()
+                    self.alert(message: "등록되지 않은 계정이거나\n비밀번호가 일치하지 않습니다.", title: "로그인실패", completion: nil)
+                }
+                self.printLog("LoginViewController > login > enabled Error")
+                return nil
             }
             
             self.printLog("login > enabled : \(enabled)")
@@ -162,21 +136,13 @@ class LoginViewController: UIViewController {
                     UserInfoManager.sharedInstance.registEndpointARN()
                     
                     DispatchQueue.main.async {
-                        let mainStoryboard = Constants.StoryboardName.Main
-                        let storyboard = UIStoryboard(name: mainStoryboard.rawValue, bundle: nil)
-                        
-                        guard let viewController = storyboard.instantiateViewController(withIdentifier: mainStoryboard.identifier) as? MainViewController else {
-                            fatalError("LoginViewController > login > get MainViewController From Storyboard")
-                        }
-                        
                         self.endLoading()
-                        self.present(viewController, animated: true, completion: nil)
+                        guard let mainVC = MainViewController.storyboardInstance(from: "Main") as? MainViewController else { return }
+                        self.present(mainVC, animated: true, completion: nil)
                     }
-                    
                     return nil
                 })
             }
-            
             return nil
         })
         
@@ -294,5 +260,52 @@ extension LoginViewController: AgreementDelegate {
     
     func onAgreementTapped() {
         self.performSegue(withIdentifier: SignupViewController.className, sender: self)
+    }
+}
+
+extension LoginViewController: Observerable {
+    
+    func addNotificationObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)),
+                                               name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)),
+                                               name: .UIKeyboardWillHide, object: nil)
+    }
+    
+    func removeNotificationObservers() {
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
+    }
+    
+    func keyboardWillShow(_ notification: Notification) {
+        var info: Dictionary = notification.userInfo!
+        
+        if let keyboardSize = (info[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            
+            guard let textField = self.activeTextField else {
+                printLog("keyboardWillShow > activeTextField is nil")
+                return
+            }
+            
+            let point = textField.convert(textField.frame.origin, to: self.view)
+            
+            let textFieldBottomY = point.y + self.view.frame.origin.y
+            let keyboardY = self.view.frame.height - keyboardSize.height
+            let moveY = textFieldBottomY - keyboardY
+            
+            UIView.animate(withDuration: 0.1, animations: { () -> Void in
+                if moveY > 0 {
+                    self.view.frame.origin.y -= moveY
+                }
+            })
+        }
+    }
+    
+    func keyboardWillHide(_ notification: Notification) {
+        UIView.animate(withDuration: 0.1, animations: { () -> Void in
+            if self.view.frame.origin.y != 0 {
+                self.view.frame.origin.y = 0
+            }
+        })
     }
 }

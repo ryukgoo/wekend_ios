@@ -9,6 +9,7 @@
 import UIKit
 import DropDownMenuKit
 import SDWebImage
+import AWSCore
 
 class CampaignTableViewController: UIViewController {
     
@@ -73,28 +74,6 @@ class CampaignTableViewController: UIViewController {
         super.viewDidAppear(animated)
         dropDownMenu.container = self.view
     }
-    
-    /*
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == CampaignViewController.className {
-            
-            guard let campaignDetailViewController = segue.destination as? CampaignViewController else {
-                fatalError("CampaignTableViewController > prepare > destination Error")
-            }
-            
-            guard let selectedCampaignCell = sender as? CampaignTableViewCell else {
-                fatalError("CampaignTableViewController > prepare > selected Cell Error")
-            }
-            
-            guard let indexPath = self.tableView.indexPath(for: selectedCampaignCell) else {
-                fatalError("CampaignTableViewController > prepare > indexPath Error")
-            }
-            
-            let selectedCampaign = ProductInfoManager.sharedInstance.datas?[indexPath.row]
-            campaignDetailViewController.productId = selectedCampaign?.ProductId
-        }
-    }
-    */
     
     // MARK: ScrollView Delegate
     
@@ -219,7 +198,6 @@ extension CampaignTableViewController: UITableViewDelegate {
         let imageUrl = Configuration.S3.PRODUCT_IMAGE_URL + imageName
         
         cell.campaignImage.tag = indexPath.row
-        
         cell.campaignImage.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "bg_default_logo_gray"), options: .refreshCached) {
             (image, error, cacheType, imageURL) in
         }
@@ -248,7 +226,6 @@ extension CampaignTableViewController: UITableViewDelegate {
         if indexPath.row == ProductInfoManager.sharedInstance.datas?.count {
             
             printLog("tableView > willDisplay > refreshList")
-            
             refreshList(false)
         }
     }
@@ -299,7 +276,6 @@ extension CampaignTableViewController: UITableViewDelegate {
     }
     
     func scrollToTop(animated: Bool) {
-//        tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: UITableViewScrollPosition.top, animated: animated)
         tableView.setContentOffset(.zero, animated: true)
     }
 }

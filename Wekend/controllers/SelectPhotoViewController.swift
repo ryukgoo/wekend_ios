@@ -49,10 +49,8 @@ class SelectPhotoViewController: UIViewController, UIImagePickerControllerDelega
             DispatchQueue.main.async {
                 self.endLoading()
                 
-                let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                let mainViewController = storyboard.instantiateViewController(withIdentifier: MainViewController.className)
-                
-                self.present(mainViewController, animated: true, completion: nil)
+                guard let mainVC = MainViewController.storyboardInstance(from: "Main") as? MainViewController else { return }
+                self.present(mainVC, animated: true, completion: nil)
             }
             return
         }
@@ -115,51 +113,37 @@ class SelectPhotoViewController: UIViewController, UIImagePickerControllerDelega
         
         let transferManager = AWSS3TransferManager.default()
         
-        transferManager.upload(uploadRequest).continueWith(executor: AWSExecutor.mainThread(), block: {
+        transferManager.upload(uploadRequest).continueWith(executor: AWSExecutor.mainThread()) {
             (task: AWSTask) -> Any! in
             
             if let error = task.error {
                 self.printLog("upload > error : \(error)")
+                self.alert(message: "다시 시도해 주세요", title: "사진 업로드 실패")
+                return nil
             }
             
             guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
                 fatalError("SelectPhotoViewController > upload get UserInfo Failed")
             }
             
-            self.printLog("userInfo.userid : \(userInfo.userid)")
-            
             let photos: Set = [uploadRequest.key!]
             userInfo.photos = photos
             
-            UserInfoManager.sharedInstance.saveUserInfo(userInfo: userInfo).continueWith(executor: AWSExecutor.mainThread(), block: {
-                (saveTask: AWSTask) -> Any! in
-                
-                if saveTask.error != nil {
-                    self.printLog("upload error : \(String(describing: saveTask.error))")
+            UserInfoManager.sharedInstance.saveUserInfo(userInfo: userInfo) { isSuccess in
+                self.endLoading()
+                if isSuccess {
+                    DispatchQueue.main.async {
+                        guard let mainVC = MainViewController.storyboardInstance(from: "Main") as? MainViewController else { return }
+                        self.present(mainVC, animated: true, completion: nil)
+                    }
                 } else {
-                    
-                    UserInfoManager.sharedInstance.getOwnedUserInfo(userId: userInfo.userid).continueWith(executor: AWSExecutor.mainThread(), block: {
-                        getUserTask -> Any! in
-                        
-                        DispatchQueue.main.async {
-                            self.endLoading()
-                            
-                            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                            let mainViewController = storyboard.instantiateViewController(withIdentifier: MainViewController.className)
-                            
-                            self.present(mainViewController, animated: true, completion: nil)
-                        }
-                        
-                        return nil
-                    })
-                    
+                    // user save error
+                    self.alert(message: "프로필 이미지 저장에 실패하였습니다.\n다시 시도해 주세요")
                 }
-                
-                return nil
-            })
+            }
             
             return nil
-        })
+        }
     }
 
     /*

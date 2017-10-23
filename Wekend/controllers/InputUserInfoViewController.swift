@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AWSCore
 
 class InputUserInfoViewController: UIViewController {
 
@@ -58,11 +59,18 @@ class InputUserInfoViewController: UIViewController {
         
         guard let inputNickname = nicknameInputText.text else {
             printLog("check Duplication Error > text is nil")
+            self.alert(message: "닉네임을 입력해 주세요")
             return
         }
         
-        UserInfoManager.sharedInstance.isNicknameAvailable(nickname: inputNickname).continueWith(executor: AWSExecutor.mainThread(), block: {
+        UserInfoManager.sharedInstance.isNicknameAvailable(nickname: inputNickname).continueWith(executor: AWSExecutor.mainThread()) {
             (task: AWSTask) -> Any! in
+            
+            if task.error != nil {
+                DispatchQueue.main.async {
+                    self.alert(message: "다시 시도해 주세요", title: "중복체크실패")
+                }
+            }
             
             guard let result = task.result as? Bool else {
                 self.printLog("check Duplication Error")
@@ -83,12 +91,12 @@ class InputUserInfoViewController: UIViewController {
             }
             
             return nil
-        })
+        }
         
     }
     
     @IBAction func nextButtonTapped(_ sender: Any) {
-        printLog("nextButtonTapped")
+        printLog("\(#function)")
         performSegue(withIdentifier: InsertPhoneViewController.className, sender: self)
     }
     
@@ -184,7 +192,15 @@ extension InputUserInfoViewController: UIPickerViewDelegate, UIPickerViewDataSou
     
     func initPickerView() {
         
-        for i in 1950...1998 {
+        let date = Date()
+        let calendar = Calendar.current
+        
+        let thisYear = calendar.component(.year, from: date)
+        let startYear = thisYear - 19
+        
+        printLog("\(#function) > startYear : \(startYear)")
+        
+        for i in 1950...startYear {
             yearArray.append(i)
         }
         

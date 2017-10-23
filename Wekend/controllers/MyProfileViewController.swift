@@ -247,19 +247,14 @@ class MyProfileViewController: UIViewController {
                         
                         userInfo.nickname = inputNickname
                         
-                        UserInfoManager.sharedInstance.saveUserInfo(userInfo: userInfo).continueWith(executor: AWSExecutor.mainThread(), block: {
-                            (task:AWSTask) -> Any? in
-                            
-                            self.endLoading()
-                            
-                            if task.error != nil {
-                                self.alert(message: "닉네임 변경에 실패하였습니다")
-                            } else {
+                        UserInfoManager.sharedInstance.saveUserInfo(userInfo: userInfo) { isSuccess in
+                            DispatchQueue.main.async { self.endLoading() }
+                            if isSuccess {
                                 self.alert(message: "닉네임이 변경되었습니다")
+                            } else {
+                                self.alert(message: "닉네임 변경에 실패하였습니다")
                             }
-                            
-                            return nil
-                        })
+                        }
                     }
                     
                     return nil
@@ -369,21 +364,16 @@ class MyProfileViewController: UIViewController {
             if let newPhoneNumber = phoneTextField.text {
                 userInfo.phone = newPhoneNumber
                 
-                UserInfoManager.sharedInstance.saveUserInfo(userInfo: userInfo).continueWith(block: {
-                    (task: AWSTask) -> Any? in
+                UserInfoManager.sharedInstance.saveUserInfo(userInfo: userInfo) { (isSuccess) in
                     
-                    if task.error != nil {
-                        self.printLog("onConfirmCodeButtonTapped > error: \(task.error.debugDescription)")
-                        return nil
+                    DispatchQueue.main.async { self.endLoading() }
+                    
+                    if isSuccess {
+                        self.alert(message: "전화번호가 변경되었습니다.")
+                    } else {
+                        self.alert(message: "전화번호 수정에 실패하였습니다.\n다시 시도해 주세요.")
                     }
-                    
-                    DispatchQueue.main.async {
-                        self.endLoading()
-                        self.isEditingMode = false
-                    }
-                    
-                    return nil
-                })
+                }
             }
         }
         
@@ -521,7 +511,7 @@ extension MyProfileViewController: UIImagePickerControllerDelegate, UINavigation
         
         let transferManager = AWSS3TransferManager.default()
         
-        transferManager.upload(uploadRequest).continueWith(executor: AWSExecutor.mainThread(), block: {
+        transferManager.upload(uploadRequest).continueWith(executor: AWSExecutor.mainThread()) {
             (task: AWSTask) -> Any! in
             
             if let error = task.error {
@@ -540,19 +530,16 @@ extension MyProfileViewController: UIImagePickerControllerDelegate, UINavigation
             
             SDImageCache.shared().removeImage(forKey: imageUrl, withCompletion: nil)
             
-            UserInfoManager.sharedInstance.saveUserInfo(userInfo: userInfo).continueWith(executor: AWSExecutor.mainThread(), block: {
-                (saveTask: AWSTask) -> Any! in
-                
-                if saveTask.error != nil {
-                    self.printLog("upload error : \(String(describing: saveTask.error))")
+            UserInfoManager.sharedInstance.saveUserInfo(userInfo: userInfo) { (isSuccess) in
+                DispatchQueue.main.async { self.endLoading() }
+                if isSuccess {
+                    self.alert(message: "프로필 이미지가 변경되었습니다.")
                 } else {
-                    self.endLoading()
-                    
+                    self.alert(message: "프로필 이미지 수정에 실패하였습니다.\n다시 시도해 주세요.")
                 }
-                return nil
-            })
+            }
             return nil
-        })
+        }
     }
 }
 

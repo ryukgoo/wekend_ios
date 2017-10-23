@@ -83,8 +83,8 @@ class DrawerViewController: UIViewController {
         
         profileImageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: defaultImage, options: .cacheMemoryOnly) {
             (image, error, cacheType, imageURL) in
-            self.profileImageView.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_default_2"))
         }
+        profileImageView.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_default_2"))
         
         nicknameLabel.text = userInfo.nickname!
         usernameLabel.text = userInfo.username!
@@ -257,39 +257,20 @@ extension DrawerViewController: MFMailComposeViewControllerDelegate {
 extension DrawerViewController: Observerable {
     
     func addNotificationObservers() {
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(DrawerViewController.handleUpdatePointNotification(_:)),
-                                               name: Notification.Name(rawValue: UserInfoManager.UpdatePointNotification),
-                                               object: nil)
-        
         NotificationCenter.default.addObserver(self, selector: #selector(DrawerViewController.handleUpdateUserInfoNotification(_:)),
                                                name: Notification.Name(rawValue: UserInfoManager.UpdateUserInfoNotification),
                                                object: nil)
     }
     
     func removeNotificationObservers() {
-        NotificationCenter.default.removeObserver(self, name:Notification.Name(rawValue: UserInfoManager.UpdatePointNotification),
-                                                  object: nil)
         NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: UserInfoManager.UpdateUserInfoNotification),
                                                   object: nil)
     }
     
-    func handleUpdatePointNotification(_ notification: Notification) {
-        guard let point = notification.userInfo![UserInfoManager.NotificationDataPoint] as? Int else {
-            return
-        }
-        
-        DispatchQueue.main.async {
-            self.pointLabel.text = "보유포인트 : \(point)P"
-        }
-    }
-    
     func handleUpdateUserInfoNotification(_ notification: Notification) {
-        printLog("handleUpdateUserInfoNotification")
+        printLog(#function)
         
-        guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
-            fatalError("DrawerViewController > viewDidLoad > userInfo Error")
-        }
+        guard let userInfo = UserInfoManager.sharedInstance.userInfo else { return }
         
         let defaultImage : UIImage
         if userInfo.gender == UserInfo.RawValue.GENDER_MALE {
@@ -302,9 +283,12 @@ extension DrawerViewController: Observerable {
         let imageUrl  = Configuration.S3.PROFILE_IMAGE_URL + imageName
         
         profileImageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: defaultImage, options: .cacheMemoryOnly) {
-            (image, error, cacheType, imageURL) in
-            self.profileImageView.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_default_2"))
+            _ in
         }
+        profileImageView.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_default_2"))
+        
+        guard let point = userInfo.balloon as? Int else { return }
+        pointLabel.text = "보유포인트 : \(point)P"
     }
 }
 

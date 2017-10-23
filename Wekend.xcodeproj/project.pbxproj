@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4C0F4B99F0F4E6B992718E65 /* Pods_Wekend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5EAEDF07F12987F8C85A29D /* Pods_Wekend.framework */; };
+		B81C00601F98DA02007E258A /* AuthenticateError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81C005F1F98DA02007E258A /* AuthenticateError.swift */; };
 		B8221F091E03D9D900BCC06C /* LikeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8221F081E03D9D900BCC06C /* LikeTableViewCell.swift */; };
 		B8221F0B1E03DEB000BCC06C /* LikeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8221F0A1E03DEB000BCC06C /* LikeItem.swift */; };
 		B82598FD1F260DAA003999BE /* AgreementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82598FC1F260DAA003999BE /* AgreementViewController.swift */; };
@@ -95,11 +96,11 @@
 		B89EFADC1F6A6E02000ACF72 /* GuideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89EFADA1F6A6E02000ACF72 /* GuideViewController.swift */; };
 		B89EFADF1F6A6F98000ACF72 /* DrawerViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B89EFADE1F6A6F98000ACF72 /* DrawerViewController.storyboard */; };
 		B89EFAE11F6A715B000ACF72 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89EFAE01F6A715B000ACF72 /* UIViewController+Alert.swift */; };
+		B8AE5BC11F97A31A00796751 /* DeepLinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8AE5BC01F97A31A00796751 /* DeepLinkManager.swift */; };
 		B8B5A2871F6BBB7A00D899D5 /* GuideViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8B5A2861F6BBB7A00D899D5 /* GuideViewController.xib */; };
 		B8B5A2891F6BC2E300D899D5 /* UIViewController+Instance.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B5A2881F6BC2E300D899D5 /* UIViewController+Instance.swift */; };
 		B8BA5DDC1EC8515400D3CAE0 /* NSObject+Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA5DDB1EC8515400D3CAE0 /* NSObject+Log.swift */; };
 		B8C5279C1E24D1900055D547 /* RoundedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C5279B1E24D1900055D547 /* RoundedButton.swift */; };
-		B8C5ABA31F2F16A500692B22 /* LoginError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C5ABA21F2F16A500692B22 /* LoginError.swift */; };
 		B8C6C3851DE41E7000FBDF6C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C6C3841DE41E7000FBDF6C /* AppDelegate.swift */; };
 		B8C6C38E1DE41E7000FBDF6C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8C6C38D1DE41E7000FBDF6C /* Assets.xcassets */; };
 		B8C6C39C1DE41E7100FBDF6C /* WekendTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C6C39B1DE41E7100FBDF6C /* WekendTests.swift */; };
@@ -141,6 +142,7 @@
 /* Begin PBXFileReference section */
 		AF0978F871BEF1973A4462F2 /* Pods-Wekend.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wekend.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wekend/Pods-Wekend.debug.xcconfig"; sourceTree = "<group>"; };
 		B815667B1F906D5F00E0769B /* Wekend.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Wekend.entitlements; sourceTree = "<group>"; };
+		B81C005F1F98DA02007E258A /* AuthenticateError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticateError.swift; sourceTree = "<group>"; };
 		B8221F081E03D9D900BCC06C /* LikeTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LikeTableViewCell.swift; sourceTree = "<group>"; };
 		B8221F0A1E03DEB000BCC06C /* LikeItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LikeItem.swift; sourceTree = "<group>"; };
 		B82598FC1F260DAA003999BE /* AgreementViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgreementViewController.swift; sourceTree = "<group>"; };
@@ -240,11 +242,11 @@
 		B89EFADA1F6A6E02000ACF72 /* GuideViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuideViewController.swift; sourceTree = "<group>"; };
 		B89EFADE1F6A6F98000ACF72 /* DrawerViewController.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = DrawerViewController.storyboard; sourceTree = "<group>"; };
 		B89EFAE01F6A715B000ACF72 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
+		B8AE5BC01F97A31A00796751 /* DeepLinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkManager.swift; sourceTree = "<group>"; };
 		B8B5A2861F6BBB7A00D899D5 /* GuideViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GuideViewController.xib; sourceTree = "<group>"; };
 		B8B5A2881F6BC2E300D899D5 /* UIViewController+Instance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Instance.swift"; sourceTree = "<group>"; };
 		B8BA5DDB1EC8515400D3CAE0 /* NSObject+Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSObject+Log.swift"; sourceTree = "<group>"; };
 		B8C5279B1E24D1900055D547 /* RoundedButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedButton.swift; sourceTree = "<group>"; };
-		B8C5ABA21F2F16A500692B22 /* LoginError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginError.swift; sourceTree = "<group>"; };
 		B8C6C3811DE41E7000FBDF6C /* Wekend.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wekend.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8C6C3841DE41E7000FBDF6C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B8C6C38D1DE41E7000FBDF6C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -309,6 +311,7 @@
 		B830D3061E0958DC00EAEFE2 /* data */ = {
 			isa = PBXGroup;
 			children = (
+				B87537C41F98D82F000ECE10 /* error */,
 				B830D3071E09607900EAEFE2 /* UserInfo.swift */,
 				B86DFF5D1EE5871800E93246 /* UserInfoManager.swift */,
 				B82E4E6C1DE58AC500E4488B /* ProductInfo.swift */,
@@ -320,9 +323,16 @@
 				B83D80C71E07FD0100B3E507 /* SendMail.swift */,
 				B86DFF631EE587B800E93246 /* SendMailManager.swift */,
 				B88AB2131EF125B5005EDC48 /* Notice.swift */,
-				B8C5ABA21F2F16A500692B22 /* LoginError.swift */,
 			);
 			path = data;
+			sourceTree = "<group>";
+		};
+		B87537C41F98D82F000ECE10 /* error */ = {
+			isa = PBXGroup;
+			children = (
+				B81C005F1F98DA02007E258A /* AuthenticateError.swift */,
+			);
+			path = error;
 			sourceTree = "<group>";
 		};
 		B88295B61E49CF6F009AACCA /* generated-src */ = {
@@ -543,6 +553,7 @@
 				B830D3061E0958DC00EAEFE2 /* data */,
 				B833E5E61DF7FBE400590B13 /* AmazonIdentityProvider.swift */,
 				B82E4E6E1DE59B4200E4488B /* AmazonClientManager.swift */,
+				B8AE5BC01F97A31A00796751 /* DeepLinkManager.swift */,
 				B82AE10C1DEBE0FB00325F34 /* Utilities.swift */,
 				B889C7AF1DF1555A00D05E7D /* Constants.swift */,
 				B88AB2151EF12763005EDC48 /* SettingViewModel.swift */,
@@ -819,6 +830,7 @@
 				B8F370851DFFCDD9006E010D /* PagerView.swift in Sources */,
 				B86DFF5A1EE551F500E93246 /* UITableView+Reload.swift in Sources */,
 				B8C6C3B51DE42D4F00FBDF6C /* MailBoxViewController.swift in Sources */,
+				B81C00601F98DA02007E258A /* AuthenticateError.swift in Sources */,
 				B8FB46981E5B08390084D7D2 /* MainViewController.swift in Sources */,
 				B8EA29121E8B992200DEB0B1 /* VerticallyCenteredTextView.swift in Sources */,
 				B88257041E2CB0BB008D8DBE /* DrawerMenuTableViewCell.swift in Sources */,
@@ -829,6 +841,7 @@
 				B88AB2161EF12763005EDC48 /* SettingViewModel.swift in Sources */,
 				B8C6C3851DE41E7000FBDF6C /* AppDelegate.swift in Sources */,
 				B830D8741EADDEE70005E87E /* EnumCollection.swift in Sources */,
+				B8AE5BC11F97A31A00796751 /* DeepLinkManager.swift in Sources */,
 				B837CEF01EB1C55F00598EF4 /* UIColor+RBG_Hex.swift in Sources */,
 				B870C82B1F29CFC0004802F4 /* ObjC.m in Sources */,
 				B834AE7B1EB6E99600CE80F9 /* WEKENDCreateEndpointARNResponseModel.m in Sources */,
@@ -863,7 +876,6 @@
 				B88B68B11EDEE746003FD8FB /* StoreProducts.swift in Sources */,
 				B837CEEA1EB1C46600598EF4 /* UIImageView+Download.swift in Sources */,
 				B837CEF41EB1C5A100598EF4 /* Date+Formatting.swift in Sources */,
-				B8C5ABA31F2F16A500692B22 /* LoginError.swift in Sources */,
 				B82598FD1F260DAA003999BE /* AgreementViewController.swift in Sources */,
 				B88C1D1B1ED57FB100B0E0DC /* Observerable.swift in Sources */,
 				B837CEEC1EB1C4EB00598EF4 /* UISegmentedControl+Custom.swift in Sources */,

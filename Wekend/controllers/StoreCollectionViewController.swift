@@ -58,7 +58,7 @@ class StoreCollectionViewController: UICollectionViewController {
         
         collectionView?.reloadData()
         
-        StoreProducts.store.requestProducts{
+        StoreProducts.store.requestProducts {
             success, products in
             
             self.printLog("reload > success: \(success), products: \(String(describing: products))")
@@ -81,19 +81,14 @@ class StoreCollectionViewController: UICollectionViewController {
         
         let point = BillingPoint(id: productId)
         
-        UserInfoManager.sharedInstance.chargePoint(point: point.rawValue).continueWith(block: {
-            (task: AWSTask) -> Any! in
-            
-            if task.error == nil {
-                DispatchQueue.main.async {
+        UserInfoManager.sharedInstance.chargePoint(point: point.rawValue) { isSuccess in
+            DispatchQueue.main.async {
+                if isSuccess {
                     self.alert(message: "상품을 구매하였습니다")
                     self.collectionView?.reloadData()
-                    
                 }
             }
-            
-            return nil
-        })
+        }
         
         
         // Handle purchase Non-Consumable Product

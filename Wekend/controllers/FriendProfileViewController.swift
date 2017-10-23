@@ -8,6 +8,7 @@
 
 import UIKit
 import KRWordWrapLabel
+import AWSCore
 
 /*
  * Receive Profile
@@ -15,6 +16,10 @@ import KRWordWrapLabel
 @available(iOS 9.0, *)
 class FriendProfileViewController: UIViewController, PagerViewDelegate, UIScrollViewDelegate {
 
+    deinit {
+        printLog(#function)
+    }
+    
     let minimumAlpha: CGFloat = 0.1
     
     // MARK : Properties
@@ -56,13 +61,8 @@ class FriendProfileViewController: UIViewController, PagerViewDelegate, UIScroll
         
         buttonsStackView.isHidden = true
         
-        if let mail = self.mail {
-            proposeStatus = ProposeStatus(rawValue: mail.ProposeStatus!)!
-        } else {
-            proposeStatus = .none
-        }
-        
         loadProfileInfo()
+        loadMail()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -139,13 +139,12 @@ class FriendProfileViewController: UIViewController, PagerViewDelegate, UIScroll
         
         descriptionLabel.text = productInfo.TitleKor
         if productInfo.Description != nil {
-            descriptionLabel.text! += "\n\n" + productInfo.Description!
+            descriptionLabel.text! += "\n\n" + (productInfo.Description?.htmlToString ?? productInfo.Description!)
         }
         
         descriptionLabel.sizeToFit()
         
         refreshLayout()
-        
     }
     
     private func refreshLayout() {
@@ -236,6 +235,40 @@ class FriendProfileViewController: UIViewController, PagerViewDelegate, UIScroll
             return nil
         })
         
+    }
+    
+    private func loadMail() {
+        guard let senderId = self.friendUserId,
+              let receiverId = UserInfoManager.sharedInstance.userInfo?.userid,
+              let productId = self.productId else {
+            fatalError("\(#function) > Parameter Error")
+        }
+        
+        ReceiveMailManager.sharedInstance.getReceiveMail(senderId: senderId, receiverId: receiverId, productId: productId).continueWith(executor: AWSExecutor.mainThread()) {
+            (task: AWSTask) -> Any? in
+            
+            guard let mail = task.result as? ReceiveMail else {
+                self.proposeStatus = ProposeStatus.none
+                DispatchQueue.main.async {
+                    self.refreshLayout()
+                }
+                return nil
+            }
+            
+            self.mail = mail
+            
+            guard let status = ProposeStatus(rawValue: mail.ProposeStatus!) else {
+                fatalError()
+            }
+            
+            self.proposeStatus = status
+            
+            DispatchQueue.main.async {
+                self.refreshLayout()
+            }
+            
+            return nil
+        }
     }
     
     // MARK : PagerView Delegates

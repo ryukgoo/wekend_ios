@@ -137,9 +137,7 @@ class MailBoxViewController: UIViewController {
                     
                     self.tabBarController?.endLoading()
                     self.tableView.reloadData()
-                    
                     self.handleNoResultLabel()
-                    
                     self.isNeedRefreshSendMail = false
                 }
                 
@@ -161,53 +159,6 @@ class MailBoxViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
-        
-        printLog("prepare")
-        
-        if #available(iOS 9.0, *) {
-            if segue.identifier == LikeProfileViewController.className {
-                
-                guard let profileViewController = segue.destination as? LikeProfileViewController else {
-                    fatalError("MailBoxViewController > prepare > destination Error")
-                }
-                
-                guard let mailViewCell = sender as? MailTableViewCell else {
-                    fatalError("MailBoxViewController > prepare > table Cell Error")
-                }
-                
-                guard let indexPath = tableView.indexPath(for: mailViewCell) else {
-                    fatalError("MailBoxViewController > prepare > indexPath Error")
-                }
-                
-                let mail = SendMailManager.sharedInstance.datas[indexPath.row]
-                
-                profileViewController.friendUserId = mail.ReceiverId
-                profileViewController.productId = mail.ProductId as! Int?
-                profileViewController.mail = mail
-                
-            } else if segue.identifier == FriendProfileViewController.className {
-                
-                guard let profileViewController = segue.destination as? FriendProfileViewController else {
-                    fatalError("MailBoxViewController > prepare > destination Error")
-                }
-                
-                guard let mailViewCell = sender as? MailTableViewCell else {
-                    fatalError("MailBoxViewController > prepare > table Cell Error")
-                }
-                
-                guard let indexPath = tableView.indexPath(for: mailViewCell) else {
-                    fatalError("MailBoxViewController > prepare > indexPath Error")
-                }
-                
-                let mail = ReceiveMailManager.sharedInstance.datas[indexPath.row]
-                
-                profileViewController.friendUserId = mail.SenderId
-                profileViewController.productId = mail.ProductId as! Int?
-                profileViewController.mail = mail
-            }
-        } else {
-            // Fallback on earlier versions
-        }
         
     }
      */
@@ -399,8 +350,9 @@ extension MailBoxViewController: UITableViewDelegate {
             
             cell.mailImage.sd_setImage(with: URL(string: imageUrl), placeholderImage: defaultImage, options: .cacheMemoryOnly) {
                 (image, error, cacheType, imageURL) in
-                cell.mailImage.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_s_2"))
+                
             }
+            cell.mailImage.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_s_2"))
             
             guard let status = ProposeStatus(rawValue: mail.ProposeStatus!) else {
                 fatalError("MailBoxViewController > receiveMail > ProposeStatus Error")
@@ -429,8 +381,9 @@ extension MailBoxViewController: UITableViewDelegate {
             
             cell.mailImage.sd_setImage(with: URL(string: imageUrl), placeholderImage: defaultImage, options: .cacheMemoryOnly) {
                 (image, error, cacheType, imageURL) in
-                cell.mailImage.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_s_2"))
+                
             }
+            cell.mailImage.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_s_2"))
             
             guard let status = ProposeStatus(rawValue: mail.ProposeStatus!) else {
                 fatalError("MailBoxViewController > sendMail > ProposeStatus Error")
@@ -494,7 +447,6 @@ extension MailBoxViewController: UITableViewDelegate {
             let mail = ReceiveMailManager.sharedInstance.datas[indexPath.row]
             receiveVC.friendUserId = mail.SenderId
             receiveVC.productId = mail.ProductId as! Int?
-            receiveVC.mail = mail
             navigationController?.pushViewController(receiveVC, animated: true)
             
         case Mode.send.rawValue:
@@ -505,7 +457,6 @@ extension MailBoxViewController: UITableViewDelegate {
             
             sendVC.friendUserId = mail.ReceiverId
             sendVC.productId = mail.ProductId as! Int?
-            sendVC.mail = mail
             navigationController?.pushViewController(sendVC, animated: true)
         default:
             return

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AWSCore
 
 class InsertPhoneViewController: UIViewController {
     
@@ -40,15 +41,13 @@ class InsertPhoneViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: .UIKeyboardWillHide, object: nil)
+        addNotificationObservers()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
-        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
+        removeNotificationObservers()
     }
     
     override func viewWillLayoutSubviews() {
@@ -59,43 +58,6 @@ class InsertPhoneViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-    
-    func keyboardWillShow(_ notification: Notification) {
-        
-        var info: Dictionary = notification.userInfo!
-        
-        if let keyboardSize = (info[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            
-            guard let textField = self.activeTextField else {
-                printLog("keyboardWillShow > activeTextField is nil")
-                return
-            }
-            
-            let point = textField.convert(textField.frame.origin, to: self.view)
-
-            let textFieldBottomY = point.y + self.view.frame.origin.y
-            let keyboardY = self.view.frame.height - keyboardSize.height
-            let moveY = textFieldBottomY - keyboardY
-            
-            UIView.animate(withDuration: 0.1, animations: {
-                () -> Void in
-                
-                if moveY > 0 {
-                    self.view.frame.origin.y -= moveY
-                }
-                
-            })
-        }
-    }
-    
-    func keyboardWillHide(_ notification: Notification) {
-        UIView.animate(withDuration: 0.1, animations: {
-            () -> Void in
-            if self.view.frame.origin.y != 0 {
-                self.view.frame.origin.y = 0
-            }
-        })
     }
     
     // MARK: IBAction
@@ -303,5 +265,51 @@ extension InsertPhoneViewController: UITextFieldDelegate {
     
     func codeTextDidChanged(_ textField: UITextField) {
         confirmCodeButton.isEnabled = textField.text!.characters.count == 6
+    }
+}
+
+extension InsertPhoneViewController: Observerable {
+    
+    func addNotificationObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: .UIKeyboardWillHide, object: nil)
+    }
+    
+    func removeNotificationObservers() {
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
+    }
+    
+    func keyboardWillShow(_ notification: Notification) {
+        
+        var info: Dictionary = notification.userInfo!
+        
+        if let keyboardSize = (info[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            
+            guard let textField = self.activeTextField else {
+                printLog("keyboardWillShow > activeTextField is nil")
+                return
+            }
+            
+            let point = textField.convert(textField.frame.origin, to: self.view)
+            
+            let textFieldBottomY = point.y + self.view.frame.origin.y
+            let keyboardY = self.view.frame.height - keyboardSize.height
+            let moveY = textFieldBottomY - keyboardY
+            
+            UIView.animate(withDuration: 0.1, animations: { () -> Void in
+                if moveY > 0 {
+                    self.view.frame.origin.y -= moveY
+                }
+            })
+        }
+    }
+    
+    func keyboardWillHide(_ notification: Notification) {
+        UIView.animate(withDuration: 0.1, animations: { () -> Void in
+            if self.view.frame.origin.y != 0 {
+                self.view.frame.origin.y = 0
+            }
+        })
     }
 }

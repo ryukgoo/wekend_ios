@@ -10,6 +10,7 @@ import UIKit
 import GoogleMaps
 import Social
 import FBSDKShareKit
+import AWSCore
 
 class CampaignViewController: UIViewController, UIScrollViewDelegate {
     
@@ -99,7 +100,14 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func backButtonTapped(_ sender: Any) {
-        navigationController?.popViewController(animated: true)
+        if let views = navigationController?.viewControllers {
+            if views.count > 1 {
+                navigationController?.popViewController(animated: true)
+                return
+            }
+        }
+        
+        navigationController?.dismiss(animated: true, completion: nil)
     }
     
     // Data

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AWSCognito
 
 final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
     
@@ -248,7 +249,7 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
                 }
                 
                 guard let enable = response.enable else {
-                    loginTask.set(error: LoginError.notEnable)
+                    loginTask.set(error: AuthenticateError.userDisabled)
                     return loginTask.task
                 }
                 
@@ -256,7 +257,7 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
                       let deviceKey = response.key else {
                     // TODO : Alert Login Failed
                     self.printLog("AmazonIdentityProvider > loginUser > AWS Login Function return nil")
-                    return loginTask.set(error: LoginError.notFoundUser)
+                    return loginTask.set(error: AuthenticateError.userNotFound)
                 }
                 
                 self.printLog("login > response > userId : " + userId)
@@ -297,6 +298,8 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
         LikeDBManager.sharedInstance.destroy()
         ReceiveMailManager.sharedInstance.destory()
         SendMailManager.sharedInstance.destory()
+        
+        AmazonClientManager.sharedInstance.clearCredentials()
         
         let loginStoryBoard = Constants.StoryboardName.Login
         let loginboard = UIStoryboard(name: loginStoryBoard.rawValue, bundle: nil)

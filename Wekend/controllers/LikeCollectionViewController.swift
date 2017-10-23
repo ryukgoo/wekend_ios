@@ -240,8 +240,9 @@ extension LikeCollectionViewController: UICollectionViewDelegateFlowLayout {
         
         cell.likeImageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: defaultImage, options: .cacheMemoryOnly) {
             (image, error, cacheType, imageURL) in
-            cell.likeImageView.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_s_2"))
+            
         }
+        cell.likeImageView.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_s_2"))
         
         cell.likeNickname.text = data.Nickname
         cell.newIcon.isHidden = data.isRead

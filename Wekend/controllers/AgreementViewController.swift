@@ -18,7 +18,7 @@ class AgreementViewController: UIViewController {
     
     // TODO : handle checkBox -> All checked -> button enabled
     
-    var delegate: AgreementDelegate?
+    weak var delegate: AgreementDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -94,6 +94,6 @@ class AgreementViewController: UIViewController {
 
 }
 
-protocol AgreementDelegate {
+protocol AgreementDelegate: class {
     func onAgreementTapped()
 }

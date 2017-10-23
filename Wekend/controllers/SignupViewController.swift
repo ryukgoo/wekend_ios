@@ -7,9 +7,14 @@
 //
 
 import UIKit
+import AWSCore
 
 class SignupViewController: UIViewController {
 
+    deinit {
+        printLog(#function)
+    }
+    
     // MARK: IBOutlet
     
     @IBOutlet weak var commentLabel: UILabel!
@@ -34,11 +39,13 @@ class SignupViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        addKeyboardObserver()
+        super.viewWillAppear(animated)
+        addNotificationObservers()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        removeKeyboardObserver()
+        super.viewDidDisappear(animated)
+        removeNotificationObservers()
     }
     
     override func viewWillLayoutSubviews() {
@@ -61,8 +68,8 @@ class SignupViewController: UIViewController {
         guard let username = usernameInputText.text,
               let password = passwordInputText.text,
               let confirm = confirmInputText.text else {
-//            fatalError("nextButtonTapped > NextButton is enabled, username is nil")
                 printLog("nextButtonTapped > NextButton is enabled, username is nil")
+                alert(message: "입력하지 않은 값이 있습니다")
                 return;
         }
         
@@ -73,11 +80,19 @@ class SignupViewController: UIViewController {
         
         startLoading(message: "중복 확인중 입니다")
         
-        UserInfoManager.sharedInstance.isUsernameAvailable(username: username).continueWith(block: {
+        UserInfoManager.sharedInstance.isUsernameAvailable(username: username).continueWith {
             (task: AWSTask) -> Any! in
+            
+            if task.error != nil {
+                self.endLoading()
+                self.alert(message: "다시 시도해 주시기 바랍니다", title: "E-mail 중복확인실패")
+                return nil
+            }
             
             guard let result = task.result as? Bool else {
                 self.printLog("nextButtonTapped > check username duplicated Error > result is nil")
+                self.endLoading()
+                self.alert(message: "이미 등록된 E-mail입니다", title: "E-mail 중복오류")
                 return nil
             }
             
@@ -95,7 +110,7 @@ class SignupViewController: UIViewController {
             }
             
             return nil
-        })
+        }
     }
 
     // MARK: - Navigation
@@ -116,7 +131,6 @@ class SignupViewController: UIViewController {
             destination.password = passwordInputText.text
         }
     }
-    
 }
 
 // MARK: -UITextFieldDelegate
@@ -186,18 +200,12 @@ extension SignupViewController: UITextFieldDelegate {
     }
     
     func usernameDidChange(_ textField: UITextField) {
-        
-        printLog("usernameDidChange > text : \(String(describing: textField.text))")
-        
+        printLog("\(#function) > text : \(String(describing: textField.text))")
         nextButton.isEnabled = isValidInfos()
     }
     
     func passwordDidChange(_ textField: UITextField) {
-        
-        printLog("passwordDidChange > text : \(String(describing: textField.text))")
-        
-        printLog("password is valid : \(textField.text!.isValidPassword())")
-        
+        printLog("\(#function) > text : \(String(describing: textField.text))")
         nextButton.isEnabled = isValidInfos()
     }
     
@@ -251,18 +259,16 @@ extension SignupViewController: UITextFieldDelegate {
     }
 }
 
-extension SignupViewController {
+extension SignupViewController: Observerable {
     
-    func addKeyboardObserver() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(self.keyboardWillShow(_:)),
+    func addNotificationObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)),
                                                name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(self.keyboardWillHide(_:)),
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)),
                                                name: .UIKeyboardWillHide, object: nil)
     }
     
-    func removeKeyboardObserver() {
+    func removeNotificationObservers() {
         NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
     }
@@ -283,20 +289,16 @@ extension SignupViewController {
             let keyboardY = self.view.frame.height - keyboardSize.height
             let moveY = textFieldBottomY - keyboardY
             
-            UIView.animate(withDuration: 0.1, animations: {
-                () -> Void in
-                
+            UIView.animate(withDuration: 0.1, animations: { () -> Void in
                 if moveY > 0 {
                     self.view.frame.origin.y -= moveY
                 }
-                
             })
         }
     }
     
     func keyboardWillHide(_ notification: Notification) {
-        UIView.animate(withDuration: 0.1, animations: {
-            () -> Void in
+        UIView.animate(withDuration: 0.1, animations: { () -> Void in
             if self.view.frame.origin.y != 0 {
                 self.view.frame.origin.y = 0
             }

@@ -72,7 +72,6 @@ class UserInfo: AWSDynamoDBObjectModel, AWSDynamoDBModeling {
     static func ignoreAttributes() -> [String] {
         return ["photosArr"]
     }
-    
 }
 
 enum BillingPoint: Int, EnumCollection {
@@ -124,8 +123,4 @@ enum BillingPoint: Int, EnumCollection {
     var id: String {
         return self.toString
     }
-}
-
-enum PurchaseError: Error {
-    case notEnoughPoint
 }

@@ -42,6 +42,7 @@ class MainViewController: UITabBarController {
         mailTab.badgeValue = mailCount == 0 ? nil : String(mailCount)
         
         addNotificationObservers()
+        UserInfoManager.sharedInstance.registEndpointARN()
     }
 
     override func didReceiveMemoryWarning() {
@@ -172,17 +173,17 @@ extension MainViewController: UITabBarControllerDelegate {
             break
             
         case .like:
-            UserInfoManager.sharedInstance.clearNotificationCount(selectedType).continueWith(block: {
+            UserInfoManager.sharedInstance.clearNotificationCount(selectedType).continueWith {
                 task -> Any! in return nil
-            })
+            }
             UserDefaults.NotificationCount.set(0, forKey: .like)
             displayTabbarBadge()
             break
             
         case .mail:
-            UserInfoManager.sharedInstance.clearNotificationCount(selectedType).continueWith(block: {
+            UserInfoManager.sharedInstance.clearNotificationCount(selectedType).continueWith {
                 task -> Any! in return nil
-            })
+            }
             UserDefaults.NotificationCount.set(0, forKey: .receiveMail)
             UserDefaults.NotificationCount.set(0, forKey: .sendMail)
             displayTabbarBadge()

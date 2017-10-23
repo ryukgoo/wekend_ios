@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AWSCore
 import KRWordWrapLabel
 
 /*
@@ -24,7 +25,6 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
     
     // MARK: Properties
     
-    var mail: SendMail?
     var friendUserId: String?
     var friendUserInfo: UserInfo?
     var productId: Int?
@@ -58,14 +58,8 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
         let backButton = UIBarButtonItem(image: #imageLiteral(resourceName: "btn_icon_back_w"), style: .plain, target: self, action: #selector(self.backButtonTapped(_:)))
         navigationItem.leftBarButtonItem = backButton
         
-        if let mail = self.mail {
-            proposeStatus = ProposeStatus(rawValue: mail.ProposeStatus!)!
-        } else {
-            proposeStatus = .none
-        }
-        
         loadProfileInfo()
-        loadProposeStatus()
+        loadMail()
         
         addNotificationObservers()
     }
@@ -148,20 +142,14 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
         })
     }
     
-    private func loadProposeStatus() {
+    private func loadMail() {
         
         printLog("loadProposeStatus start")
         
-        guard let senderId = UserInfoManager.sharedInstance.userInfo?.userid else {
-            fatalError("ProfileViewController > loadProposeStatus > get UserInfo Error")
-        }
-        
-        guard let receiverId = self.friendUserId else {
-            fatalError("ProfileViewController > loadProposeStatus > ReceiverId Error")
-        }
-        
-        guard let productId = self.productId else {
-            fatalError("ProfileViewController > loadProposeStatus > ProductId Error")
+        guard let senderId = UserInfoManager.sharedInstance.userInfo?.userid,
+              let receiverId = self.friendUserId,
+              let productId = self.productId else {
+            fatalError("ProfileViewController > loadProposeStatus > parameter Error")
         }
         
         SendMailManager.sharedInstance.getSendMail(senderId: senderId, receiverId: receiverId, productId: productId).continueWith(executor: AWSExecutor.mainThread(), block: {
@@ -224,7 +212,7 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
             fatalError("ProfileViewController > getProductInfo Error")
         }
         
-        descriptionLabel.text = productInfo.TitleKor! + "\n\n" + (productInfo.Description?.htmlToString)!
+        descriptionLabel.text = productInfo.TitleKor! + "\n\n" + (productInfo.Description?.htmlToString ?? productInfo.Description!)
         descriptionLabel.sizeToFit()
         
         if let point = UserInfoManager.sharedInstance.userInfo?.balloon as! Int! {
@@ -389,38 +377,37 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
         let timestamp = Date().iso8601
         sendMail?.UpdatedTime = timestamp
         sendMail?.ResponseTime = timestamp
-        
-        UserInfoManager.sharedInstance.consumePoint().continueWith(block: {
-            (task: AWSTask) -> Any? in
+     
+        do {
+            try UserInfoManager.sharedInstance.consumePoint() { isSuccess in
+                if isSuccess {
+                    self.updateMail(sendMail!)
+                }
+            }
+        } catch PurchaseError.notEnoughPoint {
+            self.alert(message: "포인트를 충분하지 않습니다", title: "포인트 부족")
+        } catch {
+            
+        }
+    }
+    
+    private func updateMail(_ mail: SendMail) {
+        SendMailManager.sharedInstance.updateSendMail(mail: mail).continueWith(executor: AWSExecutor.mainThread()) {
+            (task: AWSTask) -> Any! in
             
             if task.error == nil {
-                
-                SendMailManager.sharedInstance.updateSendMail(mail: sendMail!).continueWith(executor: AWSExecutor.mainThread(), block: {
-                    (task: AWSTask) -> Any! in
+                DispatchQueue.main.async {
+                    self.proposeButton.setTitle(ProposeStatus.notMade.message(), for: .normal)
+                    self.proposeButton.removeTarget(self, action: #selector(self.proposeButtonTapped(_:)), for: .touchUpInside)
                     
-                    if task.error == nil {
-                        DispatchQueue.main.async {
-                            self.proposeButton.setTitle(ProposeStatus.notMade.message(), for: .normal)
-                            self.proposeButton.removeTarget(self, action: #selector(self.proposeButtonTapped(_:)), for: .touchUpInside)
-                            
-                            self.alert(message: "\(receiverNickname)에게 함께가기를 신청하였습니다", title: "함께가기신청", completion: {
-                                (action) -> Void in
-                                NotificationCenter.default.post(name: Notification.Name(rawValue: SendMailManager.AddNotification), object: nil)
-                            })
-                        }
-                    }
-                    
-                    return nil
-                })
-                
-            } else if task.error is PurchaseError {
-                self.alert(message: "포인트를 충분하지 않습니다", title: "포인트 부족")
+                    self.alert(message: "\(mail.ReceiverNickname!)에게 함께가기를 신청하였습니다", title: "함께가기신청", completion: {
+                        (action) -> Void in
+                        NotificationCenter.default.post(name: Notification.Name(rawValue: SendMailManager.AddNotification), object: nil)
+                    })
+                }
             }
-            
             return nil
-        })
-        
-        
+        }
     }
     
     /*
@@ -436,21 +423,20 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
 }
 
 extension LikeProfileViewController: Observerable {
+    
     func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(LikeProfileViewController.handleUpdatePointNotification(_:)),
-                                               name: Notification.Name(rawValue: UserInfoManager.UpdatePointNotification),
+                                               name: Notification.Name(rawValue: UserInfoManager.UpdateUserInfoNotification),
                                                object: nil)
     }
     
     func removeNotificationObservers() {
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: UserInfoManager.UpdatePointNotification),
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: UserInfoManager.UpdateUserInfoNotification),
                                                   object: nil)
     }
     
     func handleUpdatePointNotification(_ notification: Notification) {
-        guard let point = notification.userInfo![UserInfoManager.NotificationDataPoint] as? Int else {
-            return
-        }
+        guard let point = UserInfoManager.sharedInstance.userInfo?.balloon as? Int else { return }
         
         DispatchQueue.main.async {
             self.pointLabel.text = "보유포인트 : \(point)P"

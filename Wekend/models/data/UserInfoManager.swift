@@ -8,12 +8,11 @@
 
 import Foundation
 import AWSDynamoDB
+import AWSCore
 
 class UserInfoManager: NSObject {
     
-    static let UpdatePointNotification = "com.entuition.wekend.Notification.UpdatePoint"
     static let UpdateUserInfoNotification = "com.entution.wekend.Notification.UpdateUser"
-    
     static let NotificationDataPoint = "com.entuition.wekend.Notification.Data.Point"
     
     static let sharedInstance = UserInfoManager()
@@ -34,16 +33,16 @@ class UserInfoManager: NSObject {
         
         let getOwnedUserInfoTask = AWSTaskCompletionSource<AnyObject>()
         
-        getUserInfo(userId: userId).continueWith(executor: AWSExecutor.mainThread(), block: {
+        getUserInfo(userId: userId).continueWith(executor: AWSExecutor.mainThread()) {
             (task: AWSTask) -> Any! in
             
-            if let error = task.error {
-                getOwnedUserInfoTask.set(error: error)
+            if task.error != nil {
+                getOwnedUserInfoTask.set(error: AuthenticateError.userNotFound)
                 return nil
             }
             
             guard let userInfo = task.result as? UserInfo else {
-                self.printLog("UserInfoManager > getOwnedUserInfo Failed")
+                getOwnedUserInfoTask.set(error: AuthenticateError.userNotFound)
                 return nil
             }
             
@@ -59,7 +58,7 @@ class UserInfoManager: NSObject {
             getOwnedUserInfoTask.set(result: userInfo)
             
             return nil
-        })
+        }
         
         return getOwnedUserInfoTask.task
     }
@@ -68,11 +67,11 @@ class UserInfoManager: NSObject {
         
         let getUserTask = AWSTaskCompletionSource<AnyObject>()
         
-        self.mapper.load(UserInfo.self, hashKey: userId, rangeKey: nil).continueWith(executor: AWSExecutor.mainThread(), block: {
+        mapper.load(UserInfo.self, hashKey: userId, rangeKey: nil).continueWith(executor: AWSExecutor.mainThread()) {
             (task: AWSTask) -> Any! in
             
             guard let result = task.result as? UserInfo else {
-                getUserTask.set(error: LoginError.notFoundUser)
+                getUserTask.set(error: AuthenticateError.userNotFound)
                 return nil
             }
             
@@ -83,7 +82,7 @@ class UserInfoManager: NSObject {
             getUserTask.set(result: result)
             
             return nil
-        })
+        }
         
         return getUserTask.task
     }
@@ -96,14 +95,13 @@ class UserInfoManager: NSObject {
         queryExpression.keyConditionExpression = "\(UserInfo.Attribute.USERNAME) = :username"
         queryExpression.expressionAttributeValues = [":username" : username]
         
-        mapper.query(UserInfo.self, expression: queryExpression).continueWith(executor: AWSExecutor.mainThread(), block: {
+        mapper.query(UserInfo.self, expression: queryExpression).continueWith(executor: AWSExecutor.mainThread()) {
             (task: AWSTask) -> Any! in
             
             guard let results = task.result?.items else {
-                fatalError("UserInfoManager > isUsernameAvailable > Error")
+                checkUsernameTask.set(error: AuthenticateError.unknown)
+                return nil
             }
-            
-            self.printLog("isUsernameAvailable > results.count : \(results.count)")
             
             if results.count == 0 {
                 checkUsernameTask.set(result: true as AnyObject?)
@@ -112,7 +110,7 @@ class UserInfoManager: NSObject {
             }
             
             return nil
-        })
+        }
         
         return checkUsernameTask.task
     }
@@ -125,11 +123,12 @@ class UserInfoManager: NSObject {
         queryExpression.keyConditionExpression = "\(UserInfo.Attribute.NICKNAME) = :nickname"
         queryExpression.expressionAttributeValues = [":nickname" : nickname]
         
-        mapper.query(UserInfo.self, expression: queryExpression).continueWith(executor: AWSExecutor.mainThread(), block: {
+        mapper.query(UserInfo.self, expression: queryExpression).continueWith(executor: AWSExecutor.mainThread()) {
             (task: AWSTask) -> Any! in
             
             guard let resultItems = task.result?.items else {
-                fatalError("UserInfoManager > isNicknameAvailable Error")
+                nicknameTask.set(error: AuthenticateError.unknown)
+                return nil
             }
             
             if resultItems.count == 0 {
@@ -139,82 +138,59 @@ class UserInfoManager: NSObject {
             }
             
             return nil
-        })
+        }
         
         return nicknameTask.task
     }
     
-    func saveUserInfo(userInfo: UserInfo) -> AWSTask<AnyObject> {
-        
-        return mapper.save(userInfo).continueWith(block: {
+    func saveUserInfo(userInfo: UserInfo, completion: @escaping (_:Bool) -> Void) {
+        mapper.save(userInfo).continueWith(executor: AWSExecutor.mainThread()) {
             (task: AWSTask) -> Any? in
-            
             if task.error == nil {
-                
                 self.userInfo = userInfo
-                
-                let imageName = userInfo.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(0)
-                let imageUrl  = Configuration.S3.PROFILE_IMAGE_URL + imageName
-                
-//                UIImageView.removeObjectFromCache(forKey: imageUrl as AnyObject)
-                NotificationCenter.default.post(name: Notification.Name(UserInfoManager.UpdateUserInfoNotification), object: nil)
+                NotificationCenter.default.post(name: Notification.Name(UserInfoManager.UpdateUserInfoNotification),
+                                                object: nil)
             }
+            completion(task.error == nil)
             return nil
-        })
+        }
     }
     
     func deleteUserInfo(userInfo: UserInfo) -> AWSTask<AnyObject> {
         return mapper.remove(userInfo)
     }
 
-    func chargePoint(point: Int) -> AWSTask<AnyObject> {
-        
-        printLog("chargePoint > point : \(point)")
-        
+    func chargePoint(point: Int, completion: @escaping (_:Bool) -> Void) {
+        printLog("\(#function) > point : \(point)")
         guard let userInfo = self.userInfo else {
-            fatalError("UserInfoManager > could not load userInfo")
+            printLog("\(#function) > get userInfo Error")
+            completion(false)
+            return
         }
         
         let oldPoint = userInfo.balloon as? Int ?? 0
         userInfo.balloon = oldPoint + point
         
-        return mapper.save(userInfo).continueWith(block: {
-            (task: AWSTask) -> Any! in
-            
-            if task.error != nil { return nil }
-            
-            NotificationCenter.default.post(name: Notification.Name(rawValue: UserInfoManager.UpdatePointNotification),
-                                            object: nil,
-                                            userInfo: [UserInfoManager.NotificationDataPoint : userInfo.balloon! as! Int])
-            
-            return nil
-        })
+        saveUserInfo(userInfo: userInfo) { isSuccess in
+            completion(isSuccess)
+        }
     }
     
-    func consumePoint() -> AWSTask<AnyObject> {
+    func consumePoint(completion: @escaping (_:Bool) -> Void) throws {
         
-        guard let oldPoint = userInfo?.balloon as? Int else {
-            fatalError("consumePoint > could not load point")
+        guard let userInfo = self.userInfo,
+            let oldPoint = userInfo.balloon as? Int else {
+                throw PurchaseError.notEnoughPoint
         }
         
         let newPoint = oldPoint - 500
-        if newPoint < 0 {
-            return AWSTask(error: PurchaseError.notEnoughPoint)
+        if newPoint < 0 { throw PurchaseError.notEnoughPoint }
+        
+        userInfo.balloon = newPoint
+        
+        saveUserInfo(userInfo: userInfo) { isSuccess in
+            completion(isSuccess)
         }
-        
-        userInfo?.balloon = newPoint
-        
-        return mapper.save(userInfo!).continueWith(block: {
-            (task: AWSTask) -> Any? in
-            
-            if task.error == nil {
-                NotificationCenter.default.post(name: Notification.Name(rawValue: UserInfoManager.UpdatePointNotification),
-                                                object: nil,
-                                                userInfo: [UserInfoManager.NotificationDataPoint : newPoint])
-            }
-            
-            return nil
-        })
     }
     
     func clearNotificationCount(_ type: NavigationType) -> AWSTask<AnyObject> {
