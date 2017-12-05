@@ -11,6 +11,7 @@ import StoreKit
 import UserNotifications
 import GoogleMaps
 import FBSDKCoreKit
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -27,6 +28,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // register Google Map
         GMSServices.provideAPIKey(Configuration.GOOGLE_API_KEY)
         
+        FirebaseApp.configure()
+        
         // FBSDKApplicationDelegate initialize --> For What?????
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
@@ -35,7 +38,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let token = deviceToken.reduce("") { $0 + String(format: "%02.2hhx", $1) }
-        printLog("\(#function) data: \(deviceToken)")
+        printLog("\(#function) data: \(token)")
         // Forward the token to your provider, using a custom method
         UserDefaults.RemoteNotification.set(token, forKey: .deviceToken)
     }
@@ -111,7 +114,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         ApplicationNavigator.shared.showMainViewController() { DeepLinker.checkDeepLink() }
                     }
                 } else {
-                    DispatchQueue.main.async { ApplicationNavigator.shared.showLoginViewController() }
+//                    self.printLog("\(#function) > topView : \(String(describing: self.window?.rootViewController?.className))")
+                    if self.window?.rootViewController?.className == "UIViewController" {
+                        DispatchQueue.main.async {
+                            ApplicationNavigator.shared.showLoginViewController()
+                        }
+                    }
                 }
             }
         }

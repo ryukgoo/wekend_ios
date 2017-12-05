@@ -9,7 +9,7 @@
 import Foundation
 
 extension UIView {
-    static let ANIMATION_DURATION = 0.4
+    static let ANIMATION_DURATION = 0.3
     
     func fadeIn(withDuration duration: TimeInterval = ANIMATION_DURATION) {
         self.alpha = 0.0

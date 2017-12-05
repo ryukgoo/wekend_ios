@@ -296,9 +296,11 @@ extension CampaignTableViewController: DropDownMenuDelegate {
     }
     
     func getDropDownMenu() -> DropDownMenu {
-        
         let dropDownMenu = DropDownMenu(frame: view.bounds)
         dropDownMenu.delegate = self
+        
+        dropDownMenu.menuView.estimatedRowHeight = 45.0
+        dropDownMenu.menuView.rowHeight = 45.0
         
         let sortCell = getSortCell()
         let categoryCell = getCategoryCell()
@@ -316,7 +318,6 @@ extension CampaignTableViewController: DropDownMenuDelegate {
     }
     
     func getSortCell() -> DropDownMenuCell {
-        // init Sort Switch
         let sortCell = FullWidthMenuCell()
         let sortKeys = [SortMode.like.toString, SortMode.date.toString]
         let sortSwitcher = UISegmentedControl(items: sortKeys)
@@ -335,9 +336,8 @@ extension CampaignTableViewController: DropDownMenuDelegate {
     }
     
     func getCategoryCell() -> FilterMenuCell {
-        printLog(#function)
-        let categoryCell = FilterMenuCell(data: Category.allStrings)
         printLog("\(#function) > cases : \(Category.allStrings)")
+        let categoryCell = FilterMenuCell(data: Category.allStrings)
         categoryCell.tag = 1
         categoryCell.setEnabled(true)
         categoryCell.delegate = self

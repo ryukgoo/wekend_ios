@@ -63,26 +63,15 @@ extension String {
     func toPhoneFormat() -> String? {
         
         let numbersOnly = self.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
-//        let length = numbersOnly.characters.count
         
-        var sourceIndex = 0
+        let areaIndex = numbersOnly.index(numbersOnly.startIndex, offsetBy: 3)
+        let areaCode = numbersOnly[..<areaIndex]
         
-        let areaCodeLength = 3
-        guard let areaCode = numbersOnly.characters.substring(start: sourceIndex, offsetBy: areaCodeLength) else {
-            return nil
-        }
-        sourceIndex += areaCodeLength
+        let prefixIndex = numbersOnly.index(numbersOnly.startIndex, offsetBy: 7)
+        let prefix = numbersOnly[areaIndex..<prefixIndex]
         
-        let prefixLength = 4
-        guard let prefix = numbersOnly.characters.substring(start: sourceIndex, offsetBy: prefixLength) else {
-            return nil
-        }
-        sourceIndex += prefixLength
-        
-        let suffixLength = 4
-        guard let suffix = numbersOnly.characters.substring(start: sourceIndex, offsetBy: suffixLength) else {
-            return nil
-        }
+        let suffixIndex = numbersOnly.index(numbersOnly.startIndex, offsetBy: 11)
+        let suffix = numbersOnly[prefixIndex..<suffixIndex]
         
         return areaCode + "-" + prefix + "-" + suffix
     }

@@ -115,7 +115,7 @@ struct Configuration {
     
     // MARK: Application Default Configuration
     static let APP_NAME = "wekend"
-    static let PLATFORM = "iOS"
+    static let PLATFORM = "APNS"
     
     // MARK: Amazon Cognito Configuration
     static let REGION_TYPE = AWSRegionType.APNortheast1

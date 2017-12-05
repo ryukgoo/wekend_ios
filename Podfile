@@ -21,5 +21,6 @@ target :'Wekend' do
 	pod 'DropDownMenuKit', '0.8.2'
 	pod 'GoogleMaps'
 	pod 'GooglePlaces'
+	pod 'Firebase/Core'
 	pod 'SDWebImage', '~> 4.0'
 end

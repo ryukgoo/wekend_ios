@@ -219,10 +219,14 @@ class UserInfoManager: NSObject {
         
         printLog("registerARN")
         
-        guard let deviceToken = UserDefaults.RemoteNotification.string(forKey: .deviceToken),
-            let userId = userInfo?.userid else {
-                printLog("registEndpointARN > deviceToken or userId is nil")
-                return
+        guard let deviceToken = UserDefaults.RemoteNotification.string(forKey: .deviceToken) else {
+            printLog("\(#function) > deviceToken is nil")
+            return
+        }
+        
+        guard let userId = userInfo?.userid else {
+            printLog("\(#function) > userId is nil")
+            return
         }
         
         let apiClient = WEKENDNotificationAPIClient.default()

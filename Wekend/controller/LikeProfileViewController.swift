@@ -166,6 +166,8 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
                 fatalError("ProfileViewController > loadProposeStatus > enum cast Error")
             }
             
+            self.proposeStatus = status
+            
             DispatchQueue.main.async {
                 self.updateProposeButton(status: status)
             }
@@ -225,6 +227,9 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
     }
     
     private func refreshLayout() {
+        
+        printLog("refreshLayout")
+        
         var scrollableHeight = pagerView.frame.height
         scrollableHeight += nicknameStackView.frame.height
         scrollableHeight += ageStackView.frame.height
@@ -282,6 +287,8 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
             proposeButton.isUserInteractionEnabled = false
             break
         }
+        
+        refreshLayout()
     }
     
     // MARK: Delegates
