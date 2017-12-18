@@ -106,11 +106,11 @@ extension MainViewController: Observerable {
                                                object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleMailNotification(_:)),
-                                               name: Notification.Name(rawValue: ReceiveMailManager.NewRemoteNotification),
+                                               name: Notification.Name(rawValue: MailNotification.Receive.New),
                                                object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleMailNotification(_:)),
-                                               name: Notification.Name(SendMailManager.NewRemoteNotification),
+                                               name: Notification.Name(MailNotification.Send.New),
                                                object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.displayTabbarBadge),
@@ -121,9 +121,9 @@ extension MainViewController: Observerable {
     func removeNotificationObservers() {
         NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.NewRemoteNotification),
                                                   object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: ReceiveMailManager.NewRemoteNotification),
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: MailNotification.Receive.New),
                                                   object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(SendMailManager.NewRemoteNotification),
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(MailNotification.Send.New),
                                                   object: nil)
         NotificationCenter.default.removeObserver(self, name: Notification.Name(AppDelegate.WillEnterForeground),
                                                   object: nil)

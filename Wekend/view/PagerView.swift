@@ -27,16 +27,20 @@ class PagerView: UIView, UIScrollViewDelegate {
         }
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        
-        printLog("init")
+    init() {
+        super.init(frame: CGRect.zero)
     }
     
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    /*
     override func layoutSubviews() {
-        
+        printLog(#function)
         loadVisiblePages()
     }
+    */
     
     func initViews() {
         initPageViews()

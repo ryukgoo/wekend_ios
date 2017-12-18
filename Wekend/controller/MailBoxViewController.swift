@@ -69,12 +69,16 @@ class MailBoxViewController: UIViewController {
     
     func loadMails(mode: Mode? = nil) {
         
+        printLog(#function)
+        
         guard let inputMode = mode else {
             loadMails(mode: Mode(rawValue: segmentControl.selectedSegmentIndex)!)
             return
         }
         
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        
+        printLog("\(#function) > inputMode : \(inputMode.rawValue)")
         
         switch inputMode {
             
@@ -89,28 +93,19 @@ class MailBoxViewController: UIViewController {
                 return
             }
             
-            ReceiveMailManager.sharedInstance.getReceiveMails().continueWith(executor: AWSExecutor.mainThread(), block: {
-                (task: AWSTask) -> Any! in
-                
-                guard let _ = task.result else {
-                    fatalError("MailBoxViewController > getReceiveMails Error")
+            ReceiveMailRepository.shared.loadMails { result in
+                if case Result.success(object: _) = result {
+                    DispatchQueue.main.async {
+                        self.refreshControl.endRefreshing()
+                        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                        
+                        self.endLoading()
+                        self.tableView.reloadData()
+                        self.handleNoResultLabel()
+                        self.isNeedRefreshReceiveMail = false
+                    }
                 }
-                
-                DispatchQueue.main.async {
-                    self.refreshControl.endRefreshing()
-                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
-                    
-                    self.endLoading()
-                    self.tableView.reloadData()
-                    
-                    self.handleNoResultLabel()
-                    
-                    self.isNeedRefreshReceiveMail = false
-                }
-                
-                return nil
-            })
-            
+            }
             break
             
         case .send:
@@ -124,26 +119,19 @@ class MailBoxViewController: UIViewController {
                 return
             }
             
-            SendMailManager.sharedInstance.getSendMails().continueWith(executor: AWSExecutor.mainThread(), block: {
-                (task : AWSTask) -> Any! in
-                
-                guard let _ = task.result else {
-                    fatalError("MailBoxViewController > getSendMails Error")
+            SendMailRepository.shared.loadMails { result in
+                if case Result.success(object: _) = result {
+                    DispatchQueue.main.async {
+                        self.refreshControl.endRefreshing()
+                        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                        
+                        self.tabBarController?.endLoading()
+                        self.tableView.reloadData()
+                        self.handleNoResultLabel()
+                        self.isNeedRefreshSendMail = false
+                    }
                 }
-                
-                DispatchQueue.main.async {
-                    self.refreshControl.endRefreshing()
-                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
-                    
-                    self.tabBarController?.endLoading()
-                    self.tableView.reloadData()
-                    self.handleNoResultLabel()
-                    self.isNeedRefreshSendMail = false
-                }
-                
-                return nil
-            })
-            
+            }
             break
             
         default:
@@ -171,30 +159,30 @@ extension MailBoxViewController: Observerable {
     func addNotificationObservers() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(MailBoxViewController.handleAddReceiveMailNotification(_:)),
-                                               name: Notification.Name(rawValue: ReceiveMailManager.AddNotification),
+                                               name: Notification.Name(rawValue: MailNotification.Receive.Add),
                                                object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(MailBoxViewController.handleAddReceiveMailNotification(_:)),
-                                               name: Notification.Name(rawValue: ReceiveMailManager.NewRemoteNotification),
+                                               name: Notification.Name(rawValue: MailNotification.Receive.New),
                                                object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(MailBoxViewController.handleAddSendMailNotification(_:)),
-                                               name: Notification.Name(rawValue: SendMailManager.AddNotification),
+                                               name: Notification.Name(rawValue: MailNotification.Send.Add),
                                                object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(MailBoxViewController.handleAddSendMailNotification(_:)),
-                                               name: Notification.Name(rawValue: SendMailManager.NewRemoteNotification),
+                                               name: Notification.Name(rawValue: MailNotification.Send.New),
                                                object: nil)
     }
     
     func removeNotificationObservers() {
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: ReceiveMailManager.AddNotification),
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: MailNotification.Receive.Add),
                                                   object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: ReceiveMailManager.NewRemoteNotification),
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: MailNotification.Receive.New),
                                                   object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: SendMailManager.AddNotification),
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: MailNotification.Send.Add),
                                                   object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: SendMailManager.NewRemoteNotification),
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: MailNotification.Send.New),
                                                   object: nil)
     }
     
@@ -280,7 +268,7 @@ extension MailBoxViewController {
     func handleNoResultLabel() {
         switch segmentControl.selectedSegmentIndex {
         case Mode.receive.rawValue:
-            if ReceiveMailManager.sharedInstance.datas.count == 0 {
+            if ReceiveMailRepository.shared.datas.count == 0 {
                 self.noResultLabel.text = "받은 메일이 없습니다"
                 self.noResultLabel.isHidden = false
             } else {
@@ -288,7 +276,7 @@ extension MailBoxViewController {
             }
             break
         case Mode.send.rawValue:
-            if SendMailManager.sharedInstance.datas.count == 0 {
+            if SendMailRepository.shared.datas.count == 0 {
                 self.noResultLabel.text = "보낸 메일이 없습니다"
                 self.noResultLabel.isHidden = false
             } else {
@@ -313,9 +301,9 @@ extension MailBoxViewController: UITableViewDataSource {
         
         switch segmentControl.selectedSegmentIndex {
         case Mode.receive.rawValue:
-            return ReceiveMailManager.sharedInstance.datas.count
+            return ReceiveMailRepository.shared.datas.count
         case Mode.send.rawValue:
-            return SendMailManager.sharedInstance.datas.count
+            return SendMailRepository.shared.datas.count
         default:
             return 0
         }
@@ -330,9 +318,7 @@ extension MailBoxViewController: UITableViewDelegate {
         
         let cell = tableView.dequeueReusableCell(for: indexPath) as MailTableViewCell
         
-        guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
-            fatalError()
-        }
+        guard let userInfo = UserInfoManager.sharedInstance.userInfo else { return cell }
         
         let defaultImage : UIImage
         if userInfo.gender != UserInfo.RawValue.GENDER_MALE {
@@ -341,10 +327,12 @@ extension MailBoxViewController: UITableViewDelegate {
             defaultImage = #imageLiteral(resourceName: "img_bg_thumb_s_default_Female")
         }
         
+        printLog("\(#function) > segmentControl.selectedSegmentIndex : \(segmentControl.selectedSegmentIndex)")
+        
         switch segmentControl.selectedSegmentIndex {
         case Mode.receive.rawValue:
             
-            let mail = ReceiveMailManager.sharedInstance.datas[indexPath.row]
+            let mail = ReceiveMailRepository.shared.datas[indexPath.row]
             let imageName = mail.SenderId! + "/" + Configuration.S3.PROFILE_IMAGE_NAME(0)
             let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + imageName
             
@@ -375,7 +363,7 @@ extension MailBoxViewController: UITableViewDelegate {
             
         case Mode.send.rawValue:
             
-            let mail = SendMailManager.sharedInstance.datas[indexPath.row]
+            let mail = SendMailRepository.shared.datas[indexPath.row]
             let imageName = mail.ReceiverId! + "/" + Configuration.S3.PROFILE_IMAGE_NAME(0)
             let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + imageName
             
@@ -416,7 +404,7 @@ extension MailBoxViewController: UITableViewDelegate {
     
     private func getMailTitle(status: ProposeStatus, mode: Int) -> String {
         
-        printLog("getMailTitle > status : \(status), mode : \(mode)")
+        printLog("\(#function) > getMailTitle > status : \(status), mode : \(mode)")
         
         switch status {
         case .notMade:
@@ -438,28 +426,22 @@ extension MailBoxViewController: UITableViewDelegate {
         
         tableView.deselectRow(at: indexPath, animated: true)
         
+        guard let mailProfileViewController = LikeProfileViewController.storyboardInstance(from: "SubItems") as? LikeProfileViewController else {
+            fatalError()
+        }
+        
         switch segmentControl.selectedSegmentIndex {
         case Mode.receive.rawValue:
-            guard let receiveVC: FriendProfileViewController = FriendProfileViewController.storyboardInstance(from: "SubItems") as? FriendProfileViewController else {
-                fatalError()
-            }
-            
-            let mail = ReceiveMailManager.sharedInstance.datas[indexPath.row]
-            receiveVC.friendUserId = mail.SenderId
-            receiveVC.productId = mail.ProductId as! Int?
-            navigationController?.pushViewController(receiveVC, animated: true)
-            
+            let mail = ReceiveMailRepository.shared.datas[indexPath.row]
+            mailProfileViewController.viewModel = MailProfileViewModel(productId: mail.ProductId as! Int, friendId: mail.FriendId!)
+            navigationController?.pushViewController(mailProfileViewController, animated: true)
+            break
         case Mode.send.rawValue:
-            guard let sendVC: LikeProfileViewController = LikeProfileViewController.storyboardInstance(from: "SubItems") as? LikeProfileViewController else {
-                fatalError()
-            }
-            let mail = SendMailManager.sharedInstance.datas[indexPath.row]
-            
-            sendVC.friendUserId = mail.ReceiverId
-            sendVC.productId = mail.ProductId as! Int?
-            navigationController?.pushViewController(sendVC, animated: true)
-        default:
-            return
+            let mail = SendMailRepository.shared.datas[indexPath.row]
+            mailProfileViewController.viewModel = MailProfileViewModel(productId: mail.ProductId as! Int, friendId: mail.FriendId!)
+            navigationController?.pushViewController(mailProfileViewController, animated: true)
+            break
+        default: return
         }
     }
     
@@ -486,35 +468,31 @@ extension MailBoxViewController: UITableViewDelegate {
             switch self.segmentControl.selectedSegmentIndex {
                 
             case Mode.receive.rawValue:
-                let deleteMail = ReceiveMailManager.sharedInstance.datas[indexPath.row]
-                ReceiveMailManager.sharedInstance.deleteReceiveMail(mail: deleteMail).continueWith(executor: AWSExecutor.mainThread(), block: {
-                    (task: AWSTask) -> Any? in
-                    
-                    if task.error == nil {
-                        ReceiveMailManager.sharedInstance.datas.remove(at: indexPath.row)
+                let deleteMail = ReceiveMailRepository.shared.datas[indexPath.row]
+                
+                ReceiveMailRepository.shared.updateMail(mail: deleteMail) { isSuccess in
+                    if isSuccess {
+                        ReceiveMailRepository.shared.datas.remove(at: indexPath.row)
                         DispatchQueue.main.async {
                             self.tableView.deleteRows(at: [indexPath], with: .fade)
                             self.handleNoResultLabel()
                         }
                     }
-                    return nil
-                })
+                }
                 break
                 
             case Mode.send.rawValue:
-                let deleteMail = SendMailManager.sharedInstance.datas[indexPath.row]
-                SendMailManager.sharedInstance.deleteSendMail(mail: deleteMail).continueWith(executor: AWSExecutor.mainThread(), block: {
-                    (task: AWSTask) -> Any? in
-                    
-                    if task.error == nil {
-                        SendMailManager.sharedInstance.datas.remove(at: indexPath.row)
+                let deleteMail = SendMailRepository.shared.datas[indexPath.row]
+                
+                SendMailRepository.shared.deleteMail(mail: deleteMail) { isSuccess in
+                    if isSuccess {
+                        SendMailRepository.shared.datas.remove(at: indexPath.row)
                         DispatchQueue.main.async {
                             self.tableView.deleteRows(at: [indexPath], with: .fade)
                             self.handleNoResultLabel()
                         }
                     }
-                    return nil
-                })
+                }
                 break
                 
             default:

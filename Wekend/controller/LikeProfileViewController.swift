@@ -14,43 +14,37 @@ import KRWordWrapLabel
  *
  */
 @available(iOS 9.0, *)
-class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollViewDelegate {
-
-    deinit {
-        removeNotificationObservers()
-        printLog("deinit")
-    }
+class LikeProfileViewController: UIViewController {
     
-    let minimumAlpha: CGFloat = 0.1
-    
-    // MARK: Properties
-    
-    var friendUserId: String?
-    var friendUserInfo: UserInfo?
-    var productId: Int?
-    var productInfo: ProductInfo?
-    var proposeStatus: ProposeStatus = .none
-    var isLoading: Bool = false
-        
     // MARK: IBOutlet
-    
-    @IBOutlet weak var containerView: UIView!
+    @IBOutlet weak var container: UIView!
     @IBOutlet weak var pagerView: PagerView!
     @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var messageStackView: UIStackView!
     @IBOutlet weak var nicknameStackView: UIStackView!
     @IBOutlet weak var ageStackView: UIStackView!
     @IBOutlet weak var phoneStackView: UIStackView!
+    @IBOutlet weak var buttonStackView: UIStackView!
+    @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var nicknameLabel: UILabel!
     @IBOutlet weak var ageLabel: UILabel!
     @IBOutlet weak var phoneLabel: UILabel!
     @IBOutlet weak var descriptionLabel: KRWordWrapLabel!
     @IBOutlet weak var pointLabel: UILabel!
     @IBOutlet weak var proposeButton: UIButton!
+    
     @IBOutlet weak var containerViewHeight: NSLayoutConstraint!
     @IBOutlet weak var pagerViewOffsetY: NSLayoutConstraint!
     @IBOutlet weak var stackViewOffsetY: NSLayoutConstraint!
     @IBOutlet weak var backViewOffsetY: NSLayoutConstraint!
     @IBOutlet weak var backgroundHeight: NSLayoutConstraint!
+    
+    var viewModel: MailProfileViewModel?
+    
+    deinit {
+        removeNotificationObservers()
+        printLog("deinit")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,8 +52,15 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
         let backButton = UIBarButtonItem(image: #imageLiteral(resourceName: "btn_icon_back_w"), style: .plain, target: self, action: #selector(self.backButtonTapped(_:)))
         navigationItem.leftBarButtonItem = backButton
         
-        loadProfileInfo()
-        loadMail()
+        bindViewModel()
+        
+        viewModel?.loadUser()
+        viewModel?.loadFriend()
+        viewModel?.loadProduct()
+        viewModel?.loadMail()
+        
+        pagerView.delegate = self
+        scrollView.delegate = self
         
         addNotificationObservers()
     }
@@ -70,363 +71,204 @@ class LikeProfileViewController: UIViewController, PagerViewDelegate, UIScrollVi
         if #available(iOS 11.0, *) {
             scrollView.contentInsetAdjustmentBehavior = .never
         }
-        
-        UIApplication.shared.isStatusBarHidden = true
-        
-        var colors = [UIColor]()
-        colors.append(UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.5))
-        colors.append(UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0))
-        navigationController?.navigationBar.setGradientBackground(colors: colors)
-        navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.tintColor = .white
+        navigationController?.navigationBar.viewWillAppear()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        navigationController?.navigationBar.viewDidAppear()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
         UIApplication.shared.isStatusBarHidden = false
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
-    func backButtonTapped(_ sender: Any) {
-        navigationController?.popViewController(animated: true)
-    }
-    
-    private func loadProfileInfo() {
+    fileprivate func bindViewModel() {
+        guard let viewModel = viewModel else { return }
         
-//        startLoading()
-        
-        isLoading = true
-        self.containerView.alpha = 0.0
-        
-        UserInfoManager.sharedInstance.getUserInfo(userId: friendUserId!).continueWith(executor: AWSExecutor.mainThread(), block: {
-            (task: AWSTask) -> Any! in
-            
-            guard let info = task.result else {
-                fatalError("ProfileViewController > get Friend UserInfo Error")
+        viewModel.user.bindAndFire { [weak self] user in
+            if let point = user?.balloon as? Int {
+                self?.pointLabel.text = "보유포인트 \(point)P"
             }
+        }
+        
+        viewModel.friend.bindAndFire { [weak self] friend in
+            guard let friend = friend else { return }
+            guard let photos = friend.photos as? Set<String> else { return }
             
-            self.friendUserInfo = info as? UserInfo
+            self?.nicknameLabel.text = friend.nickname
+            self?.ageLabel.text = (friend.birth as! Int).toAge.description
+            self?.phoneLabel.text = friend.phone?.toPhoneFormat() ?? friend.phone
+            self?.pagerView.pageCount = max(photos.count, 1)
+        }
+        
+        viewModel.product.bindAndFire { [weak self] product in
+            guard let product = product else { return }
+            self?.descriptionLabel.text = product.toDescriptionForProfile
+        }
+        
+        viewModel.mail.bindAndFire { [weak self] mail in
+            if !(self?.isViewLoaded)! { return }
             
-            ProductInfoManager.sharedInstance.getProductInfo(productId: self.productId!).continueWith(executor: AWSExecutor.mainThread(), block: {
-                (productTask: AWSTask) -> Any! in
+            if let mail = mail {
+                guard let proposeStatus = mail.ProposeStatus else { return }
+                guard let status = ProposeStatus(rawValue: proposeStatus) else { return }
                 
-                guard let productInfo = productTask.result else {
-                    fatalError("ProfileViewController > get ProductInfo Error")
-                }
+                self?.messageStackView.isHidden = false
+                self?.messageLabel.text = mail.Message
+                self?.proposeButton.setTitle(status.message(), for: .normal)
                 
-                self.productInfo = productInfo as? ProductInfo
-                self.isLoading = false
+                self?.buttonStackView.isHidden = true
                 
-                DispatchQueue.main.async {
-                    self.initViews()
-//                    self.endLoading()
+                switch status {
+                case .none: break
+                case .notMade:
+                    self?.phoneStackView.isHidden = true
+                    self?.proposeButton.isUserInteractionEnabled = false
                     
-                    UIView.animate(withDuration: 0.3, animations: {
-                        self.containerView.alpha = 1.0
-                    })
+                    if let _ = mail as? ReceiveMail {
+                        self?.printLog("\(#function) > mail is ReceiveMail")
+                        self?.buttonStackView.isHidden = false
+                    }
+                    break
+                case .made:
+                    self?.phoneStackView.isHidden = false
+                    self?.proposeButton.isUserInteractionEnabled = false
+                    break
+                case .alreadyMade:
+                    self?.phoneStackView.isHidden = true
+                    self?.proposeButton.isUserInteractionEnabled = false
+                    break
+                case .reject:
+                    self?.phoneStackView.isHidden = true
+                    self?.proposeButton.isUserInteractionEnabled = false
+                    self?.proposeButton.setTitle("함께가기 거절", for: .normal)
+                    break
+                case .delete:
+                    self?.phoneStackView.isHidden = true
+                    self?.proposeButton.isUserInteractionEnabled = false
+                    break
                 }
                 
-                return nil
-            })
-            
-            return nil
-        })
-    }
-    
-    private func loadMail() {
-        
-        printLog("loadProposeStatus start")
-        
-        guard let senderId = UserInfoManager.sharedInstance.userInfo?.userid,
-              let receiverId = self.friendUserId,
-              let productId = self.productId else {
-            fatalError("ProfileViewController > loadProposeStatus > parameter Error")
-        }
-        
-        SendMailManager.sharedInstance.getSendMail(senderId: senderId, receiverId: receiverId, productId: productId).continueWith(executor: AWSExecutor.mainThread(), block: {
-            (task: AWSTask) -> Any! in
-            
-            guard let mail = task.result as? SendMail else {
-                DispatchQueue.main.async {
-                    self.updateProposeButton(status: ProposeStatus.none)
-                }
-                return nil
+                self?.proposeButton.setTitle(status.message(), for: .normal)
+                
+            } else {
+                self?.messageStackView.isHidden = true
+                self?.phoneStackView.isHidden = true
+                self?.proposeButton.isUserInteractionEnabled = true
+                self?.proposeButton.setTitle(ProposeStatus.none.message(), for: .normal)
+                self?.proposeButton.addTarget(self,
+                                              action: #selector(self?.proposeButtonTapped(_:)),
+                                              for: .touchUpInside)
             }
-            
-            guard let status = ProposeStatus(rawValue: mail.ProposeStatus!) else {
-                fatalError("ProfileViewController > loadProposeStatus > enum cast Error")
+            self?.refreshLayout()
+        }
+        
+        self.viewModel?.onShowAlert = { [weak self] alert in
+            let alertController = UIAlertController(title: alert.title,
+                                                    message: alert.message,
+                                                    preferredStyle: .alert)
+            for action in alert.actions {
+                alertController.addAction(UIAlertAction(title: action.buttonTitle,
+                                                        style: action.style,
+                                                        handler: { _ in action.handler?() }))
             }
-            
-            self.proposeStatus = status
-            
-            DispatchQueue.main.async {
-                self.updateProposeButton(status: status)
-            }
-            
-            return nil
-        })
-        
-    }
-    
-    private func initViews() {
-        
-        guard let userInfo = self.friendUserInfo else {
-            fatalError("ProfileViewController > get UserInfo Error")
+            self?.present(alertController, animated: true, completion: nil)
         }
         
-        let photos: Set<String>
-        
-        if userInfo.photos == nil {
-            photos = Set<String>()
-        } else {
-            photos = userInfo.photos as! Set<String>
-        }
-        
-        pagerView.delegate = self
-        pagerView.pageCount = max(photos.count, 1)
-        
-        scrollView.delegate = self
-        
-        printLog("photos count : \(photos.count)")
-        
-        guard let birth = userInfo.birth as! Int! else {
-            fatalError("ProfileViewController > userInfo age Error")
-        }
-        
-        let date = Date()
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year], from: date)
-        let year = components.year
-        
-        nicknameLabel.text = userInfo.nickname
-        ageLabel.text = String(year! - birth) + "세"
-        
-        guard let productInfo = self.productInfo else {
-            fatalError("ProfileViewController > getProductInfo Error")
-        }
-        
-        descriptionLabel.text = productInfo.TitleKor! + "\n\n" + (productInfo.Description?.htmlToString ?? productInfo.Description!)
-        descriptionLabel.sizeToFit()
-        
-        if let point = UserInfoManager.sharedInstance.userInfo?.balloon as! Int! {
-            pointLabel.text = "보유포인트 : " + String(point) + "P"
-        } else {
-            pointLabel.text = "보유포인트 : " + String(0) + "P"
-        }
-        
-        refreshLayout()
+        self.viewModel?.onShowMessage = { [weak self] _ in self?.sendMessage() }
     }
     
     private func refreshLayout() {
         
-        printLog("refreshLayout")
-        
         var scrollableHeight = pagerView.frame.height
-        scrollableHeight += nicknameStackView.frame.height
-        scrollableHeight += ageStackView.frame.height
+        if (!messageStackView.isHidden) { scrollableHeight += messageStackView.frame.height }
+        if (!nicknameStackView.isHidden) { scrollableHeight += nicknameStackView.frame.height }
+        if (!ageStackView.isHidden) { scrollableHeight += ageStackView.frame.height }
+        if (!phoneStackView.isHidden) { scrollableHeight += phoneStackView.frame.height }
+        if (!descriptionLabel.isHidden) { scrollableHeight += descriptionLabel.frame.height }
         scrollableHeight += 27 // margin
-        scrollableHeight += descriptionLabel.frame.height
         scrollableHeight += 20 // bottom margin
         
-        switch proposeStatus {
-        case .made:
-            
-            phoneLabel.text = friendUserInfo?.phone?.toPhoneFormat()
-            phoneStackView.isHidden = false
-            scrollableHeight += phoneLabel.frame.height
-            
-            break
-        default:
-            
-            phoneStackView.isHidden = true
-            
-            break
-        }
+        let maxHeight = UIScreen.main.bounds.height - proposeButton.frame.height - pointLabel.frame.height + pagerView.frame.height
+        containerViewHeight.constant = max(scrollableHeight, maxHeight)
         
-        containerViewHeight.constant = scrollableHeight
         backgroundHeight.constant = scrollableHeight - pagerView.frame.size.height
     }
-    
-    private func updateProposeButton(status: ProposeStatus) {
-        
-        printLog("updateProposeButton > status : \(status.rawValue)")
-        
-        proposeButton.setTitle(status.message(), for: .normal)
-        
-        switch status {
-        case .none :
-            proposeButton.isUserInteractionEnabled = true
-            proposeButton.addTarget(self, action: #selector(proposeButtonTapped(_:)), for: .touchUpInside)
-            
-            break
-        case .notMade :
-            proposeButton.isUserInteractionEnabled = false
-            break
-        case .made :
-            proposeButton.isUserInteractionEnabled = false
-            break
-        case .reject :
-            
-            proposeButton.isUserInteractionEnabled = false
-            proposeButton.setTitle("함께가기 거절", for: .normal)
-            
-            break
-        case .alreadyMade :
-            proposeButton.isUserInteractionEnabled = false
-            break
-        case .delete :
-            proposeButton.isUserInteractionEnabled = false
-            break
-        }
-        
-        refreshLayout()
+}
+
+
+extension LikeProfileViewController {
+    func backButtonTapped(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
     }
     
-    // MARK: Delegates
+    func proposeButtonTapped(_ sender: Any) {
+        guard let viewModel = viewModel else { return }
+        viewModel.proposeButtonTapped()
+    }
     
-    func loadPageViewItem(imageView: UIImageView, page: Int) {
-        printLog(#function)
-        guard let userInfo = self.friendUserInfo else {
-            fatalError("ProfileViewController > loadPageViewItem > userInfo Error")
+    func sendMessage() {
+        let alertController = UIAlertController(title: "상대방에게 한마디",
+                                                message: "상대방에게 전하고 싶은 메시지을 보내주세요",
+                                                preferredStyle: .alert)
+        
+        // for multiline textField -> addCustomView
+        alertController.addTextField { (textField) in
+            textField.placeholder = "200자 내로 적어주세요"
         }
         
-        let imageName = userInfo.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(page)
-        let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + imageName
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        let okAction = UIAlertAction(title: "보내기", style: .default, handler: { (action) in
+            let textField = alertController.textFields![0] as UITextField
+            guard let viewModel = self.viewModel else { return }
+            viewModel.propose(message: textField.text!)
+        })
+        alertController.addAction(cancelAction)
+        alertController.addAction(okAction)
         
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    @IBAction func onAcceptButtonTapped(_ sender: Any) {
+        viewModel?.accept()
+    }
+    
+    @IBAction func onRejectButtonTapped(_ sender: Any) {
+        viewModel?.reject()
+    }
+}
+
+// MARK: - Delegates
+extension LikeProfileViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let yOffset = scrollView.contentOffset.y
+        let alpha = 1 - (yOffset / pagerView.frame.size.height)
+        let halfOffsetY = yOffset * 0.5
+
+        pagerView.alpha = alpha
+        pagerViewOffsetY.constant = halfOffsetY
+        backViewOffsetY.constant = -halfOffsetY
+        stackViewOffsetY.constant = -halfOffsetY
+    }
+}
+
+extension LikeProfileViewController: PagerViewDelegate {
+    func loadPageViewItem(imageView: UIImageView, page: Int) {
+        printLog("\(#function) > page : \(page)")
+        guard let friend = viewModel?.friend.value else { return }
+        
+        let imageName = friend.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(page)
+        let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + imageName
         imageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "default_profile"), options: .cacheMemoryOnly) {
             (image, error, cachedType, url) in
         }
     }
     
     func onPageTapped(page: Int) {
-        printLog("onPageTapped > page: \(page)")
+        printLog("\(#function) > page : \(page)")
     }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let yOffset = scrollView.contentOffset.y
-        let alpha = 1 - (yOffset / pagerView.frame.size.height)
-        let halfOffsetY = yOffset * 0.5
-        
-        pagerView.alpha = alpha
-        pagerViewOffsetY.constant = halfOffsetY
-        backViewOffsetY.constant = -halfOffsetY
-        stackViewOffsetY.constant = -halfOffsetY
-    }
-    
-    // MARK : Button click event
-    
-    /*
-     * update sendMail DB -> SendMailEvent
-     */
-    func proposeButtonTapped(_ sender: Any) {
-        printLog("proposeButtonTapped!!!!!")
-        
-        guard let receiverNickname = self.friendUserInfo?.nickname else {
-            fatalError("ProfileViewController > proposeButtonTapped > receiverNickname Error")
-        }
-        
-        let alertController = UIAlertController(title: "함께가기 신청\n",
-                                                message: "\(receiverNickname)님에게 함께가기를 신청하시겠습니까?\n(500포인트가 차감됩니다)",
-                                                preferredStyle: .alert)
-        
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        let okAction = UIAlertAction(title: "신청", style: .default, handler: { (action) in self.propose() })
-        alertController.addAction(cancelAction)
-        alertController.addAction(okAction)
-        
-        self.present(alertController, animated: true, completion: nil)
-        
-    }
-    
-    func propose() {
-        guard let senderId = UserInfoManager.sharedInstance.userInfo?.userid else {
-            fatalError("ProfileViewController > proposeButtonTapped > senderId Error")
-        }
-        
-        guard let receiverId = self.friendUserId else {
-            fatalError("ProfileViewcontroller > proposeButtonTapped > receiverId Error")
-        }
-        
-        guard let productId = self.productId else {
-            fatalError("ProfileViewController > proposeButtonTapped > productId Error")
-        }
-        
-        guard let senderNickname = UserInfoManager.sharedInstance.userInfo?.nickname else {
-            fatalError("ProfileViewController > proposeButtonTapped > senderNickname Error")
-        }
-        
-        guard let receiverNickname = self.friendUserInfo?.nickname else {
-            fatalError("ProfileViewController > proposeButtonTapped > receiverNickname Error")
-        }
-        
-        guard let productTitle = self.productInfo?.TitleKor else {
-            fatalError("ProfileViewController > proposeButtonTapped > ProductTitle Error")
-        }
-        
-        let sendMail = SendMail()
-        sendMail?.UserId = senderId
-        sendMail?.ReceiverId = receiverId
-        sendMail?.ProductId = productId
-        sendMail?.ProposeStatus = ProposeStatus.notMade.rawValue
-        sendMail?.SenderNickname = senderNickname
-        sendMail?.ReceiverNickname = receiverNickname
-        sendMail?.ProductTitle = productTitle
-        sendMail?.IsRead = 0
-        let timestamp = Date().iso8601
-        sendMail?.UpdatedTime = timestamp
-        sendMail?.ResponseTime = timestamp
-     
-        do {
-            try UserInfoManager.sharedInstance.consumePoint() { isSuccess in
-                if isSuccess {
-                    self.updateMail(sendMail!)
-                }
-            }
-        } catch PurchaseError.notEnoughPoint {
-            self.alert(message: "포인트를 충분하지 않습니다", title: "포인트 부족")
-        } catch {
-            
-        }
-    }
-    
-    private func updateMail(_ mail: SendMail) {
-        SendMailManager.sharedInstance.updateSendMail(mail: mail).continueWith(executor: AWSExecutor.mainThread()) {
-            (task: AWSTask) -> Any! in
-            
-            if task.error == nil {
-                DispatchQueue.main.async {
-                    self.proposeButton.setTitle(ProposeStatus.notMade.message(), for: .normal)
-                    self.proposeButton.removeTarget(self, action: #selector(self.proposeButtonTapped(_:)), for: .touchUpInside)
-                    
-                    self.alert(message: "\(mail.ReceiverNickname!)에게 함께가기를 신청하였습니다", title: "함께가기신청", completion: {
-                        (action) -> Void in
-                        NotificationCenter.default.post(name: Notification.Name(rawValue: SendMailManager.AddNotification), object: nil)
-                    })
-                }
-            }
-            return nil
-        }
-    }
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 
 extension LikeProfileViewController: Observerable {
@@ -446,7 +288,7 @@ extension LikeProfileViewController: Observerable {
         guard let point = UserInfoManager.sharedInstance.userInfo?.balloon as? Int else { return }
         
         DispatchQueue.main.async {
-            self.pointLabel.text = "보유포인트 : \(point)P"
+            self.pointLabel.text = "보유포인트 \(point)P"
         }
     }
 }

@@ -166,13 +166,8 @@ class MyProfileViewController: UIViewController {
             fatalError("MyProfileViewController > initViews > get birth Error")
         }
         
-        let date = Date()
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year], from: date)
-        let year = components.year
-        
         nicknameTextField.text = userInfo.nickname
-        ageLabel.text = String(year! - birth) + "세"
+        ageLabel.text = "\(birth.toAge)세"
 
         if let point = userInfo.balloon as! Int! {
             self.pointLabel.text = "보유포인트 : \(point)P"
@@ -613,21 +608,21 @@ extension MyProfileViewController: UITextFieldDelegate {
     }
     
     func phoneDidChanged(_ textField: UITextField) {
-        requestCodeButton.isEnabled = phoneTextField.text!.characters.count == 11
+        requestCodeButton.isEnabled = phoneTextField.text!.count == 11
     }
     
     func codeDidChanged(_ textField: UITextField) {
-        confirmCodeButton.isEnabled = codeTextField.text!.characters.count == 6
+        confirmCodeButton.isEnabled = codeTextField.text!.count == 6
     }
     
     func nicknameDidChanged(_ textField: UITextField) {
-        editNicknameButton.isEnabled = nicknameTextField.text!.characters.count > 1
+        editNicknameButton.isEnabled = nicknameTextField.text!.count > 1
     }
     
     func validateInputPhoneNumber() {
         
         if let inputPhoneNumber = phoneTextField.text {
-            if inputPhoneNumber.characters.count == 11 {
+            if inputPhoneNumber.count == 11 {
                 guard let newPhoneNumber = inputPhoneNumber.toPhoneFormat() else {
                     return
                 }

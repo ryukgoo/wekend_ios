@@ -37,16 +37,19 @@ class FriendProfileViewController: UIViewController, PagerViewDelegate, UIScroll
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var pagerView: PagerView!
     @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var messageStackView: UIStackView!
     @IBOutlet weak var nicknameStackView: UIStackView!
     @IBOutlet weak var ageStackView: UIStackView!
     @IBOutlet weak var phoneStackView: UIStackView!
     @IBOutlet weak var buttonsStackView: UIStackView!
+    @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var nicknameLabel: UILabel!
     @IBOutlet weak var ageLabel: UILabel!
     @IBOutlet weak var phoneLabel: UILabel!
     @IBOutlet weak var descriptionLabel: KRWordWrapLabel!
     @IBOutlet weak var proposeStatusButton: UIButton!
     @IBOutlet weak var rejectButton: UIButton!
+    
     @IBOutlet weak var containerViewHeight: NSLayoutConstraint!
     @IBOutlet weak var pagerViewOffsetY: NSLayoutConstraint!
     @IBOutlet weak var backViewOffsetY: NSLayoutConstraint!
@@ -74,17 +77,21 @@ class FriendProfileViewController: UIViewController, PagerViewDelegate, UIScroll
         
         UIApplication.shared.isStatusBarHidden = true
         
-        var colors = [UIColor]()
-        colors.append(UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.5))
-        colors.append(UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0))
-        navigationController?.navigationBar.setGradientBackground(colors: colors)
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.tintColor = .white
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        var colors = [UIColor]()
+        colors.append(UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.5))
+        colors.append(UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0))
+        navigationController?.navigationBar.setGradientBackground(colors: colors)
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
         UIApplication.shared.isStatusBarHidden = false
     }
 
@@ -189,7 +196,8 @@ class FriendProfileViewController: UIViewController, PagerViewDelegate, UIScroll
             break
         }
         
-        self.containerViewHeight.constant = scrollableHeight
+        let maxHeight = UIScreen.main.bounds.height - buttonsStackView.frame.height + pagerView.frame.height
+        self.containerViewHeight.constant = max(scrollableHeight, maxHeight)
         self.backgroundHeight.constant = scrollableHeight - self.pagerView.frame.height
         
     }
@@ -238,36 +246,29 @@ class FriendProfileViewController: UIViewController, PagerViewDelegate, UIScroll
     }
     
     private func loadMail() {
-        guard let senderId = self.friendUserId,
-              let receiverId = UserInfoManager.sharedInstance.userInfo?.userid,
+        guard let friendId = self.friendUserId,
               let productId = self.productId else {
             fatalError("\(#function) > Parameter Error")
         }
         
-        ReceiveMailManager.sharedInstance.getReceiveMail(senderId: senderId, receiverId: receiverId, productId: productId).continueWith(executor: AWSExecutor.mainThread()) {
-            (task: AWSTask) -> Any? in
-            
-            guard let mail = task.result as? ReceiveMail else {
-                self.proposeStatus = ProposeStatus.none
+        ReceiveMailRepository.shared.getMail(friendId: friendId, productId: productId) { result in
+            if case let Result.success(object: value) = result {
+                guard let mail = value as? ReceiveMail else {
+                    self.proposeStatus = ProposeStatus.none
+                    DispatchQueue.main.async {
+                        self.refreshLayout()
+                    }
+                    return
+                }
+                
+                self.messageLabel.text = mail.Message ?? "메시지 없음"
+                guard let status = ProposeStatus(rawValue: mail.ProposeStatus!) else { return }
+                self.proposeStatus = status
+                
                 DispatchQueue.main.async {
                     self.refreshLayout()
                 }
-                return nil
             }
-            
-            self.mail = mail
-            
-            guard let status = ProposeStatus(rawValue: mail.ProposeStatus!) else {
-                fatalError()
-            }
-            
-            self.proposeStatus = status
-            
-            DispatchQueue.main.async {
-                self.refreshLayout()
-            }
-            
-            return nil
         }
     }
     
@@ -358,26 +359,18 @@ class FriendProfileViewController: UIViewController, PagerViewDelegate, UIScroll
         receiveMail.ResponseTime = timestamp
         
         self.proposeStatusButton.setTitle("", for: .normal)
-        ReceiveMailManager.sharedInstance.updateReceiveMail(mail: receiveMail).continueWith(/*executor: AWSExecutor.mainThread(),*/ block: {
-            (task: AWSTask) -> Any! in
-            
-            if task.error == nil {
-                self.printLog("acceptButtonTapped > Success")
-            }
-            
-            DispatchQueue.main.async {
+        
+        ReceiveMailRepository.shared.updateMail(mail: receiveMail) { isSuccess in
+            if isSuccess {
                 self.proposeStatus = ProposeStatus(rawValue: (receiveMail.ProposeStatus!))!
                 self.refreshLayout()
                 
                 self.alert(message: "\(senderNickname)님과 함께가기를 수락하였습니다", title: "함께가기 성공", completion: {
                     (action) -> Void in
-                    NotificationCenter.default.post(name: Notification.Name(rawValue: ReceiveMailManager.AddNotification), object: nil)
+                    NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Receive.Add), object: nil)
                 })
             }
-            
-            return nil
-        })
-        
+        }
     }
     
     @IBAction func rejectButtonTapped(_ sender: Any) {
@@ -431,23 +424,17 @@ class FriendProfileViewController: UIViewController, PagerViewDelegate, UIScroll
         receiveMail.ResponseTime = timestamp
         
         self.proposeStatusButton.setTitle("", for: .normal)
-        ReceiveMailManager.sharedInstance.updateReceiveMail(mail: receiveMail).continueWith(executor: AWSExecutor.mainThread(), block: {
-            (task: AWSTask) -> Any! in
-            
-            if task.error == nil {
-                self.printLog("acceptButtonTapped > Success")
-            }
-            
-            DispatchQueue.main.async {
-                self.proposeStatus = ProposeStatus(rawValue: (receiveMail.ProposeStatus!))!
-                self.refreshLayout()
-                
-                self.alert(message: "\(senderNickname)님과 함께가기를 거절하였습니다", title: "함께가기 거절")
-            }
-            
-            return nil
-        })
         
+        ReceiveMailRepository.shared.updateMail(mail: receiveMail) { isSuccess in
+            if isSuccess {
+                DispatchQueue.main.async {
+                    self.proposeStatus = ProposeStatus(rawValue: (receiveMail.ProposeStatus!))!
+                    self.refreshLayout()
+                    
+                    self.alert(message: "\(senderNickname)님과 함께가기를 거절하였습니다", title: "함께가기 거절")
+                }
+            }
+        }
     }
     
     

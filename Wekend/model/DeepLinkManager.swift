@@ -185,13 +185,13 @@ class NotificationParser {
             }
             
             if userInfo.NewReceiveCount > receiveCount {
-                NotificationCenter.default.post(name: Notification.Name(rawValue: ReceiveMailManager.NewRemoteNotification),
+                NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Receive.New),
                                                 object: nil,
                                                 userInfo: nil)
             }
             
             if userInfo.NewSendCount > sendCount {
-                NotificationCenter.default.post(name: Notification.Name(rawValue: SendMailManager.NewRemoteNotification),
+                NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Send.New),
                                                 object: nil,
                                                 userInfo: nil)
             }

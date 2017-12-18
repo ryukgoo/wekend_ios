@@ -112,7 +112,40 @@ class ProductInfo: AWSDynamoDBObjectModel, AWSDynamoDBModeling {
     }
     
     static func ignoreAttributes() -> [String] {
-        return ["isLike", "regionMap", "realLikeCount"]
+        return ["isLike", "regionMap", "realLikeCount", "toMergedDescription"]
+    }
+}
+
+extension ProductInfo {
+    var toDescriptionForDetail : String {
+        
+        var result: String = ""
+        
+        if let description = Description {
+            result += description.htmlToString
+        }
+        if let price = Price {
+            result += "\n\n" + "\(ProductInfo.Title.PRICE) : " + price
+        }
+        if let parking = Parking {
+            result += "\n\n" + "\(ProductInfo.Title.PARKING) : " + parking
+        }
+        if let operatingTime = OperationTime {
+            result += "\n\n" + "\(ProductInfo.Title.OPERATING_TIME) : " + operatingTime
+        }
+        
+        return result
+    }
+    
+    var toDescriptionForProfile : String {
+        var result: String = ""
+        if let title = TitleKor {
+            result += title
+        }
+        if let description = Description {
+            result += "\n\n" + description.htmlToString
+        }
+        return result
     }
 }
 

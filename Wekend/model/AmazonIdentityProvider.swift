@@ -296,8 +296,8 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
         UserInfoManager.sharedInstance.destroy()
         ProductInfoManager.sharedInstance.destroy()
         LikeDBManager.sharedInstance.destroy()
-        ReceiveMailManager.sharedInstance.destory()
-        SendMailManager.sharedInstance.destory()
+        ReceiveMailRepository.shared.destroy()
+        SendMailRepository.shared.destroy()
         
         AmazonClientManager.sharedInstance.clearCredentials()
         

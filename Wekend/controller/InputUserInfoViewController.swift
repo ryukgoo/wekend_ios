@@ -182,7 +182,7 @@ extension InputUserInfoViewController: UITextFieldDelegate {
     
     func textFieldDidChanged(_ textField: UITextField) {
         nextButton.isEnabled = false
-        nicknameConfirmButton.isEnabled = textField.text!.characters.count > 1
+        nicknameConfirmButton.isEnabled = textField.text!.count > 1
     }
 }
 
@@ -196,7 +196,7 @@ extension InputUserInfoViewController: UIPickerViewDelegate, UIPickerViewDataSou
         let calendar = Calendar.current
         
         let thisYear = calendar.component(.year, from: date)
-        let startYear = thisYear - 19
+        let startYear = thisYear - 20
         
         printLog("\(#function) > startYear : \(startYear)")
         

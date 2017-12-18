@@ -19,7 +19,7 @@ extension ReusableView where Self: UIView {
 extension UITableViewCell: ReusableView {}
 
 extension UITableView {
-    func dequeueReusableCell<T: UITableViewCell>(for indexPath: IndexPath) -> T where T: ReusableView {
+    func dequeueReusableCell<T: UITableViewCell>(for indexPath: IndexPath) -> T {
         guard let cell = dequeueReusableCell(withIdentifier: T.reuseIdentifier, for: indexPath) as? T else {
             fatalError("UITableView > Could not dequeue cell with identifier: \(T.reuseIdentifier)")
         }
@@ -30,7 +30,7 @@ extension UITableView {
 extension UICollectionViewCell: ReusableView {}
 
 extension UICollectionView {
-    func dequeueReusableCell<T: UICollectionViewCell>(for indexPath: IndexPath) -> T where T: ReusableView {
+    func dequeueReusableCell<T: UICollectionViewCell>(for indexPath: IndexPath) -> T {
         guard let cell = dequeueReusableCell(withReuseIdentifier: T.reuseIdentifier, for: indexPath) as? T else {
             fatalError("UICollectionView > Could not dequeue cell with identifier: \(T.reuseIdentifier)")
         }

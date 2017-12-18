@@ -260,11 +260,11 @@ extension InsertPhoneViewController: UITextFieldDelegate {
     }
     
     func phoneTextDidChanged(_ textField: UITextField) {
-        requestCodeButton.isEnabled = textField.text!.characters.count == 11
+        requestCodeButton.isEnabled = textField.text!.count == 11
     }
     
     func codeTextDidChanged(_ textField: UITextField) {
-        confirmCodeButton.isEnabled = textField.text!.characters.count == 6
+        confirmCodeButton.isEnabled = textField.text!.count == 6
     }
 }
 

@@ -74,18 +74,13 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
             scrollView.contentInsetAdjustmentBehavior = .never
         }
         
-        UIApplication.shared.isStatusBarHidden = true
-        
-        var colors = [UIColor]()
-        colors.append(UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.5))
-        colors.append(UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0))
-        navigationController?.navigationBar.setGradientBackground(colors: colors)
-        navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.tintColor = .white
+        navigationController?.navigationBar.viewWillAppear()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        navigationController?.navigationBar.viewDidAppear()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -118,7 +113,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         isLoading = true
         self.containerView.alpha = 0.0
         
-        ProductInfoManager.sharedInstance.getProductInfo(productId: productId!).continueWith(executor: AWSExecutor.mainThread(), block: {
+        ProductInfoManager.sharedInstance.getProductInfo(productId: productId!).continueWith(executor: AWSExecutor.mainThread()) {
             (task: AWSTask) -> Any! in
             
             guard let info = task.result as? ProductInfo else {
@@ -139,7 +134,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
             self.isLoading = false
             
             return nil
-        })
+        }
     }
     
     // View
@@ -160,19 +155,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         titleLabel.text = productInfo.TitleKor
         titleEngLabel.text = productInfo.TitleEng
         subTitleLabel.text = productInfo.SubTitle
-        descriptionLabel.text = productInfo.Description?.htmlToString ?? productInfo.Description
-        
-        if let price = productInfo.Price {
-            descriptionLabel.text! += "\n\n" + "\(ProductInfo.Title.PRICE) : " + price
-        }
-        
-        if let parking = productInfo.Parking {
-            descriptionLabel.text! += "\n\n" + "\(ProductInfo.Title.PARKING) : " + parking
-        }
-        
-        if let operatingTime = productInfo.OperationTime {
-            descriptionLabel.text! += "\n\n" + "\(ProductInfo.Title.OPERATING_TIME) : " + operatingTime
-        }
+        descriptionLabel.text = productInfo.toDescriptionForDetail
         
         phoneTextButton.setTitle(productInfo.Telephone, for: .normal)
         
@@ -198,7 +181,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
             fatalError("CampaignViewController > no Data")
         }
         
-        LikeDBManager.sharedInstance.getLikeItem(userId: userInfo.userid, productId: productInfo.ProductId).continueWith(executor: AWSExecutor.mainThread(), block: {
+        LikeDBManager.sharedInstance.getLikeItem(userId: userInfo.userid, productId: productInfo.ProductId).continueWith(executor: AWSExecutor.mainThread()) {
             (task: AWSTask) -> Any! in
             
             guard let _ = task.result else {
@@ -233,7 +216,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
                 return nil
             })
             return nil
-        })
+        }
         
     }
     
