@@ -26,6 +26,37 @@ enum MailType {
     case send, receive
 }
 
+enum ProposeStatus: String {
+    
+    case none = "none"
+    case notMade = "notMade"
+    case made = "Made"
+    case reject = "reject"
+    case delete = "delete"
+    case alreadyMade = "alreadyMade"
+    
+    func message() -> String {
+        switch self {
+        case .none:
+            return "함께 가기 신청"
+        case .notMade :
+            return "함께 가기 신청중"
+        case .made :
+            return "함께 가기 성공"
+        case .alreadyMade :
+            return "함께 가기 성공"
+        case .delete :
+            return "함께 가기 신청 삭제됨"
+        case .reject :
+            return "함께 가기 거절"
+        }
+    }
+}
+
+enum ReadState: Int {
+    case unread, read
+}
+
 class SendMail: AWSDynamoDBObjectModel, AWSDynamoDBModeling, Mail {
     
     struct Schema {
@@ -43,6 +74,7 @@ class SendMail: AWSDynamoDBObjectModel, AWSDynamoDBModeling, Mail {
         static let SENDER_NICKNAME = "SenderNickname"
         static let RECEIVER_NICKNAME = "ReceiverNickname"
         static let STATUS = "ProposeStatus"
+        static let MESSAGE = "Message"
         static let ISREAD = "IsRead"
     }
     
@@ -104,6 +136,7 @@ class ReceiveMail: AWSDynamoDBObjectModel, AWSDynamoDBModeling, Mail {
         static let SENDER_NICKNAME = "SenderNickname"
         static let RECEIVER_NICKNAME = "ReceiverNickname"
         static let STATUS = "ProposeStatus"
+        static let MESSAGE = "Message"
         static let ISREAD = "IsRead"
     }
     
@@ -148,29 +181,4 @@ class ReceiveMail: AWSDynamoDBObjectModel, AWSDynamoDBModeling, Mail {
     }
 }
 
-enum ProposeStatus: String {
-    
-    case none = "none"
-    case notMade = "notMade"
-    case made = "Made"
-    case reject = "reject"
-    case delete = "delete"
-    case alreadyMade = "alreadyMade"
-    
-    func message() -> String {
-        switch self {
-        case .none:
-            return "함께 가기 신청"
-        case .notMade :
-            return "함께 가기 신청중"
-        case .made :
-            return "함께 가기 성공"
-        case .alreadyMade :
-            return "함께 가기 성공"
-        case .delete :
-            return "함께 가기 신청 삭제됨"
-        case .reject :
-            return "함께 가기 거절"
-        }
-    }
-}
+

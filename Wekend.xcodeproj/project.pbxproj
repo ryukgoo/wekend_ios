@@ -16,8 +16,8 @@
 		B82598FD1F260DAA003999BE /* AgreementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82598FC1F260DAA003999BE /* AgreementViewController.swift */; };
 		B82AC1311DFE7F3700C9EFC2 /* CampaignViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82AC1301DFE7F3700C9EFC2 /* CampaignViewController.swift */; };
 		B82AE10D1DEBE0FB00325F34 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82AE10C1DEBE0FB00325F34 /* Utilities.swift */; };
-		B82D89231FD7AD9B0027A7EC /* MailProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82D89221FD7AD9B0027A7EC /* MailProfileViewController.swift */; };
-		B82DCE2A1E1D00FB0040A683 /* LikeProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82DCE291E1D00FB0040A683 /* LikeProfileViewController.swift */; };
+		B82D89231FD7AD9B0027A7EC /* MailProfileSourceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82D89221FD7AD9B0027A7EC /* MailProfileSourceViewController.swift */; };
+		B82DCE2A1E1D00FB0040A683 /* MailProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82DCE291E1D00FB0040A683 /* MailProfileViewController.swift */; };
 		B82E4E6D1DE58AC500E4488B /* ProductInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82E4E6C1DE58AC500E4488B /* ProductInfo.swift */; };
 		B82E4E6F1DE59B4200E4488B /* AmazonClientManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82E4E6E1DE59B4200E4488B /* AmazonClientManager.swift */; };
 		B830D2FD1E09209400EAEFE2 /* LikeCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B830D2FC1E09209400EAEFE2 /* LikeCollectionViewController.swift */; };
@@ -121,7 +121,6 @@
 		B8F370851DFFCDD9006E010D /* PagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F370841DFFCDD9006E010D /* PagerView.swift */; };
 		B8FB46981E5B08390084D7D2 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB46971E5B08390084D7D2 /* MainViewController.swift */; };
 		B8FB469A1E5B08460084D7D2 /* CampaignTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB46991E5B08460084D7D2 /* CampaignTableViewController.swift */; };
-		B8FB469C1E5B08620084D7D2 /* FriendProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB469B1E5B08620084D7D2 /* FriendProfileViewController.swift */; };
 		B8FB469E1E5B08730084D7D2 /* SelectPhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB469D1E5B08730084D7D2 /* SelectPhotoViewController.swift */; };
 		B8FB46A01E5B08AD0084D7D2 /* DrawerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB469F1E5B08AD0084D7D2 /* DrawerViewController.swift */; };
 		B8FB46A21E5B096C0084D7D2 /* NoticeDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB46A11E5B096C0084D7D2 /* NoticeDetailViewController.swift */; };
@@ -155,8 +154,8 @@
 		B82598FC1F260DAA003999BE /* AgreementViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgreementViewController.swift; sourceTree = "<group>"; };
 		B82AC1301DFE7F3700C9EFC2 /* CampaignViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CampaignViewController.swift; sourceTree = "<group>"; };
 		B82AE10C1DEBE0FB00325F34 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
-		B82D89221FD7AD9B0027A7EC /* MailProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailProfileViewController.swift; sourceTree = "<group>"; };
-		B82DCE291E1D00FB0040A683 /* LikeProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LikeProfileViewController.swift; sourceTree = "<group>"; };
+		B82D89221FD7AD9B0027A7EC /* MailProfileSourceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailProfileSourceViewController.swift; sourceTree = "<group>"; };
+		B82DCE291E1D00FB0040A683 /* MailProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MailProfileViewController.swift; sourceTree = "<group>"; };
 		B82E4E6C1DE58AC500E4488B /* ProductInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductInfo.swift; sourceTree = "<group>"; };
 		B82E4E6E1DE59B4200E4488B /* AmazonClientManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AmazonClientManager.swift; sourceTree = "<group>"; };
 		B830D2FC1E09209400EAEFE2 /* LikeCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LikeCollectionViewController.swift; sourceTree = "<group>"; };
@@ -278,7 +277,6 @@
 		B8F370841DFFCDD9006E010D /* PagerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagerView.swift; sourceTree = "<group>"; };
 		B8FB46971E5B08390084D7D2 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		B8FB46991E5B08460084D7D2 /* CampaignTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CampaignTableViewController.swift; sourceTree = "<group>"; };
-		B8FB469B1E5B08620084D7D2 /* FriendProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FriendProfileViewController.swift; sourceTree = "<group>"; };
 		B8FB469D1E5B08730084D7D2 /* SelectPhotoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectPhotoViewController.swift; sourceTree = "<group>"; };
 		B8FB469F1E5B08AD0084D7D2 /* DrawerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawerViewController.swift; sourceTree = "<group>"; };
 		B8FB46A11E5B096C0084D7D2 /* NoticeDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoticeDetailViewController.swift; sourceTree = "<group>"; };
@@ -554,9 +552,8 @@
 				B830D3001E09272E00EAEFE2 /* StoreCollectionViewController.swift */,
 				B830D3021E09289000EAEFE2 /* StoreCollectionViewCell.swift */,
 				B8C6FB101F4470BA0049E4F2 /* StoreHeaderView.swift */,
-				B82DCE291E1D00FB0040A683 /* LikeProfileViewController.swift */,
-				B8FB469B1E5B08620084D7D2 /* FriendProfileViewController.swift */,
-				B82D89221FD7AD9B0027A7EC /* MailProfileViewController.swift */,
+				B82DCE291E1D00FB0040A683 /* MailProfileViewController.swift */,
+				B82D89221FD7AD9B0027A7EC /* MailProfileSourceViewController.swift */,
 				B8FB469F1E5B08AD0084D7D2 /* DrawerViewController.swift */,
 				B88257031E2CB0BB008D8DBE /* DrawerMenuTableViewCell.swift */,
 				B84E3B591E2DFD08003B9AF7 /* NoticeTableViewController.swift */,
@@ -891,7 +888,7 @@
 				B8BA5DDC1EC8515400D3CAE0 /* NSObject+Log.swift in Sources */,
 				B88295C61E49CF6F009AACCA /* WEKENDGetTokenRequestModel.m in Sources */,
 				B88AB2141EF125B5005EDC48 /* Notice.swift in Sources */,
-				B82DCE2A1E1D00FB0040A683 /* LikeProfileViewController.swift in Sources */,
+				B82DCE2A1E1D00FB0040A683 /* MailProfileViewController.swift in Sources */,
 				B837CEEE1EB1C54400598EF4 /* UIImage+Color.swift in Sources */,
 				B89EFAE11F6A715B000ACF72 /* UIViewController+Alert.swift in Sources */,
 				B87B19F51FE79EBA0089D6B5 /* MailRepository.swift in Sources */,
@@ -912,7 +909,7 @@
 				B848F7261E41CC470034E803 /* SignupViewController.swift in Sources */,
 				B86DFF5E1EE5871800E93246 /* UserInfoManager.swift in Sources */,
 				B88AB2161EF12763005EDC48 /* SettingViewModel.swift in Sources */,
-				B82D89231FD7AD9B0027A7EC /* MailProfileViewController.swift in Sources */,
+				B82D89231FD7AD9B0027A7EC /* MailProfileSourceViewController.swift in Sources */,
 				B8C6C3851DE41E7000FBDF6C /* AppDelegate.swift in Sources */,
 				B830D8741EADDEE70005E87E /* EnumCollection.swift in Sources */,
 				B8AE5BC11F97A31A00796751 /* DeepLinkManager.swift in Sources */,
@@ -932,7 +929,6 @@
 				B82AC1311DFE7F3700C9EFC2 /* CampaignViewController.swift in Sources */,
 				B8FB46A21E5B096C0084D7D2 /* NoticeDetailViewController.swift in Sources */,
 				B86F5B491E87AF2A00BEE3D9 /* FullWidthMenuCell.swift in Sources */,
-				B8FB469C1E5B08620084D7D2 /* FriendProfileViewController.swift in Sources */,
 				B88295C81E49CF6F009AACCA /* WEKENDLoginRequestModel.m in Sources */,
 				B8B5A2891F6BC2E300D899D5 /* UIViewController+Instance.swift in Sources */,
 				B88295C51E49CF6F009AACCA /* WEKENDAuthenticationAPIClient.m in Sources */,

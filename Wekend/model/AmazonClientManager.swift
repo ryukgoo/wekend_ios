@@ -30,7 +30,7 @@ class AmazonClientManager: NSObject {
     
     func didFinishLaunching(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        printLog("didFinishLaunchingWithOptions > start")
+        printLog("\(#function) > start")
         
         // AWS Initialization
         devIdentityProvider = AmazonIdentityProvider(regionType: .APNortheast1, identityPoolId: Configuration.IDENTITY_POOL_ID, useEnhancedFlow: true, identityProviderManager: nil)
@@ -39,7 +39,7 @@ class AmazonClientManager: NSObject {
         AWSServiceManager.default().defaultServiceConfiguration = configuration
         isInitialized = true
         
-        printLog("didFinishLaunching > finished")
+        printLog("\(#function) > finished")
         
         return true
     }
@@ -49,7 +49,7 @@ class AmazonClientManager: NSObject {
         guard let userId = UserDefaults.Account.string(forKey: .userId),
               let _ = UserDefaults.Account.string(forKey: .userName) else {
                 
-                printLog("register user not yet")
+                printLog("\(#function) > register user not yet")
                 if self.credentialsProvider?.identityId != nil {
                     self.credentialsProvider?.clearKeychain()
                 }

@@ -101,14 +101,14 @@ class ReceiveMailRepository: NSObject, MailDataSource {
             }
             
             let paginatedOutput = result as AWSDynamoDBPaginatedOutput
-            
-            guard let mail = paginatedOutput.items[0] as? ReceiveMail else {
-                completion(.failure(.notFound))
-                return nil
+            if paginatedOutput.items.count > 0 {
+                if let mail = paginatedOutput.items[0] as? ReceiveMail {
+                    completion(.success(object: mail))
+                    return nil
+                }
             }
             
-            completion(.success(object: mail))
-            
+            completion(.failure(.notFound))
             return nil
         }
     }
@@ -116,6 +116,9 @@ class ReceiveMailRepository: NSObject, MailDataSource {
     func updateMail(mail: Mail, completion: @escaping (Bool) -> ()) {
         guard let receiveMail = mail as? ReceiveMail else { return }
         mapper.save(receiveMail).continueWith(executor: AWSExecutor.mainThread()) { task in
+            
+            if let error = task.error { print(error) }
+            
             completion(task.error == nil)
             return nil
         }
@@ -158,8 +161,6 @@ class SendMailRepository: NSObject, MailDataSource {
     
     func loadMails(completion: @escaping (Result<Array<Mail>, FailureReason>) -> ()) {
         
-        printLog("#function")
-        
         guard let user = UserInfoManager.sharedInstance.userInfo else { return }
         
         let expression = AWSDynamoDBQueryExpression()
@@ -190,6 +191,7 @@ class SendMailRepository: NSObject, MailDataSource {
     }
     
     func getMail(friendId: String, productId: Int, completion: @escaping (Result<Mail, FailureReason>) -> ()) {
+        
         guard let user = UserInfoManager.sharedInstance.userInfo else { return }
         
         let expression = AWSDynamoDBQueryExpression()
@@ -206,14 +208,14 @@ class SendMailRepository: NSObject, MailDataSource {
             }
             
             let paginatedOutput = result as AWSDynamoDBPaginatedOutput
-            
-            guard let mail = paginatedOutput.items[0] as? SendMail else {
-                completion(.failure(.notFound))
-                return nil
+            if paginatedOutput.items.count > 0 {
+                if let mail = paginatedOutput.items[0] as? SendMail {
+                    completion(.success(object: mail))
+                    return nil
+                }
             }
             
-            completion(.success(object: mail))
-            
+            completion(.failure(.notFound))
             return nil
         }
     }

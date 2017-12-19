@@ -46,7 +46,6 @@ class PagerView: UIView, UIScrollViewDelegate {
         initPageViews()
         configureScrollView()
         configurePageControl()
-        
         loadVisiblePages()
     }
     
@@ -86,9 +85,6 @@ class PagerView: UIView, UIScrollViewDelegate {
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        
-        printLog("scrollViewDidEndDecelerating")
-        
         loadVisiblePages()
     }
     

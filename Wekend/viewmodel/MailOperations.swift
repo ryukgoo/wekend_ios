@@ -13,16 +13,18 @@ struct LoadMailOperation {
     let userId: String
     let friendId: String
     let productId: Int
+    let dataSource: MailDataSource
     
-    init(userId: String, friendId: String, productId: Int) {
+    init(userId: String, friendId: String, productId: Int, dataSource: MailDataSource) {
         self.userId = userId
         self.friendId = friendId
         self.productId = productId
+        self.dataSource = dataSource
     }
     
     func execute(completion: @escaping (Result<Mail, FailureReason>) -> Void) {
         
-        SendMailRepository.shared.getMail(friendId: friendId, productId: productId) { result in
+        dataSource.getMail(friendId: friendId, productId: productId) { result in
             if case let Result.success(object: value) = result {
                 DispatchQueue.main.async {
                     completion(.success(object: value))
@@ -87,9 +89,11 @@ struct LoadProductOperation {
 }
 
 struct ProposeOperation {
-    let mail: SendMail
-    init(mail: SendMail) {
+    let mail: Mail
+    let dataSource: MailDataSource
+    init(mail: Mail, dataSource: MailDataSource) {
         self.mail = mail
+        self.dataSource = dataSource
     }
     
     func execute(completion: @escaping (Result<Any?, FailureReason>) -> Void) {
@@ -97,7 +101,7 @@ struct ProposeOperation {
             try UserInfoManager.sharedInstance.consumePoint { isSuccess in
                 if isSuccess {
                     
-                    SendMailRepository.shared.updateMail(mail: self.mail) { isUpdateSuccess in
+                    self.dataSource.updateMail(mail: self.mail) { isUpdateSuccess in
                         if isUpdateSuccess {
                             completion(.success(object: nil))
                         } else {
@@ -110,6 +114,23 @@ struct ProposeOperation {
             completion(.failure(.notEnough))
         } catch {
             completion(.failure(.notAvailable))
+        }
+    }
+}
+
+struct UpdateOperation {
+    let mail: ReceiveMail
+    init(mail: ReceiveMail) {
+        self.mail = mail
+    }
+    
+    func execute(completion: @escaping (Result<Any?, FailureReason>) -> Void) {
+        ReceiveMailRepository.shared.updateMail(mail: mail) { isSuccess in
+            if isSuccess {
+                completion(.success(object: nil))
+            } else {
+                completion(.failure(.notAvailable))
+            }
         }
     }
 }

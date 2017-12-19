@@ -256,7 +256,7 @@ extension LikeCollectionViewController: UICollectionViewDelegateFlowLayout {
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        guard let profileViewController: LikeProfileViewController = LikeProfileViewController.storyboardInstance(from: "SubItems") as? LikeProfileViewController else { fatalError() }
+        guard let profileViewController: MailProfileViewController = MailProfileViewController.storyboardInstance(from: "SubItems") as? MailProfileViewController else { fatalError() }
         
         guard let selectedLike = datas?[indexPath.row] else {
             fatalError("LikeCollectionViewController > get data Error")
@@ -270,7 +270,9 @@ extension LikeCollectionViewController: UICollectionViewDelegateFlowLayout {
             fatalError("LikeCollectionViewController > LikeId is nil")
         }
         
-        profileViewController.viewModel = MailProfileViewModel(productId: selectedLike.ProductId, friendId: selectedLike.UserId)
+        profileViewController.viewModel = MailProfileViewModel(productId: selectedLike.ProductId,
+                                                               friendId: selectedLike.UserId,
+                                                               dataSource: SendMailRepository.shared)
         
         navigationController?.pushViewController(profileViewController, animated: true)
         LikeDBManager.sharedInstance.updateReadState(id: likeId, userId: userId, productId: selectedLike.ProductId, likeUserId: selectedLike.UserId)

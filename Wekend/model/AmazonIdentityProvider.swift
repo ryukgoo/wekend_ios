@@ -33,9 +33,7 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
     }
     
     override func token() -> AWSTask<NSString> {
-        
-        printLog("token")
-        
+        printLog(#function)
         return getCredentialsByURL().continueWith(block: {
             credentialTask -> AWSTask<NSString> in
             guard let credential = credentialTask.result else {
@@ -50,9 +48,7 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
     }
     
     override func clear() {
-        
-        printLog("clear")
-        
+        printLog(#function)
         super.clear()
     }
     

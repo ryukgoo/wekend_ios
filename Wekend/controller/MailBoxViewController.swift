@@ -426,19 +426,23 @@ extension MailBoxViewController: UITableViewDelegate {
         
         tableView.deselectRow(at: indexPath, animated: true)
         
-        guard let mailProfileViewController = LikeProfileViewController.storyboardInstance(from: "SubItems") as? LikeProfileViewController else {
+        guard let mailProfileViewController = MailProfileViewController.storyboardInstance(from: "SubItems") as? MailProfileViewController else {
             fatalError()
         }
         
         switch segmentControl.selectedSegmentIndex {
         case Mode.receive.rawValue:
             let mail = ReceiveMailRepository.shared.datas[indexPath.row]
-            mailProfileViewController.viewModel = MailProfileViewModel(productId: mail.ProductId as! Int, friendId: mail.FriendId!)
+            mailProfileViewController.viewModel = MailProfileViewModel(productId: mail.ProductId as! Int,
+                                                                       friendId: mail.FriendId!,
+                                                                       dataSource: ReceiveMailRepository.shared)
             navigationController?.pushViewController(mailProfileViewController, animated: true)
             break
         case Mode.send.rawValue:
             let mail = SendMailRepository.shared.datas[indexPath.row]
-            mailProfileViewController.viewModel = MailProfileViewModel(productId: mail.ProductId as! Int, friendId: mail.FriendId!)
+            mailProfileViewController.viewModel = MailProfileViewModel(productId: mail.ProductId as! Int,
+                                                                       friendId: mail.FriendId!,
+                                                                       dataSource: SendMailRepository.shared)
             navigationController?.pushViewController(mailProfileViewController, animated: true)
             break
         default: return
@@ -470,7 +474,7 @@ extension MailBoxViewController: UITableViewDelegate {
             case Mode.receive.rawValue:
                 let deleteMail = ReceiveMailRepository.shared.datas[indexPath.row]
                 
-                ReceiveMailRepository.shared.updateMail(mail: deleteMail) { isSuccess in
+                ReceiveMailRepository.shared.deleteMail(mail: deleteMail) { isSuccess in
                     if isSuccess {
                         ReceiveMailRepository.shared.datas.remove(at: indexPath.row)
                         DispatchQueue.main.async {

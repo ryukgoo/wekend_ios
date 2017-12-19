@@ -57,7 +57,7 @@ class AlarmSettingTableViewController: UITableViewController {
     }
     
     func onChangedSwitch(_ sender: UISwitch) {
-        printLog("onChangedSwitch : \(sender.tag), \(sender.isOn)")
+        printLog("\(#function) : \(sender.tag), \(sender.isOn)")
     }
 
     /*

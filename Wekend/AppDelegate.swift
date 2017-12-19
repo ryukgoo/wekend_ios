@@ -137,7 +137,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
     func registerNotificationCenter(_ application: UIApplication) {
         if #available(iOS 10.0, *) {
-            printLog("didFinishLaunchingWithOptions > register remote notification")
+            printLog("\(#function) > register remote notification")
             let center = UNUserNotificationCenter.current()
             center.delegate = self
             center.requestAuthorization(options: [.alert, .badge, .sound], completionHandler: {
@@ -164,7 +164,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
     @available(iOS 10.0, *)
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive respone: UNNotificationResponse, withCompletionHandler completionHandler : @escaping () -> Void) {
-        printLog("userNotificationCenter delegate > response : \(respone)")
+        printLog("\(#function) delegate > response : \(respone)")
         
         // Else handle actions for other notification types...
         
