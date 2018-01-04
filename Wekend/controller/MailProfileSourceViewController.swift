@@ -76,15 +76,15 @@ class MailProfileSourceViewController: UIViewController {
     }
     
     func proposeButtonTapped(_ sender: Any) {
-        printLog(#function)
+        print("\(className) > \(#function)")
     }
     
     func acceptButtonTapped(_ sender: Any) {
-        printLog(#function)
+        print("\(className) > \(#function)")
     }
     
     func rejectButtonTapped(_ sender: Any) {
-        printLog(#function)
+        print("\(className) > \(#function)")
     }
     
     fileprivate func fillUI() {
@@ -100,7 +100,7 @@ class MailProfileSourceViewController: UIViewController {
             self.age.text = (friend?.birth as! Int).toAge.description
             self.phone.text = friend?.phone?.toPhoneFormat()
             self.pagerView.pageCount = photos.count
-            self.printLog("\(#function) > pageCount : \(photos.count)")
+            print("\(self.className) > \(#function) > pageCount : \(photos.count)")
         }
         
         viewModel.product.bindAndFire { product in
@@ -111,7 +111,7 @@ class MailProfileSourceViewController: UIViewController {
         
         viewModel.mail.bindAndFire { mail in
             guard let mail = mail else { return }
-            self.printLog("\(String(describing: mail.FriendNickname))")
+            print("\(self.className) > \(#function) > \(String(describing: mail.FriendNickname))")
             self.refreshLayout()
         }
     }
@@ -130,7 +130,7 @@ class MailProfileSourceViewController: UIViewController {
 
 extension MailProfileSourceViewController: PagerViewDelegate {
     func loadPageViewItem(imageView: UIImageView, page: Int) {
-        printLog("\(#function) > page : \(page)")
+        print("\(className) > \(#function) > page : \(page)")
         
         guard let friend = viewModel?.friend.value else {
             return
@@ -145,7 +145,7 @@ extension MailProfileSourceViewController: PagerViewDelegate {
     }
     
     func onPageTapped(page: Int) {
-        printLog("\(#function) > page : \(page)")
+        print("\(className) > \(#function) > page : \(page)")
     }
 }
 
@@ -285,7 +285,7 @@ extension MailProfileSourceViewController {
         if (!phoneStackView.isHidden) { scrollableHeight += phoneStackView.frame.height }
         if (!campaignStackView.isHidden) { scrollableHeight += campaignStackView.frame.height }
         
-        printLog("\(#function) > scrollableHeight : \(scrollableHeight)")
+        print("\(className) > \(#function) > scrollableHeight : \(scrollableHeight)")
         scrollableHeight = max(scrollableHeight, UIScreen.main.bounds.height - proposeButton.frame.height
             - pointLabel.frame.height + pagerView.frame.height)
         

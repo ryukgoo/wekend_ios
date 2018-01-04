@@ -13,7 +13,7 @@ class StoreCollectionViewController: UICollectionViewController {
 
     deinit {
         removeNotificationObservers()
-        printLog("deinit")
+        print("\(className) > \(#function)")
     }
     
     var priceArray: [String] = Array(Constants.Title.Price.allStrings)
@@ -50,7 +50,7 @@ class StoreCollectionViewController: UICollectionViewController {
     
     func reload() {
         
-        printLog("reload")
+        print("\(className) > \(#function)")
         
         self.tabBarController?.startLoading()
         
@@ -61,7 +61,7 @@ class StoreCollectionViewController: UICollectionViewController {
         StoreProducts.store.requestProducts {
             success, products in
             
-            self.printLog("reload > success: \(success), products: \(String(describing: products))")
+            print("\(self.className) > \(#function) > success: \(success), products: \(String(describing: products))")
             
             if success {
                 self.products = products!
@@ -73,7 +73,7 @@ class StoreCollectionViewController: UICollectionViewController {
     
     func handlePurchaseNotification(_ notification: Notification) {
         
-        printLog("handlePurchaseNotification > notification : \(notification)")
+        print("\(className) > \(#function) > notification : \(notification)")
         
         self.tabBarController?.endLoading()
         

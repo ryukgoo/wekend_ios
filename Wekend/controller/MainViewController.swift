@@ -14,7 +14,7 @@ class MainViewController: UITabBarController {
     
     deinit {
         removeNotificationObservers()
-        printLog("deinit")
+        print("\(className) > \(#function)")
     }
     
     override func viewDidLoad() {
@@ -25,13 +25,11 @@ class MainViewController: UITabBarController {
         tabBar.tintColor = UIColor(netHex: Constants.ColorInfo.MAIN)
         
         guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
-            printLog("viewDidLoad > get UserInfo Error")
-            return
+            fatalError("\(className) > \(#function) > get UserInfo Error")
         }
         
         guard let tabArray = self.tabBar.items else {
-            printLog("tabBarController > tabBar items Error")
-            return
+            fatalError("\(className) > \(#function) > tabBar items Error")
         }
         
         let likeTab = tabArray[1]
@@ -54,9 +52,7 @@ class MainViewController: UITabBarController {
         super.viewDidAppear(animated)
         
         if (MainViewController.isFirstLoad) {
-            
-            printLog("MainViewController.isFirstLoad : \(MainViewController.isFirstLoad)")
-            
+            print("\(className) > \(#function) > isFirstLoad : \(MainViewController.isFirstLoad)")
             MainViewController.isFirstLoad = false
             showGuide()
         }
@@ -65,8 +61,7 @@ class MainViewController: UITabBarController {
     func displayTabbarBadge() {
         
         guard let tabArray = self.tabBar.items else {
-            printLog("tabBarController > tabBar items Error")
-            return
+            fatalError("\(className) > \(#function) > tabBar items Error")
         }
         
         let newLikeCount = UserDefaults.NotificationCount.integer(forKey: .like)
@@ -89,8 +84,7 @@ class MainViewController: UITabBarController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
-        
-        printLog("prepare > segue.identifier : \(String(describing: segue.identifier))")
+        print("\(className) > \(#function) > segue.identifier : \(String(describing: segue.identifier))")
     }
 
 }
@@ -119,21 +113,23 @@ extension MainViewController: Observerable {
     }
     
     func removeNotificationObservers() {
+        
         NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.NewRemoteNotification),
                                                   object: nil)
+        
         NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: MailNotification.Receive.New),
                                                   object: nil)
+        
         NotificationCenter.default.removeObserver(self, name: Notification.Name(MailNotification.Send.New),
                                                   object: nil)
+        
         NotificationCenter.default.removeObserver(self, name: Notification.Name(AppDelegate.WillEnterForeground),
                                                   object: nil)
     }
     
     func handleLikeRemoteNotification(_ notification: Notification) {
         
-        guard let likeTab = tabBar.items?[1] else {
-            return
-        }
+        guard let likeTab = tabBar.items?[1] else { return }
         
         let newCount = UserDefaults.NotificationCount.integer(forKey: .like)
         likeTab.badgeValue = newCount == 0 ? nil : String(newCount)
@@ -141,11 +137,9 @@ extension MainViewController: Observerable {
     
     func handleMailNotification(_ notification: Notification) {
         
-        printLog("handleMailNotification > notification : \(notification.description)")
+        print("\(className) > \(#function) > notification : \(notification.description)")
         
-        guard let mailTab = tabBar.items?[2] else {
-            return
-        }
+        guard let mailTab = tabBar.items?[2] else { return }
         
         let receiveCount = UserDefaults.NotificationCount.integer(forKey: .receiveMail)
         let sendCount = UserDefaults.NotificationCount.integer(forKey: .sendMail)
@@ -161,10 +155,9 @@ extension MainViewController: Observerable {
 extension MainViewController: UITabBarControllerDelegate {
     
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        
-        printLog("didSelect > selectedIndex : \(selectedIndex)")
+        print("\(className) > \(#function) > selectedIndex : \(selectedIndex)")
         guard let selectedType = NavigationType(rawValue: selectedIndex) else {
-                fatalError("MainViewController > tabBarController > no viewController Title")
+            fatalError("\(className) > \(#function) > no viewController Title")
         }
         
         switch selectedType {
@@ -198,11 +191,10 @@ extension MainViewController: UITabBarControllerDelegate {
     
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         
-        printLog("tabBarController > shouldSelect : \(selectedIndex)")
+        print("\(className) > \(#function) > shouldSelect : \(selectedIndex)")
         
         guard let previousType = NavigationType(rawValue: selectedIndex) else {
-            printLog("tabConroller > navigationType Error")
-            fatalError("MainViewController > tabBarController > no viewController Title")
+            fatalError("\(className) > \(#function) > no viewController Title")
         }
         
         guard let navigationController = viewController as? UINavigationController else {
@@ -246,7 +238,7 @@ extension MainViewController: SlideMenuDelegate {
     func onDrawerTapped(_ sender: Any) {
         
         guard let drawerViewController: DrawerViewController = DrawerViewController.storyboardInstance() else {
-            fatalError("MainViewController > onDrawerTapped > drawerVC from storyBoard Error")
+            fatalError("\(className) > \(#function) > drawerVC from storyBoard Error")
         }
         
         drawerViewController.delegate = self
@@ -258,28 +250,21 @@ extension MainViewController: SlideMenuDelegate {
         drawerViewController.slideIn()
     }
     
-    func slideMenuItemSelectedAtIndex(_ index: Int) {
-        
-    }
+    func slideMenuItemSelectedAtIndex(_ index: Int) { }
     
-    func onCloseSlideMenu() {
-        
-    }
+    func onCloseSlideMenu() { }
 }
 
 extension MainViewController {
     
     func showGuide() {
     
-        printLog("UserDefaults.Account.bool(forKey: .isNoMoreGuide) : \(UserDefaults.Account.bool(forKey: .isNoMoreGuide))")
+        print("\(className) > \(#function) > isNoMoreGuide : \(UserDefaults.Account.bool(forKey: .isNoMoreGuide))")
         
         if (UserDefaults.Account.bool(forKey: .isNoMoreGuide)) { return }
         
         if let presentingVC = self.presentedViewController as? UIAlertController {
-            printLog("presenting ViewController is dismissed")
-            presentingVC.dismiss(animated: false, completion: {
-                self.presentGuide()
-            })
+            presentingVC.dismiss(animated: false, completion: { self.presentGuide() })
         } else {
             presentGuide()
         }

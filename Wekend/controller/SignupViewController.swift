@@ -12,7 +12,7 @@ import AWSCore
 class SignupViewController: UIViewController {
 
     deinit {
-        printLog(#function)
+        print("\(className) > \(#function)")
     }
     
     // MARK: IBOutlet
@@ -63,12 +63,12 @@ class SignupViewController: UIViewController {
     
     @IBAction func nextButtonTapped(_ sender: Any) {
         
-        printLog("nextButtonTapped")
+        print("\(className) > \(#function)")
         
         guard let username = usernameInputText.text,
               let password = passwordInputText.text,
               let confirm = confirmInputText.text else {
-                printLog("nextButtonTapped > NextButton is enabled, username is nil")
+                print("\(className) > \(#function) > NextButton is enabled, username is nil")
                 alert(message: "입력하지 않은 값이 있습니다")
                 return;
         }
@@ -90,13 +90,13 @@ class SignupViewController: UIViewController {
             }
             
             guard let result = task.result as? Bool else {
-                self.printLog("nextButtonTapped > check username duplicated Error > result is nil")
+                print("\(self.className) > \(#function) > check username duplicated Error > result is nil")
                 self.endLoading()
                 self.alert(message: "이미 등록된 E-mail입니다", title: "E-mail 중복오류")
                 return nil
             }
             
-            self.printLog("nextButtonTapped > result : \(String(describing: result))")
+            print("\(self.className) > \(#function) > result : \(String(describing: result))")
             self.endLoading()
             
             if result {
@@ -121,10 +121,10 @@ class SignupViewController: UIViewController {
         // Pass the selected object to the new view controller.
         
         if segue.identifier == InputUserInfoViewController.className {
-            printLog("prepare > identifier : \(String(describing: segue.identifier))")
+            print("\(className) > \(#function) > identifier : \(String(describing: segue.identifier))")
             
             guard let destination = segue.destination as? InputUserInfoViewController else {
-                fatalError("SignupViewController > prepare > destination Error")
+                fatalError("\(className) > \(#function) > destination Error")
             }
             
             destination.username = usernameInputText.text
@@ -200,12 +200,12 @@ extension SignupViewController: UITextFieldDelegate {
     }
     
     func usernameDidChange(_ textField: UITextField) {
-        printLog("\(#function) > text : \(String(describing: textField.text))")
+        print("\(className) > \(#function) > text : \(String(describing: textField.text))")
         nextButton.isEnabled = isValidInfos()
     }
     
     func passwordDidChange(_ textField: UITextField) {
-        printLog("\(#function) > text : \(String(describing: textField.text))")
+        print("\(className) > \(#function) > text : \(String(describing: textField.text))")
         nextButton.isEnabled = isValidInfos()
     }
     
@@ -279,7 +279,7 @@ extension SignupViewController: Observerable {
         if let keyboardSize = (info[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             
             guard let textField = self.activeTextField else {
-                printLog("keyboardWillShow > activeTextField is nil")
+                print("\(className) > \(#function) > activeTextField is nil")
                 return
             }
             

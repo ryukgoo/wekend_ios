@@ -18,7 +18,7 @@ class NoticeTableViewController: UITableViewController {
 
         tableView?.contentInset = UIEdgeInsetsMake(12, 0, 0, 0)
         
-        printLog("viewDidLoad > noticeType : \(String(describing: noticeType))")
+        print("\(className) > \(#function) > noticeType : \(String(describing: noticeType))")
         
         if noticeType == "Notice" {
             
@@ -88,7 +88,7 @@ class NoticeTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(for: indexPath) as NoticeTableViewCell
         
         guard let notice = datas?[indexPath.row] else {
-            printLog("tableView > notice is nil")
+            print("\(className) > \(#function) > notice is nil")
             return cell
         }
         

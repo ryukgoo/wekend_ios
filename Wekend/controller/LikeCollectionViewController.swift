@@ -12,7 +12,7 @@ class LikeCollectionViewController: UICollectionViewController {
 
     deinit {
         removeNotificationObservers()
-        printLog("deinit")
+        print("\(className) > \(#function)")
     }
     
     // MARK: Properties
@@ -56,22 +56,19 @@ class LikeCollectionViewController: UICollectionViewController {
     // MARK: load Datas
     func loadLikeFriends() {
         
-        printLog("loadLikeFriends")
-        
+        print("\(className) > \(#function)")
         startLoading()
         
         guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
-            fatalError("LikeCollectionViewController > get UserInfo Error")
+            fatalError("\(className) > \(#function) > get UserInfo Error")
         }
         
-        LikeDBManager.sharedInstance.getFriends(productId: self.productId!, userId: userInfo.userid, gender: userInfo.gender!).continueWith(executor: AWSExecutor.mainThread(), block: {
-            (task: AWSTask) -> Any! in
+        LikeDBManager.sharedInstance.getFriends(productId: self.productId!, userId: userInfo.userid, gender: userInfo.gender!)
+            .continueWith(executor: AWSExecutor.mainThread()) { task in
             
             self.datas = []
             
-            guard let result = task.result else {
-                fatalError("LikeCollectionViewController > loadLikeFriends Error")
-            }
+            guard let result = task.result else { fatalError("\(self.className) > \(#function) Error") }
             
             self.datas = result as? Array<LikeItem>
             
@@ -82,7 +79,7 @@ class LikeCollectionViewController: UICollectionViewController {
             }
             
             return nil
-        })
+        }
     }
 
     /*
@@ -153,7 +150,6 @@ extension LikeCollectionViewController {
         } else {
             collectionView?.addSubview(refreshControl)
         }
-        
     }
     
     func refresh(_ sender: Any) {
@@ -180,11 +176,9 @@ extension LikeCollectionViewController: Observerable {
     
     func handleReadFriendNotification(_ notification: Notification) {
         
-        printLog("handleReadFriendNotification > notification : \(notification.description)")
+        print("\(className) > \(#function) > notification : \(notification.description)")
         
-        guard let likeUserId = notification.userInfo![LikeDBManager.NotificationDataUserId] as? String else {
-            return
-        }
+        guard let likeUserId = notification.userInfo![LikeDBManager.NotificationDataUserId] as? String else { return }
         
         if let index = datas?.index(where: { $0.UserId == likeUserId }) {
             datas?[index].isRead = true
@@ -197,22 +191,15 @@ extension LikeCollectionViewController: Observerable {
 }
 
 // MARK: CollectionViewController Delegate / DataSource
-
 extension LikeCollectionViewController: UICollectionViewDelegateFlowLayout {
     
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
     
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
-        
-        guard let rowCount = datas?.count else {
-            return 0
-        }
-        
+        guard let rowCount = datas?.count else { return 0 }
         return rowCount
     }
     
@@ -220,10 +207,8 @@ extension LikeCollectionViewController: UICollectionViewDelegateFlowLayout {
         
         let cell = collectionView.dequeueReusableCell(for: indexPath) as LikeCollectionViewCell
         
-        // Configure the cell
-        
         guard let data = datas?[indexPath.row] else {
-            fatalError("LikeCollectionViewController > No Cell data")
+            fatalError("\(className) > \(#function) > No Cell data")
         }
         
         let imageName = data.UserId + "/" + Configuration.S3.PROFILE_IMAGE_NAME(0)
@@ -259,15 +244,15 @@ extension LikeCollectionViewController: UICollectionViewDelegateFlowLayout {
         guard let profileViewController: MailProfileViewController = MailProfileViewController.storyboardInstance(from: "SubItems") as? MailProfileViewController else { fatalError() }
         
         guard let selectedLike = datas?[indexPath.row] else {
-            fatalError("LikeCollectionViewController > get data Error")
+            fatalError("\(className) > \(#function) > get data Error")
         }
         
         guard let userId = UserInfoManager.sharedInstance.userInfo?.userid else {
-            fatalError("LikeCollectionViewController > get UserId Error")
+            fatalError("\(className) > \(#function) > get UserId Error")
         }
         
         guard let likeId = selectedLike.LikeId else {
-            fatalError("LikeCollectionViewController > LikeId is nil")
+            fatalError("\(className) > \(#function) > LikeId is nil")
         }
         
         profileViewController.viewModel = MailProfileViewModel(productId: selectedLike.ProductId,

@@ -12,7 +12,7 @@ import AWSCore
 class LoginViewController: UIViewController {
 
     deinit {
-        printLog(#function)
+        print("\(className) > \(#function)")
     }
     
     // MARK: AlertController with IndicatorView
@@ -29,7 +29,7 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        printLog(#function)
+        print("\(className) > \(#function)")
         
         initTextFields()
         
@@ -77,28 +77,28 @@ class LoginViewController: UIViewController {
         
         guard let username = usernameInputText.text,
               let password = passwordInputText.text else {
-                printLog("LoginViewController > login > username Input Error")
+                print("\(className) > \(#function) > username Input Error")
                 alert(message: "이메일 또는 비밀번호가 비어있습니다", title: "로그인 실패")
                 return
         }
         
         if !username.isValidEmailAddress() {
-            printLog("login > username is not valid")
+            print("\(className) > \(#function) > username is not valid")
             alert(message: "지원하지 않는 이메일 형식입니다", title: "E-mail 오류")
         }
         
         if !password.isValidPassword() {
-            printLog("login > password is not valid")
+            print("\(className) > \(#function) > password is not valid")
             alert(message: "패스워드는 영문과 숫자 조합 6자리 이상이어야 합니다", title: "Password 오류")
         }
         
         startLoading(message: "로그인중입니다")
         
-        AmazonClientManager.sharedInstance.devIdentityProvider?.loginUser(username: username, password: password).continueWith(block: {
-            (task: AWSTask) -> Any! in
+        AmazonClientManager.sharedInstance.devIdentityProvider?.loginUser(username: username, password: password)
+            .continueWith(executor: AWSExecutor.mainThread()) { task in
             
             if let error = task.error as? AuthenticateError {
-                self.printLog("error : \(error.localizedDescription)")
+                print("\(self.className) > \(#function) > error : \(error.localizedDescription)")
                 DispatchQueue.main.async {
                     self.endLoading()
                     self.alert(message: "등록되지 않은 계정이거나\n비밀번호가 일치하지 않습니다.", title: "로그인실패", completion: nil)
@@ -111,26 +111,26 @@ class LoginViewController: UIViewController {
                     self.endLoading()
                     self.alert(message: "등록되지 않은 계정이거나\n비밀번호가 일치하지 않습니다.", title: "로그인실패", completion: nil)
                 }
-                self.printLog("LoginViewController > login > enabled Error")
+                print("\(self.className) > \(#function) > enabled Error")
                 return nil
             }
             
-            self.printLog("login > enabled : \(enabled)")
+            print("\(self.className) > \(#function) > enabled : \(enabled)")
             
             if enabled.isEqual(to: "true") {
-                self.printLog("go MainViewController")
+                print("\(self.className) > \(#function) > go MainViewController")
                 
                 guard let userId = UserDefaults.Account.string(forKey: .userId) else {
-                    fatalError("LoginViewController > login > get UserId from UserDefaults Error")
+                    fatalError("\(self.className) > \(#function) > get UserId from UserDefaults Error")
                 }
                 
-                UserInfoManager.sharedInstance.getOwnedUserInfo(userId: userId).continueWith(block: {
-                    (getUserTask : AWSTask) -> Any! in
+                UserInfoManager.sharedInstance.getOwnedUserInfo(userId: userId)
+                    .continueWith(executor: AWSExecutor.mainThread()) { getUserTask in
                     
-                    self.printLog("Fetch UserInfo Complete")
+                    print("\(self.className) > \(#function) >  Fetch UserInfo Complete")
                     
                     if getUserTask.error != nil {
-                        fatalError("LoginViewController > getUserTask > result Error")
+                        fatalError("\(self.className) > \(#function) > result Error")
                     }
                     
                     UserInfoManager.sharedInstance.registEndpointARN()
@@ -141,10 +141,10 @@ class LoginViewController: UIViewController {
                         self.present(mainVC, animated: true, completion: nil)
                     }
                     return nil
-                })
+                }
             }
             return nil
-        })
+        }
         
     }
 
@@ -156,7 +156,7 @@ class LoginViewController: UIViewController {
         // Pass the selected object to the new view controller.
         
         if segue.identifier == SignupViewController.className {
-            printLog("prepare > identifier : \(String(describing: segue.identifier))")
+            print("\(className) > \(#function) > prepare > identifier : \(String(describing: segue.identifier))")
         }
         
     }
@@ -246,11 +246,11 @@ extension LoginViewController: AgreementDelegate {
         let identifier = AgreementViewController.className
         
         guard let navigationController = self.storyboard?.instantiateViewController(withIdentifier: identifier) as? UINavigationController else {
-            fatalError("LoginViewController > get UINavigationViewController Failed")
+            fatalError("\(className) > \(#function) > get UINavigationViewController Failed")
         }
         
         guard let agreementViewController = navigationController.topViewController as? AgreementViewController else {
-            fatalError("LoginViewController > get AgreementViewController failed")
+            fatalError("\(className) > \(#function) > get AgreementViewController failed")
         }
         
         agreementViewController.delegate = self
@@ -283,7 +283,7 @@ extension LoginViewController: Observerable {
         if let keyboardSize = (info[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             
             guard let textField = self.activeTextField else {
-                printLog("keyboardWillShow > activeTextField is nil")
+                print("\(className) > \(#function) > activeTextField is nil")
                 return
             }
             

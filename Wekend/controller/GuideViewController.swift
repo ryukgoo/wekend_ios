@@ -21,7 +21,7 @@ class GuideViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        printLog("GuideViewController > viewDidLoad")
+        print("\(className) > \(#function)")
         
         // Do any additional setup after loading the view.
         
@@ -49,7 +49,7 @@ class GuideViewController: UIViewController {
     }
     
     private func initView() {
-        printLog(#function)
+        print("\(className) > \(#function)")
         
         pagerView.delegate = self
         pagerView.pageCount = 6

@@ -74,8 +74,7 @@ class AgreementViewController: UIViewController {
         do {
             readString = try String(contentsOfFile: agreementUseFileUrl!, encoding: String.Encoding.utf8)
         } catch let error as NSError {
-            printLog("Failed to read from file")
-            print(error)
+            print("\(className) > \(#function) > Failed error : \(error)")
         }
         
         return readString

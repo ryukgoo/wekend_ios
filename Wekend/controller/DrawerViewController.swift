@@ -23,7 +23,7 @@ class DrawerViewController: UIViewController {
     
     deinit {
         removeNotificationObservers()
-        printLog("deinit")
+        print("\(className) > \(#function)")
     }
     
     // MARK: menuString -> to enum
@@ -63,7 +63,7 @@ class DrawerViewController: UIViewController {
     func initViews() {
         
         guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
-            fatalError("DrawerViewController > viewDidLoad > userInfo Error")
+            fatalError("\(className) > \(#function) > userInfo Error")
         }
         
         let imageName = userInfo.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(0)
@@ -151,7 +151,7 @@ extension DrawerViewController: UITableViewDataSource, UITableViewDelegate {
         delegate?.slideMenuItemSelectedAtIndex(indexPath.row)
         
         guard let cell = tableView.cellForRow(at: indexPath) else {
-            fatalError("DrawerViewController > tableView > Cell Error")
+            fatalError("\(className) > \(#function) > Cell Error")
         }
         
         switch indexPath.row {
@@ -234,7 +234,7 @@ extension DrawerViewController: MFMailComposeViewControllerDelegate {
     
     func sendMail() {
         if !MFMailComposeViewController.canSendMail() {
-            printLog("sendMail > MFMailCompseViewController > canSendMail false")
+            print("\(className) > \(#function) > canSendMail false")
             return
         }
         
@@ -268,7 +268,7 @@ extension DrawerViewController: Observerable {
     }
     
     func handleUpdateUserInfoNotification(_ notification: Notification) {
-        printLog(#function)
+        print("\(className) > \(#function)")
         
         guard let userInfo = UserInfoManager.sharedInstance.userInfo else { return }
         

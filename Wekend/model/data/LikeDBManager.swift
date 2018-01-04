@@ -41,7 +41,7 @@ class LikeDBManager : NSObject {
     
     func comeNewNotification(id: Int) {
         
-        printLog("comeNewNotification > id : \(id)")
+        print("\(className) > \(#function) > id : \(id)")
         
         if let removeIndex = datas?.index(where: { $0.ProductId == id }) {
             if let element = datas?.remove(at: removeIndex) {
@@ -59,12 +59,12 @@ class LikeDBManager : NSObject {
     
     func getLikeItem(userId: String, productId: Int) -> AWSTask<AnyObject> {
         
-        printLog("getLikeItem > userId : \(userId), productId : \(productId)")
+        print("\(className) > \(#function) > userId : \(userId), productId : \(productId)")
         
         let getItemTask = AWSTaskCompletionSource<AnyObject>()
         
-        mapper.load(LikeItem.self, hashKey: userId, rangeKey: productId).continueWith(executor: AWSExecutor.mainThread(), block: {
-            (task: AWSTask) -> Any! in
+        mapper.load(LikeItem.self, hashKey: userId, rangeKey: productId)
+            .continueWith(executor: AWSExecutor.mainThread()) { task in
             
             guard let result = task.result else {
                 getItemTask.set(result: nil)
@@ -74,14 +74,14 @@ class LikeDBManager : NSObject {
             getItemTask.set(result: result)
             
             return nil
-        })
+        }
         
         return getItemTask.task
     }
     
     func addLike(userInfo: UserInfo, productInfo: ProductInfo) {
         
-        printLog("addLike > userInfo : \(String(describing: userInfo.username))")
+        print("\(className) > \(#function) > userInfo : \(String(describing: userInfo.username))")
         
         guard let likeItem = LikeItem() else {
             fatalError("LikeItemManager > LikeItem initialize Error")
@@ -102,22 +102,21 @@ class LikeDBManager : NSObject {
             likeItem.ProductDesc = productInfo.SubTitle
         }
         
-        mapper.save(likeItem).continueWith(executor: AWSExecutor.mainThread(), block: {
-            (task: AWSTask) -> Any! in
+        mapper.save(likeItem).continueWith(executor: AWSExecutor.mainThread()) { task in
             
             if task.error != nil { return nil }
             
-            LikeDBManager.sharedInstance.getLikeCount(productId: likeItem.ProductId).continueWith(block: {
-                (getCountTask: AWSTask) -> Any! in
+            LikeDBManager.sharedInstance.getLikeCount(productId: likeItem.ProductId)
+                .continueWith(executor: AWSExecutor.mainThread()) { getCountTask in
                 
                 guard let likeCount = getCountTask.result as? Int else {
-                    self.printLog("addLike > getCount from Server Error")
+                    print("\(self.className) > \(#function) > getCount from Server Error")
                     return nil
                 }
                 
                 if let index = ProductInfoManager.sharedInstance.datas?.index(where: { $0.ProductId == productInfo.ProductId }) {
                     guard let newProductInfo = ProductInfoManager.sharedInstance.datas?[index] else {
-                        self.printLog("addLike > get ProductInfo from ProductInfoManager Error")
+                        print("\(self.className) > \(#function) > get ProductInfo from ProductInfoManager Error")
                         return nil
                     }
                     
@@ -132,10 +131,10 @@ class LikeDBManager : NSObject {
                 }
                 
                 return nil
-            })
+            }
             
             return nil
-        })
+        }
     }
     
     /*
@@ -208,18 +207,18 @@ class LikeDBManager : NSObject {
                 (getCountTask: AWSTask) -> Any! in
                 
                 if task.error != nil {
-                    self.printLog("deleteLike > AWSTask > Error")
+                    print("\(self.className) > \(#function) > AWSTask > Error")
                     // TODO: Error notification
                 }
                 
                 guard let likeCount = getCountTask.result as? Int else {
-                    self.printLog("deleteLike > getCount from Server Error")
+                    print("\(self.className) > \(#function) > getCount from Server Error")
                     return nil
                 }
                 
                 if let index = ProductInfoManager.sharedInstance.datas?.index(where: { $0.ProductId == item.ProductId }) {
                     guard let newProductInfo = ProductInfoManager.sharedInstance.datas?[index] else {
-                        self.printLog("deleteLike > get productInfo from ProductInfoManager Error")
+                        print("\(self.className) > \(#function) > get productInfo from ProductInfoManager Error")
                         return nil
                     }
                     
@@ -243,7 +242,7 @@ class LikeDBManager : NSObject {
     
     func getDatas(userId : String) -> AWSTask<AnyObject> {
         
-        printLog("getDatas > userId : \(userId)")
+        print("\(className) > \(#function) > userId : \(userId)")
         
         let getDataTask = AWSTaskCompletionSource<AnyObject>()
         
@@ -258,26 +257,25 @@ class LikeDBManager : NSObject {
         queryExpression.expressionAttributeValues = [":userId" : userId]
         queryExpression.scanIndexForward = false
         
-        mapper.query(LikeItem.self, expression: queryExpression).continueWith(executor: AWSExecutor.mainThread(), block: {
-            (task: AWSTask) -> Any! in
+        mapper.query(LikeItem.self, expression: queryExpression).continueWith(executor: AWSExecutor.mainThread()) { task in
             
             if task.error != nil {
-                self.printLog("getDatas > Error : \(String(describing: task.error))")
+                print("\(self.className) > \(#function) > Error : \(String(describing: task.error))")
                 return nil
             }
             
             guard let result = task.result else {
-                fatalError("LikeDBManager > getDatas > Error !!!!")
+                fatalError("\(self.className) > \(#function) > Error !!!!")
             }
             
             let paginatedOutput = result as AWSDynamoDBPaginatedOutput
             
-            self.printLog("getDatas complete And getReadTimes start")
+            print("\(self.className) > \(#function) > complete And getReadTimes start")
             
-            ProductInfoManager.sharedInstance.getReadTimes().continueWith(block: {
-                (readTask: AWSTask) -> Any! in
+            ProductInfoManager.sharedInstance.getReadTimes()
+                .continueWith(executor: AWSExecutor.mainThread()) { readTask in
                 
-                self.printLog("getReadTimes in continue")
+                print("\(self.className) > \(#function) > getReadTimes in continue")
                 
                 self.datas = []
                 
@@ -290,7 +288,7 @@ class LikeDBManager : NSObject {
                 }
                 
                 guard let productReadTimes = ProductInfoManager.sharedInstance.likeStates else {
-                    self.printLog("getReadTimes > likeStates is nil")
+                    print("\(self.className) > \(#function) > likeStates is nil")
                     return nil
                 }
                 
@@ -299,7 +297,7 @@ class LikeDBManager : NSObject {
                         if item.ProductId == readItem.ProductId {
                             
                             item.isRead = self.compareLikeTimeAndReadTime(like: item, read: readItem)
-                            self.printLog("compareLikeTimeAndReadTime > ProductId : \(item.ProductId), isRead : \(item.isRead)")
+                            print("\(self.className) > \(#function) > compareLikeTimeAndReadTime > ProductId : \(item.ProductId), isRead : \(item.isRead)")
                             
                             if item.Gender == UserInfo.RawValue.GENDER_MALE {
                                 item.productLikedTime = readItem.FemaleLikeTime ?? ""
@@ -326,20 +324,20 @@ class LikeDBManager : NSObject {
                 getDataTask.set(result: self.datas as AnyObject?)
                 
                 return nil
-            })
+            }
             
             return nil
-        })
+        }
         
         return getDataTask.task
     }
     
     private func compareLikeTimeAndReadTime(like: LikeItem, read: ProductReadState) -> Bool {
         
-        printLog("compareLikeTimeAndReadTime > productId : \(read.ProductId)")
-        printLog("compareLikeTimeAndReadTime > maleTime : \(String(describing: read.MaleLikeTime))")
-        printLog("compareLikeTimeAndReadTime > femaleTime : \(String(describing: read.FemaleLikeTime))")
-        printLog("compareLikeTimeAndReadTime > likeReadTime : \(String(describing: like.ReadTime))")
+        print("\(className) > \(#function) > productId : \(read.ProductId)")
+        print("\(className) > \(#function) > maleTime : \(String(describing: read.MaleLikeTime))")
+        print("\(className) > \(#function) > femaleTime : \(String(describing: read.FemaleLikeTime))")
+        print("\(className) > \(#function) > likeReadTime : \(String(describing: like.ReadTime))")
         
         if let likeReadTime = like.ReadTime?.dateFromISO8601 {
             if like.Gender == UserInfo.RawValue.GENDER_MALE {
@@ -374,7 +372,7 @@ class LikeDBManager : NSObject {
     
     func getLikeCount(productId : Int) -> AWSTask<AnyObject> {
         
-        printLog("getLikeCount > productId : \(productId)")
+        print("\(className) > \(#function) > productId : \(productId)")
         
         let getLikeCountTask = AWSTaskCompletionSource<AnyObject>()
         
@@ -383,11 +381,11 @@ class LikeDBManager : NSObject {
         queryExpression.keyConditionExpression = "\(LikeItem.Attribute.PRODUCT_ID) = :productId"
         queryExpression.expressionAttributeValues = [":productId" : productId]
         
-        mapper.query(LikeItem.self, expression: queryExpression).continueWith(executor: AWSExecutor.mainThread(), block: {
-            (task: AWSTask) -> Any! in
+        mapper.query(LikeItem.self, expression: queryExpression)
+            .continueWith(executor: AWSExecutor.mainThread()) { task in
             
             guard let result = task.result else {
-                fatalError("LikeDBManager > getLikeCount > Error !!!!")
+                fatalError("\(self.className) > \(#function) > Error !!!!")
             }
             
             let paginatedOutput = result as AWSDynamoDBPaginatedOutput
@@ -395,14 +393,14 @@ class LikeDBManager : NSObject {
             getLikeCountTask.set(result: paginatedOutput.items.count as AnyObject)
             
             return nil
-        })
+        }
         
         return getLikeCountTask.task
     }
     
     func getFriends(productId: Int, userId: String, gender: String) -> AWSTask<AnyObject> {
         
-        printLog("getFriends > productId : \(productId), userId : \(userId), gender : \(gender)")
+        print("\(className) > \(#function) > productId : \(productId), userId : \(userId), gender : \(gender)")
         
         let getFriendsTask = AWSTaskCompletionSource<AnyObject>()
         
@@ -413,11 +411,10 @@ class LikeDBManager : NSObject {
         queryExpression.expressionAttributeValues = [":productId" : productId, ":gender" : gender]
         queryExpression.scanIndexForward = false
         
-        mapper.query(LikeItem.self, expression: queryExpression).continueWith(executor: AWSExecutor.mainThread(), block: {
-            (task: AWSTask) -> Any! in
+        mapper.query(LikeItem.self, expression: queryExpression).continueWith(executor: AWSExecutor.mainThread()) { task in
             
             guard let result = task.result else {
-                fatalError("getFriendsTask > Error")
+                fatalError("\(self.className) > \(#function) > Error")
             }
             
             let paginatedOutput = result as AWSDynamoDBPaginatedOutput
@@ -432,11 +429,11 @@ class LikeDBManager : NSObject {
             readStateExpression.keyConditionExpression = "\(LikeReadState.Attribute.PRODUCT_ID) = :productId and \(LikeReadState.Attribute.USER_ID) = :userId"
             readStateExpression.expressionAttributeValues = [":productId" : productId, ":userId" : userId]
             
-            self.mapper.query(LikeReadState.self, expression: readStateExpression).continueWith(block: {
-                (readStateTask: AWSTask) -> Any! in
+            self.mapper.query(LikeReadState.self, expression: readStateExpression)
+                .continueWith(executor: AWSExecutor.mainThread()) { readStateTask in
                 
                 guard let readStateResult = readStateTask.result else {
-                    self.printLog("getFriends > get readStateResult Error")
+                    print("\(self.className) > \(#function) > get readStateResult Error")
                     getFriendsTask.set(result: arrResult as AnyObject)
                     return nil
                 }
@@ -445,11 +442,11 @@ class LikeDBManager : NSObject {
                 
                 for item in arrResult {
                     
-                    self.printLog("getFriends > item.userId : \(item.UserId)")
+                    print("\(self.className) > \(#function) > item.userId : \(item.UserId)")
                     
                     for readState in readStateOutput.items as! [LikeReadState] {
                         
-                        self.printLog("getFriends > readState.LikeUserId : \(readState.LikeUserId)")
+                        print("\(self.className) > \(#function) > readState.LikeUserId : \(readState.LikeUserId)")
                         
                         if item.UserId == readState.LikeUserId {
                             item.isRead = true
@@ -461,10 +458,10 @@ class LikeDBManager : NSObject {
                 getFriendsTask.set(result: arrResult as AnyObject)
                 
                 return nil
-            })
+            }
             
             return nil
-        })
+        }
         
         return getFriendsTask.task
     }

@@ -62,11 +62,11 @@ class SelectPhotoViewController: UIViewController, UIImagePickerControllerDelega
         do {
             try imageData?.write(to: fileURL!, options: .atomicWrite)
         } catch let error {
-            printLog("imageData write error : \(error)")
+            print("\(className) > \(#function) > imageData write error : \(error)")
         }
         
         guard let userId = UserInfoManager.sharedInstance.userInfo?.userid else {
-            fatalError("SelectPhotoViewController > nextButtonTapped > userId Error")
+            fatalError("\(className) > \(#function) > userId Error")
         }
         
         let uploadRequest = AWSS3TransferManagerUploadRequest()
@@ -92,7 +92,7 @@ class SelectPhotoViewController: UIViewController, UIImagePickerControllerDelega
         }
         
         guard let resizedImage = selectedImage.resize(targetSize: CGSize(width: 800, height: 800)) else {
-            fatalError("SelectPhotoViewController > resize image > error!!!!")
+            fatalError("\(className) > \(#function) > resize image > error!!!!")
         }
         
         selectedPhoto = resizedImage
@@ -117,13 +117,13 @@ class SelectPhotoViewController: UIViewController, UIImagePickerControllerDelega
             (task: AWSTask) -> Any! in
             
             if let error = task.error {
-                self.printLog("upload > error : \(error)")
+                print("\(self.className) > \(#function) > upload > error : \(error)")
                 self.alert(message: "다시 시도해 주세요", title: "사진 업로드 실패")
                 return nil
             }
             
             guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
-                fatalError("SelectPhotoViewController > upload get UserInfo Failed")
+                fatalError("\(self.className) > \(#function) > upload get UserInfo Failed")
             }
             
             let photos: Set = [uploadRequest.key!]

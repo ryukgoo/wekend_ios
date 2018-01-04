@@ -51,31 +51,28 @@ class ProductInfoManager : NSObject {
         let loadTask = AWSTaskCompletionSource<AnyObject>()
         
         guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
-            fatalError("ProductInfoManager > userInfo not loaded")
+            fatalError("\(className) > \(#function) > userInfo not loaded")
         }
         
-        LikeDBManager.sharedInstance.getDatas(userId: userInfo.userid).continueWith(executor: AWSExecutor.mainThread(), block: {
-            (likeTask : AWSTask) -> Any? in
+        LikeDBManager.sharedInstance.getDatas(userId: userInfo.userid).continueWith(executor: AWSExecutor.mainThread()) { likeTask in
             
             guard let _ = likeTask.result as! Array<LikeItem>? else {
-                fatalError("Failed Like > getDatas")
+                fatalError("\(self.className) > \(#function) > Failed Like > getDatas")
             }
             
-            self.queryData(startFromBeginning: startFromBeginning).continueWith(executor: AWSExecutor.mainThread(), block: {
-                (task: AWSTask) -> Any! in
-                
+            self.queryData(startFromBeginning: startFromBeginning).continueWith(executor: AWSExecutor.mainThread()) { task in
                 guard let _ = task.result else {
-                    self.printLog("loadData > No Data")
+                    print("\(self.className) > \(#function) > loadData > No Data")
                     return nil
                 }
                 
                 loadTask.set(result: self.datas as AnyObject?)
                 
                 return nil
-            })
+            }
             
             return nil
-        })
+        }
         
         return loadTask.task
     }
@@ -92,8 +89,7 @@ class ProductInfoManager : NSObject {
         let scanExpression = AWSDynamoDBScanExpression()
         scanExpression.exclusiveStartKey = self.lastEvaluatedKey
         scanExpression.limit = 20
-        self.mapper.scan(ProductInfo.self, expression: scanExpression).continueWith(executor: AWSExecutor.mainThread(), block: {
-            (task: AWSTask) -> Any! in
+        self.mapper.scan(ProductInfo.self, expression: scanExpression).continueWith(executor: AWSExecutor.mainThread()) { task in
             
             if self.lastEvaluatedKey == nil {
                 self.datas?.removeAll(keepingCapacity: true)
@@ -112,13 +108,13 @@ class ProductInfoManager : NSObject {
             }
             
             if task.error != nil {
-                self.printLog("scan Error : \(String(describing: task.error))")
+                print("\(self.className) > \(#function) > scan Error : \(String(describing: task.error))")
             }
             
             scanTask.set(result: self.datas as AnyObject?)
             
             return nil
-        })
+        }
         
         return scanTask.task
     }
@@ -155,8 +151,7 @@ class ProductInfoManager : NSObject {
             queryExpression.scanIndexForward = false
         }
         
-        mapper.query(ProductInfo.self, expression: queryExpression).continueWith(executor: AWSExecutor.mainThread(), block: {
-            (task: AWSTask) -> Any! in
+        mapper.query(ProductInfo.self, expression: queryExpression).continueWith(executor: AWSExecutor.mainThread()) { task in
             
             if self.lastEvaluatedKey == nil {
                 self.datas?.removeAll(keepingCapacity: true)
@@ -175,31 +170,31 @@ class ProductInfoManager : NSObject {
             }
             
             if task.error != nil {
-                self.printLog("query Error : \(String(describing: task.error))")
+                print("\(self.className) > \(#function) > query Error : \(String(describing: task.error))")
             }
             
             queryTask.set(result: self.datas as AnyObject?)
             
             return nil
-        })
+        }
         
         return queryTask.task
     }
     
     func getReadTimes() -> AWSTask<AnyObject> {
         
-        printLog("getReadTimes")
+        print("\(className) > \(#function)")
         
-        return mapper.scan(ProductReadState.self, expression: AWSDynamoDBScanExpression()).continueWith(block: {
-            (task: AWSTask) -> Any! in
+        return mapper.scan(ProductReadState.self, expression: AWSDynamoDBScanExpression())
+            .continueWith(executor: AWSExecutor.mainThread()) { task in
             
             if task.error != nil {
-                self.printLog("getReadTimes > Error")
+                print("\(self.className) > \(#function) > Error")
                 return nil
             }
             
             guard let result = task.result else {
-                self.printLog("getReadTimes > No result")
+                print("\(self.className) > \(#function) > No result")
                 return nil
             }
             
@@ -213,8 +208,7 @@ class ProductInfoManager : NSObject {
             }
             
             return nil
-        })
-        
+        }
     }
     
     private func getIndexName() -> String {
@@ -252,7 +246,7 @@ class ProductInfoManager : NSObject {
             filterExpression += " and \(ProductInfo.Attribute.PRODUCT_REGION) = :productRegion"
         }
         
-        printLog("keyConditionExpression : \(filterExpression)")
+        print("\(className) > \(#function) > keyConditionExpression : \(filterExpression)")
         
         if filterExpression.isEmpty { return nil }
         
@@ -286,7 +280,7 @@ class ProductInfoManager : NSObject {
             expressionAttributeValues[":productRegion"] = filterOptions.region.rawValue
         }
         
-        printLog("getExpressionAttributeValues : \(expressionAttributeValues)")
+        print("\(className) > \(#function) > \(expressionAttributeValues)")
         
         return expressionAttributeValues
     }

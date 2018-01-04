@@ -23,7 +23,7 @@ class MyProfileViewController: UIViewController {
     var isEditingMode: Bool = false {
         didSet {
             
-            print("MyProfileViewController > isEdigingMode didSet > isEditing : \(isEditingMode)")
+            print("\(className) > \(#function) > isEditing : \(isEditingMode)")
             
             editLayoutStackView.isHidden = !isEditingMode
             editPhoneButton.isHidden = !isEditingMode
@@ -41,7 +41,7 @@ class MyProfileViewController: UIViewController {
             codeTextField.isEnabled = isEditingMode
             
             guard let phoneNumber = UserInfoManager.sharedInstance.userInfo?.phone?.toPhoneFormat() else {
-                fatalError("phoneNumber is nil")
+                fatalError("\(className) > \(#function) > phoneNumber is nil")
             }
             phoneTextField.text = isEditingMode ? "" : phoneNumber
             
@@ -150,7 +150,7 @@ class MyProfileViewController: UIViewController {
     private func initViews() {
         
         guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
-            fatalError("MyProfileViewController > initViews > get UserInfo Error")
+            fatalError("\(className) > \(#function) > get UserInfo Error")
         }
         
         pagerView.delegate = self
@@ -163,7 +163,7 @@ class MyProfileViewController: UIViewController {
         scrollView.delegate = self
         
         guard let birth = userInfo.birth as! Int! else {
-            fatalError("MyProfileViewController > initViews > get birth Error")
+            fatalError("\(className) > \(#function) > get birth Error")
         }
         
         nicknameTextField.text = userInfo.nickname
@@ -194,7 +194,7 @@ class MyProfileViewController: UIViewController {
 //        scrollableHeight += editButton.frame.height
 //        scrollableHeight += 40
         
-        printLog("pagerView.frame.size.height: \(pagerView.frame.size.height)")
+        print("\(className) > \(#function) > pagerView.frame.size.height: \(pagerView.frame.size.height)")
         
         containerViewHeight.constant = scrollableHeight
         backgroundViewHeight.constant = scrollableHeight - pagerView.frame.size.height
@@ -210,26 +210,23 @@ class MyProfileViewController: UIViewController {
     }
     
     @IBAction func onEditPhoneButtonTapped(_ sender: Any) {
-        printLog(#function)
+        print("\(className) > \(#function)")
         phoneTextField.becomeFirstResponder()
     }
     
     @IBAction func onEditNicknameButtonTapped(_ sender: Any) {
-        printLog(#function)
+        print("\(className) > \(#function)")
 //        nicknameTextField.becomeFirstResponder()
         
         view.endEditing(true)
         
-        guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
-            return
-        }
+        guard let userInfo = UserInfoManager.sharedInstance.userInfo else { return }
         
         if let inputNickname = nicknameTextField.text {
             if !inputNickname.isEmpty && userInfo.nickname != inputNickname {
                 startLoading(message: "수정중..")
                 
-                UserInfoManager.sharedInstance.isNicknameAvailable(nickname: inputNickname).continueWith(executor: AWSExecutor.mainThread(), block: {
-                    (task: AWSTask) -> Any? in
+                UserInfoManager.sharedInstance.isNicknameAvailable(nickname: inputNickname).continueWith(executor: AWSExecutor.mainThread()) { task in
                     
                     guard let isAvailable = task.result as? Bool else {
                         DispatchQueue.main.async {
@@ -253,7 +250,7 @@ class MyProfileViewController: UIViewController {
                     }
                     
                     return nil
-                })
+                }
                 
             }
         }
@@ -262,7 +259,7 @@ class MyProfileViewController: UIViewController {
     // MARK: IBAction
     @IBAction func onEditButtonTapped(_ sender: Any) {
         
-        printLog("onEditButtonTapped")
+        print("\(className) > \(#function)")
         
         if isEditingMode {
             
@@ -276,11 +273,11 @@ class MyProfileViewController: UIViewController {
                 do {
                     try imageData?.write(to: fileURL!, options: .atomicWrite)
                 } catch let error {
-                    printLog("imageData write error : \(error)")
+                    print("\(className) > \(#function) > imageData write error : \(error)")
                 }
                 
                 guard let userId = UserInfoManager.sharedInstance.userInfo?.userid else {
-                    fatalError("SelectPhotoViewController > nextButtonTapped > userId Error")
+                    fatalError("\(className) > \(#function) > userId Error")
                 }
                 
                 uploadRequest?.bucket = Configuration.S3.PROFILE_IMAGE_BUCKET
@@ -302,7 +299,7 @@ class MyProfileViewController: UIViewController {
     }
     
     @IBAction func onRequestCodeButtonTapped(_ sender: Any) {
-        printLog("onRequestCodeButtonTapped")
+        print("\(className) > \(#function)")
         
         phoneTextField.resignFirstResponder()
         
@@ -311,7 +308,7 @@ class MyProfileViewController: UIViewController {
             return
         }
         
-        printLog("\(#function) > onRequestCodeButtonTapped > phoneNumber : \(phoneNumber)")
+        print("\(className) > \(#function) > phoneNumber : \(phoneNumber)")
         
         UserInfoManager.sharedInstance.sendVerificationCode(phoneNumber: phoneNumber).continueWith(block: {
             (task: AWSTask) -> Any! in
@@ -322,7 +319,7 @@ class MyProfileViewController: UIViewController {
                     DispatchQueue.main.async {
                         self.alert(message: "다시 시도해 주세요", title: "인증번호 발송오류")
                     }
-                    self.printLog("getVerificationCode Failed")
+                    print("\(self.className) > \(#function) > getVerificationCode Failed")
                     return nil
                 }
                 
@@ -338,7 +335,7 @@ class MyProfileViewController: UIViewController {
     }
     
     @IBAction func onConfirmCodeButtonTapped(_ sender: Any) {
-        printLog("onConfirmCodeButtonTapped")
+        print("\(className) > \(#function)")
         
         codeTextField.resignFirstResponder()
         
@@ -353,7 +350,7 @@ class MyProfileViewController: UIViewController {
             alert(message: "인증번호가 맞지 않습니다", title: "인증번호 확인")
         } else {
             guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
-                fatalError("MyProfileViewController > onConfirmCodeButtonTapped > userInfo is nil")
+                fatalError("\(className) > \(#function) > userInfo is nil")
             }
             
             if let newPhoneNumber = phoneTextField.text {
@@ -401,10 +398,10 @@ class MyProfileViewController: UIViewController {
 extension MyProfileViewController: PagerViewDelegate, UIScrollViewDelegate {
     
     func loadPageViewItem(imageView: UIImageView, page: Int) {
-        printLog("loadPageViewItem")
+        print("\(className) > \(#function)")
         
         guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
-            fatalError("ProfileViewController > loadPageViewItem > userInfo Error")
+            fatalError("\(className) > \(#function) > userInfo Error")
         }
         
         let imageName = userInfo.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(page)
@@ -455,7 +452,7 @@ extension MyProfileViewController: UIImagePickerControllerDelegate, UINavigation
         }
         
         guard let resizedImage = selectedImage.resize(targetSize: CGSize(width: 800, height: 800)) else {
-            fatalError("SelectPhotoViewController > resize image > error!!!!")
+            fatalError("\(className) > \(#function) > error!!!!")
         }
         
         selectedPhoto = resizedImage
@@ -485,11 +482,11 @@ extension MyProfileViewController: UIImagePickerControllerDelegate, UINavigation
         do {
             try imageData?.write(to: fileURL!, options: .atomicWrite)
         } catch let error {
-            printLog("imageData write error : \(error)")
+            print("\(className) > \(#function) > imageData write error : \(error)")
         }
         
         guard let userId = UserInfoManager.sharedInstance.userInfo?.userid else {
-            fatalError("SelectPhotoViewController > nextButtonTapped > userId Error")
+            fatalError("\(className) > \(#function) > userId Error")
         }
         
         uploadRequest?.bucket = Configuration.S3.PROFILE_IMAGE_BUCKET
@@ -510,7 +507,7 @@ extension MyProfileViewController: UIImagePickerControllerDelegate, UINavigation
             (task: AWSTask) -> Any! in
             
             if let error = task.error {
-                self.printLog("upload > error : \(error)")
+                print("\(self.className) > \(#function) > upload > error : \(error)")
             }
             
             guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
@@ -656,15 +653,15 @@ extension MyProfileViewController {
     }
     
     func keyboardWillShow(_ notification: Notification) {
-        printLog(#function)
+        print("\(className) > \(#function)")
         var info: Dictionary = notification.userInfo!
         
         if let keyboardSize = (info[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             
-            printLog("\(#function) > keyboardSize : \(keyboardSize)")
+            print("\(className) > \(#function) > keyboardSize : \(keyboardSize)")
             
             guard let textField = self.activeTextField else {
-                printLog("keyboardWillShow > activeTextField is nil")
+                print("\(className) > \(#function) > activeTextField is nil")
                 return
             }
             
@@ -674,9 +671,9 @@ extension MyProfileViewController {
             let keyboardY = self.view.frame.height - keyboardSize.height
             let moveY = textFieldBottomY - keyboardY
             
-            printLog("\(#function) > textFieldBottomY : \(textFieldBottomY)")
-            printLog("\(#function) > keyboardY : \(keyboardY)")
-            printLog("\(#function) > moveY : \(moveY)")
+            print("\(className) > \(#function) > textFieldBottomY : \(textFieldBottomY)")
+            print("\(className) > \(#function) > keyboardY : \(keyboardY)")
+            print("\(className) > \(#function) > moveY : \(moveY)")
             
             UIView.animate(withDuration: 0.1, animations: {
                 () -> Void in
@@ -690,7 +687,7 @@ extension MyProfileViewController {
     }
     
     func keyboardWillHide(_ notification: Notification) {
-        printLog(#function)
+        print("\(className) > \(#function)")
         UIView.animate(withDuration: 0.1, animations: {
             () -> Void in
             if self.view.frame.origin.y != 0 {

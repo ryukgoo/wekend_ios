@@ -19,11 +19,11 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
 
         guard let latitude = self.latitude, let longitude = self.longitude else {
-            fatalError("MapViewController > viewDidLoad > latitude or longitude is nil")
+            fatalError("\(className) > \(#function) > latitude or longitude is nil")
         }
         
         guard let productTitle = self.productTitle else {
-            fatalError("MapViewController > viewDidLoad > productTitle is nil")
+            fatalError("\(className) > \(#function) > productTitle is nil")
         }
         
         let camera = GMSCameraPosition.camera(withLatitude: latitude, longitude: longitude, zoom: 16.0)
@@ -42,9 +42,7 @@ class MapViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        printLog("viewWillAppear")
-        
+        print("\(className) > \(#function)")
         self.navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
         self.navigationController?.navigationBar.shadowImage = nil
         self.navigationController?.navigationBar.tintColor = .black

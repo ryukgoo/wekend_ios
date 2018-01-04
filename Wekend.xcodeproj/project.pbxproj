@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		4C0F4B99F0F4E6B992718E65 /* Pods_Wekend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5EAEDF07F12987F8C85A29D /* Pods_Wekend.framework */; };
 		B80438B91FA0A68B00D4A4FA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B80438B81FA0A68A00D4A4FA /* GoogleService-Info.plist */; };
+		B806953D1FFE2D85009F57A3 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B806953B1FFE2D85009F57A3 /* ProfileViewController.swift */; };
+		B806953E1FFE2D85009F57A3 /* ProfileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B806953C1FFE2D85009F57A3 /* ProfileViewController.xib */; };
 		B80E7F9F1FD9018200C742D2 /* MailProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E7F9E1FD9018200C742D2 /* MailProfileViewModel.swift */; };
 		B81C00601F98DA02007E258A /* AuthenticateError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81C005F1F98DA02007E258A /* AuthenticateError.swift */; };
 		B8221F091E03D9D900BCC06C /* LikeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8221F081E03D9D900BCC06C /* LikeTableViewCell.swift */; };
@@ -146,6 +148,8 @@
 /* Begin PBXFileReference section */
 		AF0978F871BEF1973A4462F2 /* Pods-Wekend.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wekend.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wekend/Pods-Wekend.debug.xcconfig"; sourceTree = "<group>"; };
 		B80438B81FA0A68A00D4A4FA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		B806953B1FFE2D85009F57A3 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		B806953C1FFE2D85009F57A3 /* ProfileViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProfileViewController.xib; sourceTree = "<group>"; };
 		B80E7F9E1FD9018200C742D2 /* MailProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailProfileViewModel.swift; sourceTree = "<group>"; };
 		B815667B1F906D5F00E0769B /* Wekend.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Wekend.entitlements; sourceTree = "<group>"; };
 		B81C005F1F98DA02007E258A /* AuthenticateError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticateError.swift; sourceTree = "<group>"; };
@@ -570,6 +574,8 @@
 				B82598FC1F260DAA003999BE /* AgreementViewController.swift */,
 				B89EFADA1F6A6E02000ACF72 /* GuideViewController.swift */,
 				B8B5A2861F6BBB7A00D899D5 /* GuideViewController.xib */,
+				B806953B1FFE2D85009F57A3 /* ProfileViewController.swift */,
+				B806953C1FFE2D85009F57A3 /* ProfileViewController.xib */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -742,6 +748,7 @@
 				B8893A311E5B241600C135CE /* LaunchScreen.storyboard in Resources */,
 				B8B5A2871F6BBB7A00D899D5 /* GuideViewController.xib in Resources */,
 				B8E1E1C41F9625F600355CD7 /* SubItems.storyboard in Resources */,
+				B806953E1FFE2D85009F57A3 /* ProfileViewController.xib in Resources */,
 				B88D36251E40C2F000B977E5 /* Login.storyboard in Resources */,
 				B8C6C38E1DE41E7000FBDF6C /* Assets.xcassets in Resources */,
 				B80438B91FA0A68B00D4A4FA /* GoogleService-Info.plist in Resources */,
@@ -861,6 +868,7 @@
 				B830D3031E09289000EAEFE2 /* StoreCollectionViewCell.swift in Sources */,
 				B86DFF601EE5876200E93246 /* LikeDBManager.swift in Sources */,
 				B8D6FF881FDFC9E100899C44 /* IntExtension.swift in Sources */,
+				B806953D1FFE2D85009F57A3 /* ProfileViewController.swift in Sources */,
 				B89EFADC1F6A6E02000ACF72 /* GuideViewController.swift in Sources */,
 				B848F7281E41D0FD0034E803 /* InputUserInfoViewController.swift in Sources */,
 				B895CF101ED6CE1800891559 /* UIImage+Resize.swift in Sources */,

@@ -30,7 +30,7 @@ class AmazonClientManager: NSObject {
     
     func didFinishLaunching(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        printLog("\(#function) > start")
+        print("\(className) > \(#function) > start")
         
         // AWS Initialization
         devIdentityProvider = AmazonIdentityProvider(regionType: .APNortheast1, identityPoolId: Configuration.IDENTITY_POOL_ID, useEnhancedFlow: true, identityProviderManager: nil)
@@ -39,7 +39,7 @@ class AmazonClientManager: NSObject {
         AWSServiceManager.default().defaultServiceConfiguration = configuration
         isInitialized = true
         
-        printLog("\(#function) > finished")
+        print("\(className) > \(#function) > finished")
         
         return true
     }
@@ -49,7 +49,7 @@ class AmazonClientManager: NSObject {
         guard let userId = UserDefaults.Account.string(forKey: .userId),
               let _ = UserDefaults.Account.string(forKey: .userName) else {
                 
-                printLog("\(#function) > register user not yet")
+                print("\(className) > \(#function) > register user not yet")
                 if self.credentialsProvider?.identityId != nil {
                     self.credentialsProvider?.clearKeychain()
                 }
@@ -58,8 +58,7 @@ class AmazonClientManager: NSObject {
                 return
         }
         
-        UserInfoManager.sharedInstance.getOwnedUserInfo(userId: userId).continueWith(executor: AWSExecutor.mainThread(), block: {
-            (task: AWSTask) -> Any? in
+        UserInfoManager.sharedInstance.getOwnedUserInfo(userId: userId).continueWith(executor: AWSExecutor.mainThread()) { task in
             
             if task.error != nil || task.result == nil {
                 completion(false)
@@ -68,7 +67,7 @@ class AmazonClientManager: NSObject {
             completion(true)
             
             return nil
-        })
+        }
     }
     
     func clearCredentials() {

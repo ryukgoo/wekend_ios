@@ -38,14 +38,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let token = deviceToken.reduce("") { $0 + String(format: "%02.2hhx", $1) }
-        printLog("\(#function) data: \(token)")
+        print("\(className) > \(#function) > data: \(token)")
         // Forward the token to your provider, using a custom method
         UserDefaults.RemoteNotification.set(token, forKey: .deviceToken)
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         // The token is not currently available
-        printLog("Remote notification support is unavailable due to error: \(error.localizedDescription)")
+        print("\(className) > \(#function) > Remote notification support is unavailable due to error: \(error.localizedDescription)")
     }
     
     /*
@@ -53,12 +53,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
      * update data from notification..
      */
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        printLog("\(#function) userInfo: \(userInfo)")
+        print("\(className) > \(#function) > userInfo: \(userInfo)")
         completionHandler(.newData)
     }
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
-        printLog(#function)
+        print("\(className) > \(#function)")
     }
     
     /*
@@ -67,7 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
      */
     
     func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-        printLog(#function)
+        print("\(className) > \(#function)")
         return false
     }
     
@@ -76,32 +76,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
      * Work HERE!!
      */
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-        printLog(#function)
+        print("\(className) > \(#function)")
         return DeepLinker.handleDeepLink(url: url)
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
-        printLog(#function)
+        print("\(className) > \(#function)")
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
         
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-        printLog(#function)
+        print("\(className) > \(#function)")
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        printLog(#function)
+        print("\(className) > \(#function)")
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
         
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         
-        printLog(#function)
+        print("\(className) > \(#function)")
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         
         if let _ = UserInfoManager.sharedInstance.userInfo {
@@ -137,20 +137,20 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
     func registerNotificationCenter(_ application: UIApplication) {
         if #available(iOS 10.0, *) {
-            printLog("\(#function) > register remote notification")
+            print("\(className) > \(#function) > register remote notification")
             let center = UNUserNotificationCenter.current()
             center.delegate = self
             center.requestAuthorization(options: [.alert, .badge, .sound], completionHandler: {
                 (granted, error) in
                 
                 if granted {
-                    self.printLog("UNUserNotificationCenter is granted")
+                    print("\(self.className) > \(#function) > UNUserNotificationCenter is granted")
                     DispatchQueue.main.async {
                         UIApplication.shared.registerForRemoteNotifications()
                     }
                     
                 } else {
-                    self.printLog("UNUserNotificationCenter not granted")
+                    print("\(self.className) > \(#function) > UNUserNotificationCenter not granted")
                 }
                 
             })
@@ -164,7 +164,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
     @available(iOS 10.0, *)
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive respone: UNNotificationResponse, withCompletionHandler completionHandler : @escaping () -> Void) {
-        printLog("\(#function) delegate > response : \(respone)")
+        print("\(className) > \(#function) > delegate > response : \(respone)")
         
         // Else handle actions for other notification types...
         
@@ -174,7 +174,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     @available(iOS 10.0, *)
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         
-        print(#function)
+        print("\(className) > \(#function)")
         
         // Application is Active
         // slient push notification handle... TBD

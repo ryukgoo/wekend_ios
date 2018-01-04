@@ -63,7 +63,7 @@ class InsertPhoneViewController: UIViewController {
     // MARK: IBAction
     
     @IBAction func requestCodeButtonTapped(_ sender: Any) {
-        printLog("requestCodeButtonTapped")
+        print("\(className) > \(#function)")
         
         inputPhoneText.resignFirstResponder()
         
@@ -78,7 +78,7 @@ class InsertPhoneViewController: UIViewController {
             if task.error == nil {
                 
                 guard let result = task.result else {
-                    self.printLog("getVerificationCode Failed")
+                    print("\(self.className) > \(#function) > getVerificationCode Failed")
                     
                     DispatchQueue.main.async {
                         self.alert(message: "다시 시도해주세요", title: "인증번호 발송오류")
@@ -117,57 +117,57 @@ class InsertPhoneViewController: UIViewController {
         }
         
         guard let username = self.username else {
-            fatalError("InsertPhoneViewController > register > username Error")
+            fatalError("\(className) > \(#function) > username Error")
         }
         
         guard let password = self.password else {
-            fatalError("InsertPhoneViewController > register > password Error")
+            fatalError("\(className) > \(#function) > password Error")
         }
         
         guard let nickname = self.nickname else {
-            fatalError("InsertPhoneViewController > register > nickname Error")
+            fatalError("\(className) > \(#function) > nickname Error")
         }
         
         guard let gender = self.gender else {
-            fatalError("InsertPhoneViewController > register > gender Error")
+            fatalError("\(className) > \(#function) > gender Error")
         }
         
         guard let birth = self.birth else {
-            fatalError("InsertPhoneViewController > register > birth Error")
+            fatalError("\(className) > \(#function) > birth Error")
         }
         
         guard let phone = self.inputPhoneText.text else {
-            fatalError("InsertPhoneViewController > register > phone Error")
+            fatalError("\(className) > \(#function) > phone Error")
         }
         
         startLoading(message: "가입중입니다")
         
-        AmazonClientManager.sharedInstance.devIdentityProvider?.register(username: username, password: password, nickname: nickname, gender: gender, birth: birth, phone: phone).continueWith(executor: AWSExecutor.mainThread(), block: {
-            (task: AWSTask) -> Any! in
+        AmazonClientManager.sharedInstance.devIdentityProvider?.register(username: username, password: password, nickname: nickname, gender: gender, birth: birth, phone: phone)
+            .continueWith(executor: AWSExecutor.mainThread()) { task in
             
             guard let userId = task.result as NSString? else {
-                fatalError("InsertPhoneViewController > register > userId is nil")
+                fatalError("\(self.className) > \(#function) > userId is nil")
             }
             
-            AmazonClientManager.sharedInstance.devIdentityProvider?.loginUser(username: username, password: password).continueWith(executor: AWSExecutor.mainThread(), block: {
-                (loginTask: AWSTask) -> Any! in
+            AmazonClientManager.sharedInstance.devIdentityProvider?.loginUser(username: username, password: password)
+                .continueWith(executor: AWSExecutor.mainThread()) { loginTask in
                 
                 guard let loginEnable = loginTask.result as NSString? else {
-                    fatalError("InsertPhoneViewController > loginUser > login result Error")
+                    fatalError("\(self.className) > \(#function) > login result Error")
                 }
                 
                 // OnSuccess
                 if loginEnable == "true" {
                     
-                    AmazonClientManager.sharedInstance.devIdentityProvider?.token().continueOnSuccessWith(executor: AWSExecutor.mainThread(), block: {
-                        (tokenTask: AWSTask) -> Any! in
+                    AmazonClientManager.sharedInstance.devIdentityProvider?.token()
+                        .continueOnSuccessWith(executor: AWSExecutor.mainThread()) { tokenTask in
                         
                         guard let _ = tokenTask.result else {
-                            fatalError("InsertPhoneViewController > getToken > token is nil")
+                            fatalError("\(self.className) > \(#function) > token is nil")
                         }
                         
-                        UserInfoManager.sharedInstance.getOwnedUserInfo(userId: userId as String).continueWith(executor: AWSExecutor.mainThread(), block: {
-                            (getUserTask: AWSTask) -> Any! in
+                        UserInfoManager.sharedInstance.getOwnedUserInfo(userId: userId as String)
+                            .continueWith(executor: AWSExecutor.mainThread()) { getUserTask in
                             
                             if getUserTask.error != nil { return nil }
                             
@@ -179,28 +179,25 @@ class InsertPhoneViewController: UIViewController {
                             }
                             
                             return nil
-                        })
+                        }
                         
                         if tokenTask.error != nil {
                             DispatchQueue.main.async {
                                 self.endLoading()
                             }
                         }
-                        
                         return nil
-                    })
+                    }
                 } else {
                     // LoginTask returns "false"
                     DispatchQueue.main.async {
                         self.endLoading()
                     }
                 }
-                
                 return nil
-            })
-            
+            }
             return nil
-        })
+        }
     }
     
     // MARK: - Navigation
@@ -211,7 +208,7 @@ class InsertPhoneViewController: UIViewController {
         // Pass the selected object to the new view controller.
         
         if segue.identifier == SelectPhotoViewController.className {
-            printLog("prepare > identifier : \(String(describing: segue.identifier))")
+            print("\(className) > \(#function) > identifier : \(String(describing: segue.identifier))")
         }
     }
 
@@ -287,7 +284,7 @@ extension InsertPhoneViewController: Observerable {
         if let keyboardSize = (info[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             
             guard let textField = self.activeTextField else {
-                printLog("keyboardWillShow > activeTextField is nil")
+                print("\(className) > \(#function) > activeTextField is nil")
                 return
             }
             

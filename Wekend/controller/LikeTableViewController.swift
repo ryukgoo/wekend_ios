@@ -13,7 +13,7 @@ class LikeTableViewController: UIViewController {
     
     deinit {
         removeNotificationObservers()
-        printLog("deinit")
+        print("\(className) > \(#function)")
     }
     
     @IBOutlet weak var tableView: UITableView!
@@ -23,7 +23,7 @@ class LikeTableViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        printLog("viewDidLoad")
+        print("\(className) > \(#function)")
         
         initTableView()
         self.tabBarController?.startLoading()
@@ -40,7 +40,6 @@ class LikeTableViewController: UIViewController {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.tintColor = .black
-        
         self.navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
         self.navigationController?.navigationBar.shadowImage = nil
     }
@@ -62,7 +61,6 @@ class LikeTableViewController: UIViewController {
         }
         
         noResultLabel.isHidden = true
-        
     }
     
     func refresh(_ sender: Any) {
@@ -75,17 +73,15 @@ class LikeTableViewController: UIViewController {
     // MARK: Functions
     func refreshList(_ startFromBegin: Bool) {
         
-        printLog("refreshList > startFromBegin : \(startFromBegin)")
+        print("\(#function) > startFromBegin : \(startFromBegin)")
         
         guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
-            fatalError("LikeTableViewController > refreshList > getUserInfo Failed")
+            fatalError("\(self.className) > \(#function) > getUserInfo Failed")
         }
         
-        LikeDBManager.sharedInstance.getDatas(userId: userInfo.userid).continueWith(executor: AWSExecutor.mainThread(), block: {
-            (task: AWSTask) -> Any! in
-            
+        LikeDBManager.sharedInstance.getDatas(userId: userInfo.userid).continueWith(executor: AWSExecutor.mainThread()) { task in
             guard let _ = task.result else {
-                fatalError("LikeTableViewController > refreshList > getDatas Failed")
+                fatalError("\(self.className) > \(#function) > getDatas Failed")
             }
             
             DispatchQueue.main.async {
@@ -98,7 +94,7 @@ class LikeTableViewController: UIViewController {
             }
             
             return nil
-        })
+        }
     }
 
     /*
@@ -137,7 +133,6 @@ class LikeTableViewController: UIViewController {
 }
 
 // MARK: -Observerable
-
 extension LikeTableViewController: Observerable {
     
     func addNotificationObservers() {
@@ -192,26 +187,13 @@ extension LikeTableViewController: Observerable {
     }
     
     func handleRemoteNotification(_ notification: Notification) {
-        
-//        guard let productId = notification.userInfo![LikeDBManager.NotificationDataProductId] as? Int else {
-//            return
-//        }
-        
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
-        
-//        if let index = LikeDBManager.sharedInstance.datas?.index(where: { $0.ProductId == productId }) {
-//            DispatchQueue.main.async {
-//                self.tableView.reloadIndex(index: index)
-//            }
-//        }
     }
     
     func handleReadNotification(_ notification: Notification) {
-        
-        printLog("handleReadNotification > notification : \(notification)")
-        
+        print("\(className) > \(#function) > notification : \(notification)")
         guard let productId = notification.userInfo![LikeDBManager.NotificationDataProductId] as? Int else {
             return
         }
@@ -225,7 +207,7 @@ extension LikeTableViewController: Observerable {
     
     func handleDeleteNotification(_ notification: Notification) {
         
-        printLog("handleDeleteNotification > notification : \(notification)")
+        print("\(className) > \(#function) > notification : \(notification)")
         
         guard let productId = notification.userInfo![LikeDBManager.NotificationDataProductId] as? Int else {
             return
@@ -237,14 +219,10 @@ extension LikeTableViewController: Observerable {
                 self.handleNoResultLabel()
             }
         }
-        
     }
-    
 }
 
-
 // MARK: - UITableViewController DataSource
-
 extension LikeTableViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -252,13 +230,10 @@ extension LikeTableViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        printLog("numberOfRowsInSection")
-        
+        print("\(className) > \(#function)")
         guard let datas = LikeDBManager.sharedInstance.datas else {
             return 0
         }
-        
         return datas.count
     }
     
@@ -272,25 +247,19 @@ extension LikeTableViewController: UITableViewDataSource {
 }
 
 // MARK: - UITableViewController Delegate
-
 extension LikeTableViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(for: indexPath) as LikeTableViewCell
         
-        printLog("indexPath : \(indexPath.row)")
-        
+        print("\(className) > \(#function) > indexPath : \(indexPath.row)")
         guard let likeItem = LikeDBManager.sharedInstance.datas?[indexPath.row] else {
-            // FatalError > Index out of range
-//            fatalError("LikeTableViewController > No data Error")
             return cell
         }
         
         let imageName = String(likeItem.ProductId) + "/" + Configuration.S3.PRODUCT_IMAGE_NAME(0)
         let imageUrl = Configuration.S3.PRODUCT_THUMB_URL + imageName
-        
-//        cell.likeImage.downloadedFrom(link: imageUrl, defaultImage: #imageLiteral(resourceName: "img_bg_thumb_s_logo"))
         
         cell.likeImage.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "img_bg_thumb_s_logo"), options: .refreshCached) {
             (image, error, cacheType, imageURL) in
@@ -308,7 +277,7 @@ extension LikeTableViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let detailVC: CampaignViewController = CampaignViewController.storyboardInstance(from: "SubItems") else {
-            fatalError("CampaignTableViewController > initialize CampaignViewcontroller Error")
+            fatalError("\(self.className) > \(#function) > initialize CampaignViewcontroller Error")
         }
         
         guard let selectedLikeItem = LikeDBManager.sharedInstance.datas?[indexPath.row] else {
@@ -340,22 +309,18 @@ extension LikeTableViewController: UITableViewDelegate {
         let whitespace = whitespaceString(width: tableView.rowHeight)
         let deleteAction = UITableViewRowAction(style: .normal, title: whitespace) {
             (rowAction, indexPath) in
-            
             guard let deleteItem = LikeDBManager.sharedInstance.datas?[indexPath.row] else {
-                fatalError("LikeTableViewController > deleteItem Failed")
+                fatalError("\(self.className) > \(#function) > deleteItem Failed")
             }
             
-            LikeDBManager.sharedInstance.deleteLike(item: deleteItem).continueWith(block: {
-                (task: AWSTask) -> Any? in
-                
+            LikeDBManager.sharedInstance.deleteLike(item: deleteItem).continueWith(executor: AWSExecutor.mainThread()) { task in
                 if task.error == nil {
 //                    DispatchQueue.main.async {
 //                        self.tableView.deleteRows(at: [indexPath], with: .fade)
 //                    }
                 }
-                
                 return nil
-            })
+            }
         }
         
         deleteAction.backgroundColor = UIColor(patternImage: #imageLiteral(resourceName: "img_bg_delete"))
@@ -367,5 +332,4 @@ extension LikeTableViewController: UITableViewDelegate {
         let yOffSet = -tableView.contentInset.top
         tableView.setContentOffset(CGPoint(x: 0, y: yOffSet), animated: true)
     }
- 
 }

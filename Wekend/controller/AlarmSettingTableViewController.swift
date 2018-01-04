@@ -57,7 +57,7 @@ class AlarmSettingTableViewController: UITableViewController {
     }
     
     func onChangedSwitch(_ sender: UISwitch) {
-        printLog("\(#function) : \(sender.tag), \(sender.isOn)")
+        print("\(className) > \(#function) : \(sender.tag), \(sender.isOn)")
     }
 
     /*
@@ -99,7 +99,7 @@ class AlarmSettingTableViewController: UITableViewController {
     
     @IBAction func onBackButtonTapped(_ sender: Any) {
         
-        print("AlarmSettingTableViewController > onBackButtonTapped")
+        print("\(className) > \(#function)")
         
         dismiss(animated: true, completion: nil)
     }

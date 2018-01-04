@@ -16,8 +16,4 @@ extension NSObject {
     class var className: String {
         return String(describing: self)
     }
-    
-    public func printLog(_ message: String) {
-        print("\(className) > \(message)")
-    }
 }

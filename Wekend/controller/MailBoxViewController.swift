@@ -18,7 +18,7 @@ class MailBoxViewController: UIViewController {
     
     deinit {
         removeNotificationObservers()
-        printLog("deinit")
+        print("\(className) > \(#function)")
     }
     
     // MARK : Properties
@@ -36,8 +36,8 @@ class MailBoxViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        printLog("viewDidLoad")
+        
+        print("\(className) > \(#function)")
         
         initTableView()
         initSegmentControl()
@@ -69,7 +69,7 @@ class MailBoxViewController: UIViewController {
     
     func loadMails(mode: Mode? = nil) {
         
-        printLog(#function)
+        print("\(className) > \(#function)")
         
         guard let inputMode = mode else {
             loadMails(mode: Mode(rawValue: segmentControl.selectedSegmentIndex)!)
@@ -78,10 +78,8 @@ class MailBoxViewController: UIViewController {
         
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
-        printLog("\(#function) > inputMode : \(inputMode.rawValue)")
-        
+        print("\(className) > \(#function) > inputMode : \(inputMode.rawValue)")
         switch inputMode {
-            
         case .receive:
             
             if !isNeedRefreshReceiveMail {
@@ -187,7 +185,7 @@ extension MailBoxViewController: Observerable {
     }
     
     func handleAddReceiveMailNotification(_ notification: Notification) {
-        printLog("handleAddReceiveMailNotification > notification : \(notification.name)")
+        print("\(className) > \(#function) > notification : \(notification.name)")
         isNeedRefreshReceiveMail = true
         if segmentControl.selectedSegmentIndex == Mode.receive.rawValue {
             DispatchQueue.main.async {
@@ -197,7 +195,7 @@ extension MailBoxViewController: Observerable {
     }
     
     func handleChangeReceiveMailNotification(_ notification: Notification) {
-        printLog("handleChangeReceiveMailNotification > notification : \(notification.name)")
+        print("\(className) > \(#function) > notification : \(notification.name)")
         isNeedRefreshReceiveMail = true
         if segmentControl.selectedSegmentIndex == Mode.receive.rawValue {
             loadMails()
@@ -206,7 +204,7 @@ extension MailBoxViewController: Observerable {
     }
     
     func handleAddSendMailNotification(_ notification: Notification) {
-        printLog("handleAddSendMailNotification > notification: \(notification.name)")
+        print("\(className) > \(#function) > notification: \(notification.name)")
         isNeedRefreshSendMail = true
         if segmentControl.selectedSegmentIndex == Mode.send.rawValue {
             DispatchQueue.main.async {
@@ -216,7 +214,7 @@ extension MailBoxViewController: Observerable {
     }
     
     func handleChangeSendMailNotification(_ notification: Notification) {
-        printLog("handleChangeSendMailNotification > notification: \(notification.name)")
+        print("\(className) > \(#function) > notification: \(notification.name)")
         isNeedRefreshSendMail = true
         if segmentControl.selectedSegmentIndex == Mode.send.rawValue {
             loadMails()
@@ -327,7 +325,7 @@ extension MailBoxViewController: UITableViewDelegate {
             defaultImage = #imageLiteral(resourceName: "img_bg_thumb_s_default_Female")
         }
         
-        printLog("\(#function) > segmentControl.selectedSegmentIndex : \(segmentControl.selectedSegmentIndex)")
+        print("\(className) > \(#function) > segmentControl.selectedSegmentIndex : \(segmentControl.selectedSegmentIndex)")
         
         switch segmentControl.selectedSegmentIndex {
         case Mode.receive.rawValue:
@@ -343,7 +341,7 @@ extension MailBoxViewController: UITableViewDelegate {
             cell.mailImage.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_s_2"))
             
             guard let status = ProposeStatus(rawValue: mail.ProposeStatus!) else {
-                fatalError("MailBoxViewController > receiveMail > ProposeStatus Error")
+                fatalError("\(className) > \(#function) > ProposeStatus Error")
             }
             
             let mailTitle = mail.SenderNickname! + getMailTitle(status: status, mode: segmentControl.selectedSegmentIndex)
@@ -374,7 +372,7 @@ extension MailBoxViewController: UITableViewDelegate {
             cell.mailImage.toMask(mask: #imageLiteral(resourceName: "img_bg_thumb_s_2"))
             
             guard let status = ProposeStatus(rawValue: mail.ProposeStatus!) else {
-                fatalError("MailBoxViewController > sendMail > ProposeStatus Error")
+                fatalError("\(className) > \(#function) > ProposeStatus Error")
             }
             
             let mailTitle = mail.ReceiverNickname! + getMailTitle(status: status, mode: segmentControl.selectedSegmentIndex)
@@ -404,7 +402,7 @@ extension MailBoxViewController: UITableViewDelegate {
     
     private func getMailTitle(status: ProposeStatus, mode: Int) -> String {
         
-        printLog("\(#function) > getMailTitle > status : \(status), mode : \(mode)")
+        print("\(className) > \(#function) > getMailTitle > status : \(status), mode : \(mode)")
         
         switch status {
         case .notMade:

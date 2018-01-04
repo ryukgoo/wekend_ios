@@ -16,7 +16,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     
     deinit {
         removeNotificationObservers()
-        printLog("deinit")
+        print("\(className) > \(#function)")
     }
     
     let minimumAlpha: CGFloat = 0.1
@@ -113,11 +113,11 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         isLoading = true
         self.containerView.alpha = 0.0
         
-        ProductInfoManager.sharedInstance.getProductInfo(productId: productId!).continueWith(executor: AWSExecutor.mainThread()) {
-            (task: AWSTask) -> Any! in
+        ProductInfoManager.sharedInstance.getProductInfo(productId: productId!)
+            .continueWith(executor: AWSExecutor.mainThread()) { task in
             
             guard let info = task.result as? ProductInfo else {
-                fatalError("CampaignViewController > error")
+                fatalError("\(self.className) > \(#function) > error")
             }
             
             self.productInfo = info
@@ -144,12 +144,12 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         pagerView.delegate = self
         pagerView.pageCount = productInfo!.ImageCount as! Int
         
-        printLog("initView > productInfo.ImageCount : \(productInfo!.ImageCount!)")
+        print("\(className) > \(#function) > productInfo.ImageCount : \(productInfo!.ImageCount!)")
         
         scrollView.delegate = self
         
         guard let productInfo = self.productInfo else {
-            fatalError("CampaignViewController > no Data")
+            fatalError("\(className) > \(#function) > no Data")
         }
         
         titleLabel.text = productInfo.TitleKor
@@ -174,16 +174,16 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         likeButton.loadingIndicator(true)
         
         guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
-            fatalError("CampaignViewController > getUserInfo Failed")
+            fatalError("\(className) > \(#function) > getUserInfo Failed")
         }
         
         guard let productInfo = self.productInfo else {
-            fatalError("CampaignViewController > no Data")
+            fatalError("\(className) > \(#function) > no Data")
         }
         
-        LikeDBManager.sharedInstance.getLikeItem(userId: userInfo.userid, productId: productInfo.ProductId).continueWith(executor: AWSExecutor.mainThread()) {
-            (task: AWSTask) -> Any! in
-            
+        LikeDBManager.sharedInstance.getLikeItem(userId: userInfo.userid, productId: productInfo.ProductId)
+            .continueWith(executor: AWSExecutor.mainThread()) { task in
+                
             guard let _ = task.result else {
                 
                 DispatchQueue.main.async {
@@ -198,11 +198,11 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
                 return nil
             }
             
-            LikeDBManager.sharedInstance.getFriendCount(productId: productInfo.ProductId, gender: userInfo.gender!).continueWith(executor: AWSExecutor.mainThread(), block: {
-                (getFriendTask) -> Any! in
+            LikeDBManager.sharedInstance.getFriendCount(productId: productInfo.ProductId, gender: userInfo.gender!)
+                .continueWith(executor: AWSExecutor.mainThread()) { getFriendTask in
                 
                 guard let friendCount = getFriendTask.result else {
-                    fatalError("CampaignViewController > getFriendCount > Error")
+                    fatalError("\(self.className) > \(#function) > getFriendCount > Error")
                 }
                 
                 DispatchQueue.main.async {
@@ -214,7 +214,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
                     self.refreshLayout()
                 }
                 return nil
-            })
+            }
             return nil
         }
         
@@ -223,7 +223,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     // Scroll
     private func refreshLayout() {
         
-        printLog("refreshLayout > pagerViewHeight : \(pagerView.frame.height)")
+        print("\(className) > \(#function) > pagerViewHeight : \(pagerView.frame.height)")
         
         // 673 => scrolled height
         var scrollableHeight = pagerView.frame.height
@@ -269,11 +269,11 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     func likeButtonTapped(_ sender: Any) {
         
         guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
-            fatalError("CampaignViewController > get UserInfo Error")
+            fatalError("\(className) > \(#function) > get UserInfo Error")
         }
         
         guard let productInfo = self.productInfo else {
-            fatalError("CampaignViewController > get ProductInfo Error")
+            fatalError("\(className) > \(#function) > get ProductInfo Error")
         }
         
         likeButton.loadingIndicator(true)
@@ -284,7 +284,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     
     func recommendButtonTapped(_ sender: Any) {
         
-        printLog("recommendButtonTapped")
+        print("\(className) > \(#function)")
         
         performSegue(withIdentifier: LikeCollectionViewController.className, sender: self)
     }
@@ -292,29 +292,29 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     // MARK: IBAction
     
     @IBAction func phoneIconTapped(_ sender: Any) {
-        printLog("phoneIconTapped")
+        print("\(className) > \(#function)")
         callPhone()
     }
     
     @IBAction func phoneNumberTapped(_ sender: Any) {
-        printLog("phoneNumberTapped")
+        print("\(className) > \(#function)")
         callPhone()
     }
     
     @IBAction func locationIconTapped(_ sender: Any) {
-        printLog("locationIconTapped")
+        print("\(className) > \(#function)")
         showMap()
     }
     
     @IBAction func addressTapped(_ sender: Any) {
-        printLog("addressTapped")
+        print("\(className) > \(#function)")
         showMap()
     }
     
     func callPhone() {
         
         guard let productInfo = self.productInfo else {
-            fatalError("CampaignViewController > callPhone > productInfo Error")
+            fatalError("\(className) > \(#function) > callPhone > productInfo Error")
         }
         
         if let phone = productInfo.Telephone {
@@ -335,12 +335,12 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
         
-        printLog("identity : \(String(describing: segue.identifier))")
+        print("\(className) > \(#function) > identity : \(String(describing: segue.identifier))")
         
         if segue.identifier == LikeCollectionViewController.className {
             
             guard let destController = segue.destination as? LikeCollectionViewController else {
-                fatalError("CampaignViewController > prepare > destination Error")
+                fatalError("\(className) > \(#function) > destination Error")
             }
             
             destController.productId = productInfo?.ProductId
@@ -348,15 +348,15 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         } else if segue.identifier == MapViewController.className {
             
             guard let destController = segue.destination as? MapViewController else {
-                fatalError("CampaignViewController > prepare > MapView destination Error")
+                fatalError("\(className) > \(#function) > MapView destination Error")
             }
             
             guard let productInfo = self.productInfo else {
-                fatalError("CampaignViewController > prepare > productInfo is nil")
+                fatalError("\(className) > \(#function) > productInfo is nil")
             }
             
             guard let latitude = self.latitude, let longitude = self.longitude else {
-                fatalError("CampaignViewController > prepare > latitude or longitude is nil")
+                fatalError("\(className) > \(#function) > latitude or longitude is nil")
             }
             
             destController.latitude = latitude
@@ -433,7 +433,7 @@ extension CampaignViewController: PagerViewDelegate {
     }
     
     func onPageTapped(page: Int) {
-        printLog("onPageTapped > page : \(page)")
+        print("\(className) > \(#function) > page : \(page)")
     }
     
 }
@@ -448,10 +448,10 @@ extension CampaignViewController: GMSMapViewDelegate {
     }
     
     func loadMap() {
-        printLog("loadGoogleMap")
+        print("\(className) > \(#function)")
         
         guard let productInfo = self.productInfo else {
-            printLog("loadGoogleMap > product Info not loaded")
+            print("\(className) > \(#function) > product Info not loaded")
             return
         }
         
@@ -463,7 +463,7 @@ extension CampaignViewController: GMSMapViewDelegate {
                 self.latitude = latitude
                 self.longitude = longitude
                 
-                self.printLog("loadGoogleMap > latitude : \(latitude), longitude : \(longitude)")
+                print("\(self.className) > \(#function) > latitude : \(latitude), longitude : \(longitude)")
                 let camera = GMSCameraPosition.camera(withLatitude: latitude, longitude: longitude, zoom: 16.0)
                 
                 self.mapView.camera = camera
@@ -487,7 +487,7 @@ extension CampaignViewController: GMSMapViewDelegate {
         if let _ = self.latitude, let _ = self.longitude {
             performSegue(withIdentifier: MapViewController.className, sender: self)
         } else {
-            printLog("can not show map")
+            print("\(className) > \(#function) > can not show map")
         }
     }
 }
@@ -511,8 +511,8 @@ extension CampaignViewController: FBSDKSharingDelegate {
         
         let scrollView = UIScrollView(frame: CGRect(x: 10, y: 50, width: alertController.view.bounds.size.width - 40, height: 110))
         
-        printLog("sharedButtonTapped > self.view.width : \(self.view.frame.width)")
-        printLog("sharedButtonTapped > scrollView.width : \(scrollView.frame.width)")
+        print("\(className) > \(#function) > self.view.width : \(self.view.frame.width)")
+        print("\(className) > \(#function) > scrollView.width : \(scrollView.frame.width)")
         
         let kakaoImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: scrollView.frame.width / 2, height: 70))
         kakaoImageView.image = #imageLiteral(resourceName: "img_share_kakao")
@@ -556,11 +556,10 @@ extension CampaignViewController: FBSDKSharingDelegate {
     // MARK: Share Kakao
     func shareKakaoTapped(_ tapGestureRecognizer: UITapGestureRecognizer) {
         
-        printLog("shareKakoTapped")
+        print("\(className) > \(#function)")
         
         guard let productInfo = self.productInfo else {
-            printLog("shareKakaoTapped > get productInfo Error")
-            return
+            fatalError("\(className) > \(#function) > get productInfo Error")
         }
         
         let imageName = String(productInfo.ProductId) + "/" + Configuration.S3.PRODUCT_IMAGE_NAME(0)
@@ -599,15 +598,15 @@ extension CampaignViewController: FBSDKSharingDelegate {
             
             // 성공
             self.view.stopLoading()
-            self.printLog("warning message: \(String(describing: warningMsg))")
-            self.printLog("argument message: \(String(describing: argumentMsg))")
+            print("\(self.className) > \(#function) > warning message: \(String(describing: warningMsg))")
+            print("\(self.className) > \(#function) > message: \(String(describing: argumentMsg))")
             
         }, failure: { (error) in
             
             // 실패
             self.view.stopLoading()
 //            self.alert(error.localizedDescription)
-            self.printLog("error \(error)")
+            print("\(self.className) > \(#function) > error \(error)")
             
         })
     }
@@ -615,7 +614,7 @@ extension CampaignViewController: FBSDKSharingDelegate {
     // MARK: Share Facebook
     func shareFacebookTapped(_ tapGestureRecognizer: UITapGestureRecognizer) {
         
-        printLog("shareFacebookTapped")
+        print("\(className) > \(#function)")
         
         guard let productInfo = self.productInfo else {
             return
@@ -653,21 +652,21 @@ extension CampaignViewController: FBSDKSharingDelegate {
         dialog.shareContent = content
         dialog.mode = .automatic
         if dialog.canShow() {
-            printLog("dialog can show")
+            print("\(className) > \(#function) > dialog can show")
             dialog.show()
         }
     }
     
     func sharer(_ sharer: FBSDKSharing!, didCompleteWithResults results: [AnyHashable : Any]!) {
-        print(results)
+        print("\(className) > \(#function) > results : \(results)")
     }
     
     func sharer(_ sharer: FBSDKSharing!, didFailWithError error: Error!) {
-        print("sharer Error")
+        print("\(className) > \(#function) > sharer Error")
         print(error)
     }
     
     func sharerDidCancel(_ sharer: FBSDKSharing!) {
-        print("shareDidCancel")
+        print("\(className) > \(#function)")
     }
 }

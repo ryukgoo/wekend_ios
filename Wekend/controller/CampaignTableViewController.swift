@@ -15,15 +15,13 @@ class CampaignTableViewController: UIViewController {
     
     deinit {
         removeNotificationObservers()
-        printLog("deinit")
+        print("\(className) > \(#function)")
     }
     
     // MARK: Properties
-    
     var isLoading: Bool = false
     
     // MARK: custom Views
-    
     let refreshControl = UIRefreshControl()
     
     var dropDownTitleView: DropDownTitleView!
@@ -37,7 +35,6 @@ class CampaignTableViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     // MARK: override Functions
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -62,7 +59,7 @@ class CampaignTableViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        printLog("viewWillAppear")
+        print("\(className) > \(#function)")
         
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
         navigationController?.navigationBar.shadowImage = nil
@@ -76,7 +73,6 @@ class CampaignTableViewController: UIViewController {
     }
     
     // MARK: ScrollView Delegate
-    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
         if ((scrollView.contentOffset.y + scrollView.frame.size.height) >= scrollView.contentSize.height) && self.isLoading != true {
@@ -183,7 +179,7 @@ extension CampaignTableViewController: UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(for: indexPath) as CampaignTableViewCell
         
         guard let productInfo = ProductInfoManager.sharedInstance.datas?[indexPath.row] else {
-            fatalError("CampaignTableViewController > tableView > get ProductInfo Error")
+            fatalError("\(className) > \(#function) > get ProductInfo Error")
         }
         
         if let productRegion = productInfo.ProductRegion, let regionEnum = ProductRegion(rawValue: productRegion as! Int) {
@@ -225,16 +221,16 @@ extension CampaignTableViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == ProductInfoManager.sharedInstance.datas?.count {
             
-            printLog("tableView > willDisplay > refreshList")
+            print("\(className) > \(#function) > refreshList")
             refreshList(false)
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        printLog("tableView > didSelectRowAt > index : \(indexPath.row)")
+        print("\(className) > \(#function) > index : \(indexPath.row)")
         
         guard let detailVC: CampaignViewController = CampaignViewController.storyboardInstance(from: "SubItems") else {
-            fatalError("CampaignTableViewController > initialize CampaignViewcontroller Error")
+            fatalError("\(className) > \(#function) > initialize CampaignViewcontroller Error")
         }
         
         let selectedCampaign = ProductInfoManager.sharedInstance.datas?[indexPath.row]
@@ -248,11 +244,11 @@ extension CampaignTableViewController: UITableViewDelegate {
         let index = sender.tag
         
         guard let productInfo = ProductInfoManager.sharedInstance.datas?[index] else {
-            fatalError("CampaignTableViewController > heartButtonTapped > productInfo Error")
+            fatalError("\(className) > \(#function) > productInfo Error")
         }
         
         guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
-            fatalError("CampaignTableViewController > heartButtonTapped > userInfo Error")
+            fatalError("\(className) > \(#function) > userInfo Error")
         }
         
         if sender.isSelected {
@@ -260,13 +256,10 @@ extension CampaignTableViewController: UITableViewDelegate {
             if let likeIndex = LikeDBManager.sharedInstance.datas?.index(where: { $0.ProductId == productInfo.ProductId } ) {
                 if let deleteItem = LikeDBManager.sharedInstance.datas?[likeIndex] {
                     tableView.isUserInteractionEnabled = false
-                    LikeDBManager.sharedInstance.deleteLike(item: deleteItem).continueWith(block: {
-                        (task: AWSTask) -> Any? in
-                        
-                        if task.error != nil { self.printLog("error : \(String(describing: task.error))") }
-                        
+                    LikeDBManager.sharedInstance.deleteLike(item: deleteItem).continueWith(executor: AWSExecutor.mainThread()) { task in
+                        if task.error != nil { print("\(self.className) > \(#function) > error : \(String(describing: task.error))") }
                         return nil
-                    })
+                    }
                 }
             }
         } else {
@@ -281,7 +274,6 @@ extension CampaignTableViewController: UITableViewDelegate {
 }
 
 // MARK: DropDownMenuDelegate
-
 extension CampaignTableViewController: DropDownMenuDelegate {
     
     func getDropDownTitleView() -> DropDownTitleView {
@@ -336,7 +328,7 @@ extension CampaignTableViewController: DropDownMenuDelegate {
     }
     
     func getCategoryCell() -> FilterMenuCell {
-        printLog("\(#function) > cases : \(Category.allStrings)")
+        print("\(className) > \(#function) > cases : \(Category.allStrings)")
         let categoryCell = FilterMenuCell(data: Category.allStrings)
         categoryCell.tag = 1
         categoryCell.setEnabled(true)
@@ -385,13 +377,11 @@ extension CampaignTableViewController: DropDownMenuDelegate {
             if let menuCell = self.selectedMenuCell {
                 menuCell.dismiss()
             }
-            
             dropDownTitleView.toggleMenu()
         } else {
             if let menuCell = self.selectedMenuCell {
                 menuCell.dismiss()
             }
-            
             menu.hide()
         }
     }
@@ -400,7 +390,6 @@ extension CampaignTableViewController: DropDownMenuDelegate {
     
     func willToggleNavigationBarMenu(_ sender: DropDownTitleView) {
         updateMenuContentOffsets()
-        
         if sender.isUp {
             dropDownMenu.hide()
             self.tableView.isScrollEnabled = true
@@ -410,9 +399,7 @@ extension CampaignTableViewController: DropDownMenuDelegate {
         }
     }
     
-    func didToggleNavigationBarMenu(_ menu: DropDownMenu) {
-        
-    }
+    func didToggleNavigationBarMenu(_ menu: DropDownMenu) { }
     
     // MARK: FilterMenuCell AddTarget Functions
     func sort(_ sender: UISegmentedControl) {
@@ -421,28 +408,23 @@ extension CampaignTableViewController: DropDownMenuDelegate {
 }
 
 // MARK: -FilterMenuCellDelegate
-
 extension CampaignTableViewController: FilterMenuCellDelegate {
     
     func editingDidBegin(tag: Int) {
-        
-        printLog("editingDidBegin > tag : \(tag)")
-        
+        print("\(className) > \(#function) > tag : \(tag)")
         dropDownMenu.selectMenuCell(dropDownMenu.menuCells[tag])
         selectedMenuCell = dropDownMenu.menuCells[tag] as? FilterMenuCell
     }
     
     func editingDidEnd(tag: Int, index: Int) {
-        printLog("editingDidEnd > tag :\(tag), index: \(index)")
-        
+        print("\(className) > \(#function) > tag :\(tag), index: \(index)")
         guard let subCategoryCell = dropDownMenu.menuCells[2] as? FilterMenuCell,
               let regionCell = dropDownMenu.menuCells[3] as? FilterMenuCell else {
-            printLog("FilterMenuCellDelegate > menuCell not created")
+                print("\(className) > \(#function) > menuCell not created")
             return
         }
         
         if tag == 1 {
-            
             switch index {
             case 0:
                 subCategoryCell.data = [Food.category.toString]
@@ -490,9 +472,7 @@ extension CampaignTableViewController: FilterMenuCellDelegate {
     }
     
     func doneFilter(_ sender: Any) {
-        
-        printLog("doneFilter > sender")
-        
+        print("\(className) > \(#function) > sender")
         if let menuCell = self.selectedMenuCell {
             menuCell.dismiss()
         }
@@ -507,7 +487,7 @@ extension CampaignTableViewController: FilterMenuCellDelegate {
         guard let selectedCategory = (dropDownMenu.menuCells[1] as? FilterMenuCell)?.selectedRow,
               let selectedSubCategory = (dropDownMenu.menuCells[2] as? FilterMenuCell)?.selectedRow,
               let selectedRegion = (dropDownMenu.menuCells[3] as? FilterMenuCell)?.selectedRow else {
-            printLog("doneFilter > selectedRow Error")
+            print("\(className) > \(#function) > selectedRow Error")
             return
         }
         
@@ -563,7 +543,6 @@ extension CampaignTableViewController: FilterMenuCellDelegate {
 }
 
 // MARK: SearchBar Delegate
-
 extension CampaignTableViewController: UISearchBarDelegate {
     
     func getSearchBarItem() -> UIBarButtonItem {
@@ -592,7 +571,7 @@ extension CampaignTableViewController: UISearchBarDelegate {
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        printLog("searchBarTextdidBeginEditing")
+        print("\(className) > \(#function)")
         
         if dropDownTitleView.isUp {
             dropDownMenu.hide()
@@ -603,18 +582,18 @@ extension CampaignTableViewController: UISearchBarDelegate {
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        printLog("searchBarTextDidEndEditing")
+        print("\(className) > \(#function)")
         tableView.isUserInteractionEnabled = true
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
         guard let searchText = searchBar.text else {
-            printLog("searchBarSearchButtonClicked > no input")
+            print("\(className) > \(#function) > no input")
             return
         }
         
-        printLog("searchBarSearchButtonClicked > text : \(searchText)")
+        print("\(className) > \(#function) > text : \(searchText)")
         searchBar.resignFirstResponder()
         
         
@@ -633,12 +612,11 @@ extension CampaignTableViewController: UISearchBarDelegate {
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        printLog("searchBar > textDidChange > text : \(searchText)")
+        print("\(className) > \(#function) > text : \(searchText)")
     }
 }
 
 // MARK: Observerable
-
 extension CampaignTableViewController: Observerable {
     
     func addNotificationObservers() {
@@ -665,7 +643,7 @@ extension CampaignTableViewController: Observerable {
             return
         }
         
-        printLog("addLikeNotification > productId : \(productId)")
+        print("\(className) > \(#function) > productId : \(productId)")
         
         if let index = ProductInfoManager.sharedInstance.datas?.index(where: { $0.ProductId == productId }) {
             
@@ -683,7 +661,7 @@ extension CampaignTableViewController: Observerable {
             return
         }
         
-        printLog("deleteLikeNotification > productId : \(productId)")
+        print("\(className) > \(#function) > productId : \(productId)")
         
         if let index = ProductInfoManager.sharedInstance.datas?.index(where: { $0.ProductId == productId }) {
             
@@ -691,8 +669,6 @@ extension CampaignTableViewController: Observerable {
                 self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .none)
                 self.tableView.isUserInteractionEnabled = true
             }
-            
         }
     }
-    
 }

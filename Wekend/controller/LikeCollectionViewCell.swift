@@ -10,7 +10,6 @@ import UIKit
 
 class LikeCollectionViewCell: UICollectionViewCell {
     
-    @IBOutlet weak var imageMask: UIImageView!
     @IBOutlet weak var likeImageView: UIImageView!
     @IBOutlet weak var likeNickname: UILabel!
     @IBOutlet weak var newIcon: UIImageView!

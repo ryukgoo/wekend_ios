@@ -62,7 +62,7 @@ class NoticeDetailViewController: UIViewController {
     @IBAction func onBeforeButtonTapped(_ sender: Any) {
         
         guard let _ = self.navigationController?.popViewController(animated: true) else {
-            fatalError("NoticeDetailViewController > onBeforeButtonTapped > popViewController Error")
+            fatalError("\(className) > \(#function) > popViewController Error")
         }
     }
 }

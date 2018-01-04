@@ -13,7 +13,7 @@ class VerticallyCenteredTextView: UITextView {
     override var contentSize: CGSize {
         didSet {
             
-            printLog("contentSize > didSet")
+            print("\(className) > \(#function) > didSet")
             
             var topCorrection = (bounds.size.height - contentSize.height * zoomScale) / 2.0
             topCorrection = max(0, topCorrection)

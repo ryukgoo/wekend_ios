@@ -133,7 +133,7 @@ class ReceiveMailRepository: NSObject, MailDataSource {
     }
     
     func notifyChangedMail() {
-        printLog(#function)
+        print("\(className) > \(#function)")
         
         let newCount = UserDefaults.NotificationCount.integer(forKey: .receiveMail)
         

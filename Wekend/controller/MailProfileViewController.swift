@@ -43,7 +43,7 @@ class MailProfileViewController: UIViewController {
     
     deinit {
         removeNotificationObservers()
-        printLog("deinit")
+        print("\(className) > \(#function)")
     }
     
     override func viewDidLoad() {
@@ -129,7 +129,7 @@ class MailProfileViewController: UIViewController {
                     self?.proposeButton.isUserInteractionEnabled = false
                     
                     if let _ = mail as? ReceiveMail {
-                        self?.printLog("\(#function) > mail is ReceiveMail")
+                        print("\(String(describing: self?.className)) > \(#function) > mail is ReceiveMail")
                         self?.buttonStackView.isHidden = false
                     }
                     break
@@ -156,7 +156,7 @@ class MailProfileViewController: UIViewController {
                 
             } else {
                 
-                self?.printLog("\(#function) > mail is nil")
+                print("\(String(describing: self?.className)) > \(#function) > mail is nil")
                 
                 self?.messageStackView.isHidden = true
                 self?.phoneStackView.isHidden = true
@@ -260,7 +260,7 @@ extension MailProfileViewController: UIScrollViewDelegate {
 
 extension MailProfileViewController: PagerViewDelegate {
     func loadPageViewItem(imageView: UIImageView, page: Int) {
-        printLog("\(#function) > page : \(page)")
+        print("\(className) > \(#function) > page : \(page)")
         guard let friend = viewModel?.friend.value else { return }
         
         let imageName = friend.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(page)
@@ -271,7 +271,7 @@ extension MailProfileViewController: PagerViewDelegate {
     }
     
     func onPageTapped(page: Int) {
-        printLog("\(#function) > page : \(page)")
+        print("\(className) > \(#function) > page : \(page)")
     }
 }
 

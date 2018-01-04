@@ -33,7 +33,7 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
     }
     
     override func token() -> AWSTask<NSString> {
-        printLog(#function)
+        print("\(className) > \(#function)")
         return getCredentialsByURL().continueWith(block: {
             credentialTask -> AWSTask<NSString> in
             guard let credential = credentialTask.result else {
@@ -48,18 +48,18 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
     }
     
     override func clear() {
-        printLog(#function)
+        print("\(className) > \(#function)")
         super.clear()
     }
     
     func getCredentialsByURL() -> AWSTask<AmazonCognitoCredential> {
         
-        printLog("getCredentialByURL start")
+        print("\(className) > \(#function) > start")
         
         let tokenRequest = AWSTaskCompletionSource<AmazonCognitoCredential>()
         
         guard let getTokenURL = URL(string: Configuration.ApiGateway.GETTOKEN_URL) else {
-            fatalError("AmazonIdentityProvider > getCredentialsByURL > make URL Error")
+            fatalError("\(className) > \(#function) > make URL Error")
         }
         
         var getTokenRequest = URLRequest(url: getTokenURL)
@@ -67,14 +67,14 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
         getTokenRequest.cachePolicy = .reloadIgnoringCacheData
         
         guard let username = UserDefaults.Account.string(forKey: .userName) else {
-            fatalError("AmazonIdentityProvider > User never logged in")
+            fatalError("\(className) > \(#function) > User never logged in")
         }
         
         let deviceKey = UserDefaults.Account.string(forKey: .deviceKey)
         let timestamp = Utilities.getTimestamp()
         
-        printLog("timeStamp: \(timestamp)")
-        printLog("deviceKey: \(String(describing: deviceKey))")
+        print("\(className) > \(#function) > timeStamp: \(timestamp)")
+        print("\(className) > \(#function) > deviceKey: \(String(describing: deviceKey))")
         
         let loginString = Configuration.Cognito.DEVELOPER_PROVIDER_NAME + username
         
@@ -84,7 +84,7 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
         body[GetTokenKeys.loginString.rawValue] = Utilities.dictionaryToString(map: [Configuration.Cognito.DEVELOPER_PROVIDER_NAME : username])
         
         if let cachedIdentityId = UserDefaults.Authentication.string(forKey: .identityId) {
-            printLog("getCredentialsByURL > cachedIdentityId : \(cachedIdentityId)")
+            print("\(className) > \(#function) > cachedIdentityId : \(cachedIdentityId)")
             body[GetTokenKeys.identityId.rawValue] = cachedIdentityId
             body[GetTokenKeys.signature.rawValue] = Utilities.getSignature(dateToSign: timestamp + loginString + cachedIdentityId, key: deviceKey!)
         } else {
@@ -96,40 +96,40 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
             jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
             getTokenRequest.httpBody = jsonData
         } catch {
-            printLog("Error: cannot create JSON from body")
+            print("\(className) > \(#function) > Error: cannot create JSON from body")
             return AWSTask(result: nil)
         }
         
-        printLog("getCredentialByURL > URLSession start")
+        print("\(className) > \(#function) > URLSession start")
         
         URLSession.shared.dataTask(with: getTokenRequest) {
             (data, response, error) in
             
             guard let responseData = data else {
-                self.printLog("Error : no response")
+                print("\(self.className) > \(#function) > Error : no response")
                 return
             }
             
-            self.printLog("getCredentialsByURL > data : \(responseData.base64EncodedString())")
+            print("\(self.className) > \(#function) > data : \(responseData.base64EncodedString())")
             
             do {
                 guard let receiveCredential = try JSONSerialization.jsonObject(with: responseData, options: []) as? [String : Any] else {
-                    self.printLog("Could not get JSON from response as Dictionary")
+                    print("\(self.className) > \(#function) > Could not get JSON from response as Dictionary")
                     return
                 }
                 
                 guard let identityId = receiveCredential["identityId"] as? String else {
-                    self.printLog("Could not get identityId from JSON")
+                    print("\(self.className) > \(#function) > Could not get identityId from JSON")
                     return
                 }
                 
                 guard let token = receiveCredential["token"] as? String else {
-                    self.printLog("Could not get token from JSON")
+                    print("\(self.className) > \(#function) > Could not get token from JSON")
                     return
                 }
                 
-                self.printLog("getCredentialsByURL > identityId : \(identityId)")
-                self.printLog("getCredentialsByURL > token : \(token)")
+                print("\(self.className) > \(#function) > identityId : \(identityId)")
+                print("\(self.className) > \(#function) > token : \(token)")
                 
                 self.identityId = identityId
                 
@@ -138,7 +138,7 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
                 tokenRequest.set(result: credential)
                 
             } catch {
-                self.printLog("Error parsing response from POST tokenURL")
+                print("\(self.className) > \(#function) > Error parsing response from POST tokenURL")
                 
                 if let topController = UIApplication.topViewController() {
                     let alertController = UIAlertController(title: nil,
@@ -169,7 +169,7 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
     
     func register(username: String, password: String, nickname: String, gender: String, birth: Int, phone: String) -> AWSTask<NSString> {
         
-        printLog("register")
+        print("\(className) > \(#function) > register")
         
         let registerTask = AWSTaskCompletionSource<NSString>()
         
@@ -183,35 +183,34 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
         registerRequest.birth = birth as NSNumber
         registerRequest.phone = phone
         
-        apiClient.registeruserPost(registerRequest).continueWith(block: {
-            (task: AWSTask) -> Any? in
+        apiClient.registeruserPost(registerRequest).continueWith(executor: AWSExecutor.mainThread()) { task in
             
-            self.printLog("register AWSTask > start")
+            print("\(self.className) > \(#function) > register AWSTask > start")
             
             if task.error != nil {
-                self.printLog("register AWSTask error")
+                print("\(self.className) > \(#function) > register AWSTask error")
                 
                 registerTask.set(error: task.error!)
                 
                 return nil
             } else {
-                self.printLog("register AWSTask not error")
+                print("\(self.className) > \(#function) > AWSTask not error")
                 let response = task.result as! WEKENDRegisterResponseModel
-                self.printLog("register > response > result : " + response.result!)
-                self.printLog("register > response > userid : " + response.userid!)
+                print("\(self.className) > \(#function) > response > result : " + response.result!)
+                print("\(self.className) > \(#function) > response > userid : " + response.userid!)
                 
                 registerTask.set(result: response.userid! as NSString?)
                 
                 return response
             }
-        })
+        }
         
         return registerTask.task
     }
     
     func loginUser(username: String, password: String) -> AWSTask<NSString> {
         
-        printLog("login > username : " + username + ", password : " + password)
+        print("\(className) > \(#function) > username : " + username + ", password : " + password)
         
         let loginTask = AWSTaskCompletionSource<NSString>()
         
@@ -229,18 +228,17 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
         loginRequest.signature = signature
         loginRequest.uid = deviceUid
         
-        apiClient.loginuserPost(loginRequest).continueWith(block: {
-            (task: AWSTask) -> Any? in
+        apiClient.loginuserPost(loginRequest).continueWith(executor: AWSExecutor.mainThread()) { task in
             
             if task.error != nil {
-                self.printLog("login > response > failed : \(String(describing: task.error))")
+                print("\(self.className) > \(#function) > response > failed : \(String(describing: task.error))")
                 return nil
             } else {
                 
                 guard let response = task.result as? WEKENDLoginResponseModel else {
 //                    fatalError("AmazonIdentityProvider > loginUser response Error")
                     // TODO : Alert Login failed
-                    self.printLog("LoginUser Error")
+                    print("\(self.className) > \(#function) > LoginUser Error")
                     return nil
                 }
                 
@@ -252,13 +250,13 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
                 guard let userId = response.userid,
                       let deviceKey = response.key else {
                     // TODO : Alert Login Failed
-                    self.printLog("AmazonIdentityProvider > loginUser > AWS Login Function return nil")
+                    print("\(self.className) > \(#function) > AWS Login Function return nil")
                     return loginTask.set(error: AuthenticateError.userNotFound)
                 }
                 
-                self.printLog("login > response > userId : " + userId)
-                self.printLog("login > response > key : " + deviceKey)
-                self.printLog("login > response > enable : " + enable)
+                print("\(self.className) > \(#function) > response > userId : " + userId)
+                print("\(self.className) > \(#function) > response > key : " + deviceKey)
+                print("\(self.className) > \(#function) > response > enable : " + enable)
                 
                 UserDefaults.Account.set(username, forKey: .userName)
                 UserDefaults.Account.set(userId, forKey: .userId)
@@ -269,14 +267,14 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
                 
                 return response
             }
-        })
+        }
         
         return loginTask.task
     }
     
     func logout() {
         
-        printLog("logout")
+        print("\(className) > \(#function)")
         
         UserDefaults.Account.remove(forKey: .isUserLoggedIn)
         UserDefaults.Account.remove(forKey: .userName)
@@ -302,7 +300,7 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
         
         guard let loginVC = loginboard.instantiateViewController(withIdentifier: loginStoryBoard.identifier) as? UINavigationController,
             let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-                self.printLog("AmazonClientManager > didFinishLaunching > get VC and AppDelegate Error")
+                print("\(className) > \(#function) > get VC and AppDelegate Error")
                 return
         }
         

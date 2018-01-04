@@ -31,7 +31,7 @@ class FilterMenuCell: DropDownMenuCell {
                 fatalError("FilterMenuCell > initView Error")
             }
             
-            printLog("data didSet > data[0] : \(data[0])")
+            print("\(className) > \(#function) > data[0] : \(data[0])")
             
             textField.text = data[0]
         }
@@ -40,7 +40,7 @@ class FilterMenuCell: DropDownMenuCell {
     override init() {
         super.init()
         
-        printLog("override init")
+        print("\(className) > \(#function)")
         
         data = [String]()
         
@@ -52,7 +52,7 @@ class FilterMenuCell: DropDownMenuCell {
         self.init()
         self.data = data
         
-        printLog("\(#function) > data : \(data)")
+        print("\(className) > \(#function) > data : \(data)")
         
         self.pickerView?.reloadComponent(0)
         
@@ -66,7 +66,7 @@ class FilterMenuCell: DropDownMenuCell {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
-        printLog("required init")
+        print("\(className) > \(#function) > required init")
         
         initPicker()
         initTextField()
@@ -74,12 +74,12 @@ class FilterMenuCell: DropDownMenuCell {
     
     func initTextField() {
         
-        printLog("initTextField")
+        print("\(className) > \(#function)")
         
         self.textField = NonCursorTextField(frame: self.frame)
         
         guard let textField = self.textField else {
-            fatalError("FilterMenuCell > initView Error")
+            fatalError("\(className) > \(#function) > Error")
         }
         
         textField.inputView = pickerView
@@ -90,7 +90,7 @@ class FilterMenuCell: DropDownMenuCell {
         self.toolBar = UIToolbar()
         
         guard let toolbar = self.toolBar else {
-            fatalError("NonCursorTextField > init Toolbar Error")
+            fatalError("\(className) > \(#function) > Toolbar Error")
         }
         
         toolbar.barStyle = UIBarStyle.default
@@ -114,7 +114,7 @@ class FilterMenuCell: DropDownMenuCell {
     }
 
     func done(_ sender: Any) {
-        printLog("done clicked")
+        print("\(className) > \(#function)")
         self.accessoryType = .none
         self.textField?.resignFirstResponder()
         
@@ -124,19 +124,19 @@ class FilterMenuCell: DropDownMenuCell {
     }
     
     func cancel(_ sender: Any) {
-        printLog("cancel clicked")
+        print("\(className) > \(#function)")
         self.accessoryType = .none
         self.textField?.resignFirstResponder()
     }
     
     func dismiss() {
-        printLog("dismiss")
+        print("\(className) > \(#function)")
         self.accessoryType = .none
         self.textField?.resignFirstResponder()
     }
     
     func beginEditing(_ sender: Any) {
-        printLog("beginEditing!!!!!")
+        print("\(className) > \(#function)")
         delegate?.editingDidBegin(tag: self.tag)
     }
     
@@ -172,7 +172,7 @@ extension FilterMenuCell: UIPickerViewDelegate, UIPickerViewDataSource {
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        printLog("pickerView > didSelectRow : \(row)")
+        print("\(className) > \(#function) : \(row)")
         
         //        self.textField?.text = data[row]
         self.selectedRow = row

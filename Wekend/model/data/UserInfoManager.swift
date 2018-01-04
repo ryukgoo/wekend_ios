@@ -161,9 +161,9 @@ class UserInfoManager: NSObject {
     }
 
     func chargePoint(point: Int, completion: @escaping (_:Bool) -> Void) {
-        printLog("\(#function) > point : \(point)")
+        print("\(className) > \(#function) > point : \(point)")
         guard let userInfo = self.userInfo else {
-            printLog("\(#function) > get userInfo Error")
+            print("\(className) > \(#function) > get userInfo Error")
             completion(false)
             return
         }
@@ -196,7 +196,7 @@ class UserInfoManager: NSObject {
     func clearNotificationCount(_ type: NavigationType) -> AWSTask<AnyObject> {
         
         guard let userInfo = self.userInfo else {
-            printLog("clearNotification > userInfo is nil")
+            print("\(className) > \(#function) > userInfo is nil")
             return AWSTask(result: nil)
         }
         
@@ -217,15 +217,15 @@ class UserInfoManager: NSObject {
     
     func registEndpointARN() {
         
-        printLog("registerARN")
+        print("\(className) > \(#function)")
         
         guard let deviceToken = UserDefaults.RemoteNotification.string(forKey: .deviceToken) else {
-            printLog("\(#function) > deviceToken is nil")
+            print("\(self.className) > \(#function) > deviceToken is nil")
             return
         }
         
         guard let userId = userInfo?.userid else {
-            printLog("\(#function) > userId is nil")
+            print("\(self.className) > \(#function) > userId is nil")
             return
         }
         
@@ -235,24 +235,23 @@ class UserInfoManager: NSObject {
         requestModel.snsToken = deviceToken
         requestModel.userId = userId
         
-        apiClient.endpointarnPost(requestModel).continueWith(block: {
-            task -> Any! in
+        apiClient.endpointarnPost(requestModel).continueWith(executor: AWSExecutor.mainThread()) { task in
             
             if task.error != nil || task.result == nil {
-                self.printLog("registEndpointARN > Error")
+                print("\(self.className) > \(#function) > Error")
             } else {
                 guard let response = task.result as? WEKENDCreateEndpointARNResponseModel else {
-                    self.printLog("registEndpointARN > response is nil")
+                    print("\(self.className) > \(#function) > response is nil")
                     return nil
                 }
                 
                 self.userInfo?.EndpointARN = response.endpointARN
-                self.printLog("registerARN > endpoint : \(String(describing: response.endpointARN))")
+                print("\(self.className) > \(#function) > endpoint : \(String(describing: response.endpointARN))")
                 
             }
             
             return nil
-        })
+        }
     }
     
     func sendVerificationCode(phoneNumber: String) -> AWSTask<NSString> {
@@ -260,7 +259,7 @@ class UserInfoManager: NSObject {
         let verificationTask = AWSTaskCompletionSource<NSString>()
         
         guard let verificaitonURL = URL(string: Configuration.ApiGateway.VERIFICATION_URL) else {
-            fatalError("UserInfoManager > sendVerificationCode > make URL Error")
+            fatalError("\(className) > \(#function) > make URL Error")
         }
         
         var verificationRequest = URLRequest(url: verificaitonURL)
@@ -274,7 +273,7 @@ class UserInfoManager: NSObject {
             jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
             verificationRequest.httpBody = jsonData
         } catch {
-            printLog("sendVerificationCode > create JSON from body Error")
+            print("\(className) > \(#function) > create JSON from body Error")
             return AWSTask(result: nil)
         }
         
@@ -282,28 +281,28 @@ class UserInfoManager: NSObject {
             (data, response, error) in
             
             guard let responseData = data else {
-                self.printLog("sendVerificationCode > no response")
+                print("\(self.className) > \(#function) > no response")
                 return
             }
             
             do {
                 
                 guard let returnValue = try JSONSerialization.jsonObject(with: responseData, options: []) as? [String : Any] else {
-                    self.printLog("sendVerification > Could not get JSON from response as Dictionary")
+                    print("\(self.className) > \(#function) > Could not get JSON from response as Dictionary")
                     return
                 }
                 
                 guard let verificationCode = returnValue["verificationCode"] as? String else {
-                    self.printLog("sendVerificationCode > verificationCode is nil")
+                    print("\(self.className) > \(#function) > verificationCode is nil")
                     return
                 }
                 
-                self.printLog("verificationCode : \(verificationCode)")
+                print("\(self.className) > \(#function) > verificationCode : \(verificationCode)")
                 
                 verificationTask.set(result: verificationCode as NSString)
                 
             } catch {
-                self.printLog("sendVerificationCode > URLSession Error")
+                print("\(self.className) > \(#function) > URLSession Error")
                 return
             }
             }.resume()

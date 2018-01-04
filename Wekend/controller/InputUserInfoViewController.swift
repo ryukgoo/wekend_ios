@@ -53,18 +53,18 @@ class InputUserInfoViewController: UIViewController {
     // MARK: IBAction
     @IBAction func checkDuplicateTapped(_ sender: Any) {
         
-        printLog("checkDuplication tapped")
+        print("\(className) > \(#function)")
         
         nicknameInputText.resignFirstResponder()
         
         guard let inputNickname = nicknameInputText.text else {
-            printLog("check Duplication Error > text is nil")
+            print("\(className) > \(#function) > check Duplication Error > text is nil")
             self.alert(message: "닉네임을 입력해 주세요")
             return
         }
         
-        UserInfoManager.sharedInstance.isNicknameAvailable(nickname: inputNickname).continueWith(executor: AWSExecutor.mainThread()) {
-            (task: AWSTask) -> Any! in
+        UserInfoManager.sharedInstance.isNicknameAvailable(nickname: inputNickname)
+            .continueWith(executor: AWSExecutor.mainThread()) { task in
             
             if task.error != nil {
                 DispatchQueue.main.async {
@@ -73,7 +73,7 @@ class InputUserInfoViewController: UIViewController {
             }
             
             guard let result = task.result as? Bool else {
-                self.printLog("check Duplication Error")
+                print("\(self.className) > \(#function) > check Duplication Error")
                 
                 DispatchQueue.main.async {
                     self.alert(message: "사용중인 닉네임입니다.", title: "닉네임 중복확인")
@@ -83,7 +83,7 @@ class InputUserInfoViewController: UIViewController {
             }
             
             if result {
-                self.printLog("check Duplication OKOK!!!!")
+                print("\(self.className) > \(#function) > check Duplication OKOK!!!!")
                 DispatchQueue.main.async {
                     self.nextButton.isEnabled = true
                     self.alert(message: "사용가능한 닉네임입니다.", title: "닉네임 중복확인")
@@ -96,7 +96,7 @@ class InputUserInfoViewController: UIViewController {
     }
     
     @IBAction func nextButtonTapped(_ sender: Any) {
-        printLog("\(#function)")
+        print("\(className) > \(#function)")
         performSegue(withIdentifier: InsertPhoneViewController.className, sender: self)
     }
     
@@ -118,18 +118,18 @@ class InputUserInfoViewController: UIViewController {
         // Pass the selected object to the new view controller.
         
         if segue.identifier == InsertPhoneViewController.className {
-            printLog("prepare > withIdentifier : \(String(describing: segue.identifier))")
+            print("\(className) > \(#function) > withIdentifier : \(String(describing: segue.identifier))")
             
             guard let destination = segue.destination as? InsertPhoneViewController else {
-                fatalError("InputUserInfoViewController > prepare > destination Error")
+                fatalError("\(className) > \(#function) > destination Error")
             }
             
             guard let username = self.username else {
-                fatalError("InputUserInfoViewController > prepare > username is nil")
+                fatalError("\(className) > \(#function) > username is nil")
             }
             
             guard let password = self.password else {
-                fatalError("InputUserInfoViewController > prepare > password is nil")
+                fatalError("\(className) > \(#function) > password is nil")
             }
             
             destination.username = username
@@ -198,7 +198,7 @@ extension InputUserInfoViewController: UIPickerViewDelegate, UIPickerViewDataSou
         let thisYear = calendar.component(.year, from: date)
         let startYear = thisYear - 20
         
-        printLog("\(#function) > startYear : \(startYear)")
+        print("\(className) > \(#function) > startYear : \(startYear)")
         
         for i in 1950...startYear {
             yearArray.append(i)
