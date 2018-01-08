@@ -20,18 +20,13 @@ class GuideViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         print("\(className) > \(#function)")
-        
-        // Do any additional setup after loading the view.
-        
         checkBox.isHidden = !isShowButtons
         noMoreShowText.isHidden = !isShowButtons
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -74,7 +69,5 @@ extension GuideViewController: PagerViewDelegate {
         }
     }
     
-    func onPageTapped(page: Int) {
-        
-    }
+    func onPageTapped(page: Int) { }
 }

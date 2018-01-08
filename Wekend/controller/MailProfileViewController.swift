@@ -49,9 +49,6 @@ class MailProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let backButton = UIBarButtonItem(image: #imageLiteral(resourceName: "btn_icon_back_w"), style: .plain, target: self, action: #selector(self.backButtonTapped(_:)))
-        navigationItem.leftBarButtonItem = backButton
-        
         bindViewModel()
         
         viewModel?.loadUser()
@@ -67,21 +64,10 @@ class MailProfileViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         if #available(iOS 11.0, *) {
             scrollView.contentInsetAdjustmentBehavior = .never
         }
-        navigationController?.navigationBar.viewWillAppear()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        navigationController?.navigationBar.viewDidAppear()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        UIApplication.shared.isStatusBarHidden = false
+        navigationController?.isNavigationBarHidden = true
     }
     
     fileprivate func bindViewModel() {
@@ -195,7 +181,7 @@ class MailProfileViewController: UIViewController {
         scrollableHeight += 27 // margin
         scrollableHeight += 20 // bottom margin
         
-        let maxHeight = UIScreen.main.bounds.height - proposeButton.frame.height - pointLabel.frame.height + pagerView.frame.height
+        let maxHeight = UIScreen.main.bounds.height - proposeButton.frame.height - pointLabel.frame.height + pagerView.frame.height - UIApplication.shared.statusBarFrame.height
         containerViewHeight.constant = max(scrollableHeight, maxHeight)
         
         backgroundHeight.constant = scrollableHeight - pagerView.frame.size.height
@@ -204,7 +190,8 @@ class MailProfileViewController: UIViewController {
 
 
 extension MailProfileViewController {
-    func backButtonTapped(_ sender: Any) {
+    
+    @IBAction func onBackButtonTapped(_ sender: Any) {
         navigationController?.popViewController(animated: true)
     }
     

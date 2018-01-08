@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -8,6 +8,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -15,10 +16,6 @@
         <scene sceneID="a4T-em-t40">
             <objects>
                 <viewController id="hP1-RL-Zvv" customClass="MailBoxViewController" customModule="Wekend" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Lv9-P1-604"/>
-                        <viewControllerLayoutGuide type="bottom" id="uiG-hG-AZS"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="eYf-1X-xaZ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -111,18 +108,19 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="6ae-4g-ne5" firstAttribute="leading" secondItem="eYf-1X-xaZ" secondAttribute="leading" id="Ael-J0-1TW"/>
+                            <constraint firstItem="6ae-4g-ne5" firstAttribute="leading" secondItem="mIZ-co-XUW" secondAttribute="leading" id="Ael-J0-1TW"/>
                             <constraint firstItem="6ae-4g-ne5" firstAttribute="top" secondItem="wyr-0d-gij" secondAttribute="bottom" id="CNA-gD-r8m"/>
-                            <constraint firstItem="wyr-0d-gij" firstAttribute="top" secondItem="Lv9-P1-604" secondAttribute="bottom" id="DVZ-Fb-UfQ"/>
-                            <constraint firstItem="uiG-hG-AZS" firstAttribute="top" secondItem="620-EB-A34" secondAttribute="bottom" id="Gvt-8z-B53"/>
-                            <constraint firstAttribute="trailing" secondItem="6ae-4g-ne5" secondAttribute="trailing" id="WOm-qL-mev"/>
-                            <constraint firstItem="620-EB-A34" firstAttribute="leading" secondItem="eYf-1X-xaZ" secondAttribute="leading" id="e1s-g7-9Q6"/>
-                            <constraint firstAttribute="trailing" secondItem="620-EB-A34" secondAttribute="trailing" id="lwb-Au-ktE"/>
-                            <constraint firstItem="wyr-0d-gij" firstAttribute="leading" secondItem="eYf-1X-xaZ" secondAttribute="leading" id="mTw-Jb-f5V"/>
-                            <constraint firstAttribute="trailing" secondItem="wyr-0d-gij" secondAttribute="trailing" id="osj-Ca-qxT"/>
-                            <constraint firstItem="uiG-hG-AZS" firstAttribute="top" secondItem="6ae-4g-ne5" secondAttribute="bottom" id="uFg-7q-Zyh"/>
+                            <constraint firstItem="wyr-0d-gij" firstAttribute="top" secondItem="mIZ-co-XUW" secondAttribute="top" id="DVZ-Fb-UfQ"/>
+                            <constraint firstItem="mIZ-co-XUW" firstAttribute="bottom" secondItem="620-EB-A34" secondAttribute="bottom" id="Gvt-8z-B53"/>
+                            <constraint firstItem="mIZ-co-XUW" firstAttribute="trailing" secondItem="6ae-4g-ne5" secondAttribute="trailing" id="WOm-qL-mev"/>
+                            <constraint firstItem="620-EB-A34" firstAttribute="leading" secondItem="mIZ-co-XUW" secondAttribute="leading" id="e1s-g7-9Q6"/>
+                            <constraint firstItem="mIZ-co-XUW" firstAttribute="trailing" secondItem="620-EB-A34" secondAttribute="trailing" id="lwb-Au-ktE"/>
+                            <constraint firstItem="wyr-0d-gij" firstAttribute="leading" secondItem="mIZ-co-XUW" secondAttribute="leading" id="mTw-Jb-f5V"/>
+                            <constraint firstItem="mIZ-co-XUW" firstAttribute="trailing" secondItem="wyr-0d-gij" secondAttribute="trailing" id="osj-Ca-qxT"/>
+                            <constraint firstItem="mIZ-co-XUW" firstAttribute="bottom" secondItem="6ae-4g-ne5" secondAttribute="bottom" id="uFg-7q-Zyh"/>
                             <constraint firstItem="620-EB-A34" firstAttribute="top" secondItem="wyr-0d-gij" secondAttribute="bottom" id="vEd-b8-DBe"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="mIZ-co-XUW"/>
                     </view>
                     <navigationItem key="navigationItem" title="메일함" id="D7B-AR-vHc"/>
                     <connections>
@@ -139,10 +137,6 @@
         <scene sceneID="VIv-hY-DAO">
             <objects>
                 <viewController id="BGg-Rx-rhu" customClass="LikeTableViewController" customModule="Wekend" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="qYX-NS-tmH"/>
-                        <viewControllerLayoutGuide type="bottom" id="hia-Bk-qM4"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="10f-DS-e53">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -240,15 +234,16 @@ New+</string>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="hia-Bk-qM4" firstAttribute="top" secondItem="Q04-oq-QKN" secondAttribute="bottom" id="Fuk-KD-dbD"/>
-                            <constraint firstItem="hia-Bk-qM4" firstAttribute="top" secondItem="aBL-MA-t6k" secondAttribute="bottom" id="h62-8W-WMT"/>
-                            <constraint firstAttribute="trailing" secondItem="Q04-oq-QKN" secondAttribute="trailing" id="iwX-he-Nol"/>
+                            <constraint firstItem="TG7-0d-wRM" firstAttribute="bottom" secondItem="Q04-oq-QKN" secondAttribute="bottom" id="Fuk-KD-dbD"/>
+                            <constraint firstItem="TG7-0d-wRM" firstAttribute="bottom" secondItem="aBL-MA-t6k" secondAttribute="bottom" id="h62-8W-WMT"/>
+                            <constraint firstItem="TG7-0d-wRM" firstAttribute="trailing" secondItem="Q04-oq-QKN" secondAttribute="trailing" id="iwX-he-Nol"/>
                             <constraint firstItem="aBL-MA-t6k" firstAttribute="top" secondItem="10f-DS-e53" secondAttribute="top" id="kLW-wU-cia"/>
-                            <constraint firstItem="Q04-oq-QKN" firstAttribute="leading" secondItem="10f-DS-e53" secondAttribute="leading" id="ky6-TR-wmK"/>
-                            <constraint firstAttribute="trailing" secondItem="aBL-MA-t6k" secondAttribute="trailing" id="o32-DB-11L"/>
-                            <constraint firstItem="aBL-MA-t6k" firstAttribute="leading" secondItem="10f-DS-e53" secondAttribute="leading" id="sUx-e8-H53"/>
-                            <constraint firstItem="Q04-oq-QKN" firstAttribute="top" secondItem="qYX-NS-tmH" secondAttribute="bottom" id="skN-jf-RKS"/>
+                            <constraint firstItem="Q04-oq-QKN" firstAttribute="leading" secondItem="TG7-0d-wRM" secondAttribute="leading" id="ky6-TR-wmK"/>
+                            <constraint firstItem="TG7-0d-wRM" firstAttribute="trailing" secondItem="aBL-MA-t6k" secondAttribute="trailing" id="o32-DB-11L"/>
+                            <constraint firstItem="aBL-MA-t6k" firstAttribute="leading" secondItem="TG7-0d-wRM" secondAttribute="leading" id="sUx-e8-H53"/>
+                            <constraint firstItem="Q04-oq-QKN" firstAttribute="top" secondItem="TG7-0d-wRM" secondAttribute="top" id="skN-jf-RKS"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="TG7-0d-wRM"/>
                     </view>
                     <navigationItem key="navigationItem" title="좋아요 리스트" id="c05-Tz-RnO"/>
                     <connections>
@@ -264,10 +259,6 @@ New+</string>
         <scene sceneID="g4N-TC-l6Y">
             <objects>
                 <viewController automaticallyAdjustsScrollViewInsets="NO" id="500-aM-IeH" customClass="CampaignTableViewController" customModule="Wekend" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="V24-N9-xDJ"/>
-                        <viewControllerLayoutGuide type="bottom" id="nMN-tE-Osf"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="vZy-7i-snh">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -363,15 +354,16 @@ New+</string>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="a5m-gC-KV0" secondAttribute="trailing" id="4Ro-no-FP1"/>
-                            <constraint firstItem="nMN-tE-Osf" firstAttribute="top" secondItem="h2S-1Q-mWg" secondAttribute="bottom" id="8tQ-FG-Ugv"/>
-                            <constraint firstItem="h2S-1Q-mWg" firstAttribute="leading" secondItem="vZy-7i-snh" secondAttribute="leading" id="FOs-f1-AgT"/>
+                            <constraint firstItem="Qa1-g9-Jc6" firstAttribute="trailing" secondItem="a5m-gC-KV0" secondAttribute="trailing" id="4Ro-no-FP1"/>
+                            <constraint firstItem="Qa1-g9-Jc6" firstAttribute="bottom" secondItem="h2S-1Q-mWg" secondAttribute="bottom" id="8tQ-FG-Ugv"/>
+                            <constraint firstItem="h2S-1Q-mWg" firstAttribute="leading" secondItem="Qa1-g9-Jc6" secondAttribute="leading" id="FOs-f1-AgT"/>
                             <constraint firstItem="a5m-gC-KV0" firstAttribute="top" secondItem="vZy-7i-snh" secondAttribute="top" id="Ggc-cC-jmO"/>
-                            <constraint firstItem="a5m-gC-KV0" firstAttribute="leading" secondItem="vZy-7i-snh" secondAttribute="leading" id="UCf-kR-shV"/>
-                            <constraint firstAttribute="trailing" secondItem="h2S-1Q-mWg" secondAttribute="trailing" id="knk-fs-CbA"/>
-                            <constraint firstItem="h2S-1Q-mWg" firstAttribute="top" secondItem="V24-N9-xDJ" secondAttribute="bottom" id="mxD-Ei-yDS"/>
+                            <constraint firstItem="a5m-gC-KV0" firstAttribute="leading" secondItem="Qa1-g9-Jc6" secondAttribute="leading" id="UCf-kR-shV"/>
+                            <constraint firstItem="Qa1-g9-Jc6" firstAttribute="trailing" secondItem="h2S-1Q-mWg" secondAttribute="trailing" id="knk-fs-CbA"/>
+                            <constraint firstItem="h2S-1Q-mWg" firstAttribute="top" secondItem="Qa1-g9-Jc6" secondAttribute="top" id="mxD-Ei-yDS"/>
                             <constraint firstAttribute="bottom" secondItem="a5m-gC-KV0" secondAttribute="bottom" id="whp-wb-n4u"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="Qa1-g9-Jc6"/>
                     </view>
                     <navigationItem key="navigationItem" title="전체보기" id="cnQ-dx-8gd"/>
                     <connections>
@@ -469,13 +461,10 @@ New+</string>
         <scene sceneID="0KH-nH-eG4">
             <objects>
                 <viewController title="drawer" id="ova-Of-eE3" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="ooV-kc-sE0"/>
-                        <viewControllerLayoutGuide type="bottom" id="TZi-Ky-oA4"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="fOu-e3-tZd">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="epz-Qb-znS"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="설정" image="btn_icon_drawer_n" selectedImage="btn_icon_drawer_s" id="Jbx-OT-w3I"/>
                 </viewController>

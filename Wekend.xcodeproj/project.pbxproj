@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		4C0F4B99F0F4E6B992718E65 /* Pods_Wekend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5EAEDF07F12987F8C85A29D /* Pods_Wekend.framework */; };
 		B80438B91FA0A68B00D4A4FA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B80438B81FA0A68A00D4A4FA /* GoogleService-Info.plist */; };
-		B806953D1FFE2D85009F57A3 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B806953B1FFE2D85009F57A3 /* ProfileViewController.swift */; };
-		B806953E1FFE2D85009F57A3 /* ProfileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B806953C1FFE2D85009F57A3 /* ProfileViewController.xib */; };
 		B80E7F9F1FD9018200C742D2 /* MailProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E7F9E1FD9018200C742D2 /* MailProfileViewModel.swift */; };
 		B81C00601F98DA02007E258A /* AuthenticateError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81C005F1F98DA02007E258A /* AuthenticateError.swift */; };
 		B8221F091E03D9D900BCC06C /* LikeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8221F081E03D9D900BCC06C /* LikeTableViewCell.swift */; };
@@ -46,6 +44,9 @@
 		B837CEFA1EB1D7E400598EF4 /* UIViewController+Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = B837CEF91EB1D7E400598EF4 /* UIViewController+Loading.swift */; };
 		B83D80C41E07EC8B00B3E507 /* MailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B83D80C31E07EC8B00B3E507 /* MailTableViewCell.swift */; };
 		B83D80C81E07FD0100B3E507 /* Mail.swift in Sources */ = {isa = PBXBuildFile; fileRef = B83D80C71E07FD0100B3E507 /* Mail.swift */; };
+		B842469C2003682200EB8F94 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B842469B2003682200EB8F94 /* GradientView.swift */; };
+		B842DB2920039138000432E7 /* EditImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B842DB2820039138000432E7 /* EditImageView.swift */; };
+		B842DB2B2003972B000432E7 /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B842DB2A2003972B000432E7 /* EditProfileViewController.swift */; };
 		B847E9851E3600DC007392F4 /* NonCursorTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B847E9841E3600DB007392F4 /* NonCursorTextField.swift */; };
 		B847E9871E361249007392F4 /* FilterMenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B847E9861E361249007392F4 /* FilterMenuCell.swift */; };
 		B848F7241E41A1330034E803 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B848F7231E41A1330034E803 /* LoginViewController.swift */; };
@@ -148,8 +149,6 @@
 /* Begin PBXFileReference section */
 		AF0978F871BEF1973A4462F2 /* Pods-Wekend.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wekend.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wekend/Pods-Wekend.debug.xcconfig"; sourceTree = "<group>"; };
 		B80438B81FA0A68A00D4A4FA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		B806953B1FFE2D85009F57A3 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
-		B806953C1FFE2D85009F57A3 /* ProfileViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProfileViewController.xib; sourceTree = "<group>"; };
 		B80E7F9E1FD9018200C742D2 /* MailProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailProfileViewModel.swift; sourceTree = "<group>"; };
 		B815667B1F906D5F00E0769B /* Wekend.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Wekend.entitlements; sourceTree = "<group>"; };
 		B81C005F1F98DA02007E258A /* AuthenticateError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticateError.swift; sourceTree = "<group>"; };
@@ -189,6 +188,9 @@
 		B837CEF91EB1D7E400598EF4 /* UIViewController+Loading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Loading.swift"; sourceTree = "<group>"; };
 		B83D80C31E07EC8B00B3E507 /* MailTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MailTableViewCell.swift; sourceTree = "<group>"; };
 		B83D80C71E07FD0100B3E507 /* Mail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mail.swift; sourceTree = "<group>"; };
+		B842469B2003682200EB8F94 /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
+		B842DB2820039138000432E7 /* EditImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditImageView.swift; sourceTree = "<group>"; };
+		B842DB2A2003972B000432E7 /* EditProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		B847E9841E3600DB007392F4 /* NonCursorTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonCursorTextField.swift; sourceTree = "<group>"; };
 		B847E9861E361249007392F4 /* FilterMenuCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterMenuCell.swift; sourceTree = "<group>"; };
 		B848F7231E41A1330034E803 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -477,6 +479,8 @@
 				B86F5B481E87AF2A00BEE3D9 /* FullWidthMenuCell.swift */,
 				B8EA29111E8B992200DEB0B1 /* VerticallyCenteredTextView.swift */,
 				B8EF62881F558584007B0583 /* SelectableButton.swift */,
+				B842469B2003682200EB8F94 /* GradientView.swift */,
+				B842DB2820039138000432E7 /* EditImageView.swift */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -564,6 +568,7 @@
 				B84E3B5B1E2E0B9E003B9AF7 /* NoticeTableViewCell.swift */,
 				B8FB46A11E5B096C0084D7D2 /* NoticeDetailViewController.swift */,
 				B84CFB891E2F4D6800FCAB16 /* MyProfileViewController.swift */,
+				B842DB2A2003972B000432E7 /* EditProfileViewController.swift */,
 				B86B338F1E30AD29008C8C8B /* AlarmSettingTableViewController.swift */,
 				B86B33911E30AEB5008C8C8B /* AlarmSettingTableViewCell.swift */,
 				B848F7231E41A1330034E803 /* LoginViewController.swift */,
@@ -574,8 +579,6 @@
 				B82598FC1F260DAA003999BE /* AgreementViewController.swift */,
 				B89EFADA1F6A6E02000ACF72 /* GuideViewController.swift */,
 				B8B5A2861F6BBB7A00D899D5 /* GuideViewController.xib */,
-				B806953B1FFE2D85009F57A3 /* ProfileViewController.swift */,
-				B806953C1FFE2D85009F57A3 /* ProfileViewController.xib */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -748,7 +751,6 @@
 				B8893A311E5B241600C135CE /* LaunchScreen.storyboard in Resources */,
 				B8B5A2871F6BBB7A00D899D5 /* GuideViewController.xib in Resources */,
 				B8E1E1C41F9625F600355CD7 /* SubItems.storyboard in Resources */,
-				B806953E1FFE2D85009F57A3 /* ProfileViewController.xib in Resources */,
 				B88D36251E40C2F000B977E5 /* Login.storyboard in Resources */,
 				B8C6C38E1DE41E7000FBDF6C /* Assets.xcassets in Resources */,
 				B80438B91FA0A68B00D4A4FA /* GoogleService-Info.plist in Resources */,
@@ -863,12 +865,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				B837CEF61EB1C5E700598EF4 /* UITableViewCell+Reuseable.swift in Sources */,
+				B842DB2B2003972B000432E7 /* EditProfileViewController.swift in Sources */,
 				B84CFB8A1E2F4D6800FCAB16 /* MyProfileViewController.swift in Sources */,
 				B837CEE41EB1C3E500598EF4 /* UIApplication+StatusBar.swift in Sources */,
 				B830D3031E09289000EAEFE2 /* StoreCollectionViewCell.swift in Sources */,
 				B86DFF601EE5876200E93246 /* LikeDBManager.swift in Sources */,
 				B8D6FF881FDFC9E100899C44 /* IntExtension.swift in Sources */,
-				B806953D1FFE2D85009F57A3 /* ProfileViewController.swift in Sources */,
 				B89EFADC1F6A6E02000ACF72 /* GuideViewController.swift in Sources */,
 				B848F7281E41D0FD0034E803 /* InputUserInfoViewController.swift in Sources */,
 				B895CF101ED6CE1800891559 /* UIImage+Resize.swift in Sources */,
@@ -889,6 +891,7 @@
 				B8D6FF861FDF927C00899C44 /* LoadingState.swift in Sources */,
 				B8221F0B1E03DEB000BCC06C /* LikeItem.swift in Sources */,
 				B83D80C81E07FD0100B3E507 /* Mail.swift in Sources */,
+				B842DB2920039138000432E7 /* EditImageView.swift in Sources */,
 				B837CEE21EB1C3B100598EF4 /* ArrayExtension.swift in Sources */,
 				B82E4E6F1DE59B4200E4488B /* AmazonClientManager.swift in Sources */,
 				B8FB469A1E5B08460084D7D2 /* CampaignTableViewController.swift in Sources */,
@@ -898,6 +901,7 @@
 				B88AB2141EF125B5005EDC48 /* Notice.swift in Sources */,
 				B82DCE2A1E1D00FB0040A683 /* MailProfileViewController.swift in Sources */,
 				B837CEEE1EB1C54400598EF4 /* UIImage+Color.swift in Sources */,
+				B842469C2003682200EB8F94 /* GradientView.swift in Sources */,
 				B89EFAE11F6A715B000ACF72 /* UIViewController+Alert.swift in Sources */,
 				B87B19F51FE79EBA0089D6B5 /* MailRepository.swift in Sources */,
 				B88DD0C71F303C140000DB90 /* UIApplication+TopViewController.swift in Sources */,

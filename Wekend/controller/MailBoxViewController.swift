@@ -56,13 +56,7 @@ class MailBoxViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
-        navigationController?.navigationBar.shadowImage = nil
-        navigationController?.navigationBar.tintColor = .black
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+        navigationController?.isNavigationBarHidden = false
     }
     
     // MARK : load datas

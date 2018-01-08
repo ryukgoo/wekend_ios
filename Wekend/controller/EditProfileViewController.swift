@@ -1,26 +1,27 @@
 //
-//  ProfileViewController.swift
+//  EditProfileViewController.swift
 //  Wekend
 //
-//  Created by Young-Wook Kim on 2018. 1. 4..
+//  Created by Young-Wook Kim on 2018. 1. 8..
 //  Copyright © 2018년 Kim Young-wook. All rights reserved.
 //
 
 import UIKit
 
-class ProfileViewController: UIViewController {
+class EditProfileViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.isNavigationBarHidden = false
+    }
 
     /*
     // MARK: - Navigation

@@ -46,7 +46,7 @@ extension UINavigationBar {
     }
     
     func viewWillAppear() {
-        UIApplication.shared.isStatusBarHidden = true
+//        UIApplication.shared.isStatusBarHidden = true
         setBackgroundImage(UIImage(), for: .default)
         shadowImage = UIImage()
         tintColor = .white

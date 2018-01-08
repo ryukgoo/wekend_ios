@@ -104,47 +104,27 @@ class MyProfileViewController: UIViewController {
         
         self.view.layoutIfNeeded()
         
+        navigationController?.isNavigationBarHidden = true
+        
         initViews()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         if #available(iOS 11.0, *) {
             scrollView.contentInsetAdjustmentBehavior = .never
         }
-        
-        UIApplication.shared.isStatusBarHidden = true
-        
-        var colors = [UIColor]()
-        colors.append(UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.5))
-        colors.append(UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0))
-        navigationController?.navigationBar.setGradientBackground(colors: colors)
-        navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.tintColor = .white
-        
+        navigationController?.isNavigationBarHidden = true
         addKeyboardObserver()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        UIApplication.shared.isStatusBarHidden = false
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        
         removeKeyboardObserver()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    func backButtonTapped(_ sender: Any) {
-        navigationController?.popViewController(animated: true)
     }
     
     private func initViews() {
@@ -381,10 +361,10 @@ class MyProfileViewController: UIViewController {
     }
     
     @IBAction func onBackButtonTapped(_ sender: Any) {
-        
+
         if isEditingMode {
             isEditingMode = false
-            
+
         } else {
             dismiss(animated: true, completion: nil)
         }
