@@ -56,12 +56,11 @@ class MailProfileSourceViewController: UIViewController {
         if #available(iOS 11.0, *) {
             scrollView.contentInsetAdjustmentBehavior = .never
         }
-        navigationController?.navigationBar.viewWillAppear()
+        navigationController?.isNavigationBarHidden = true
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        navigationController?.navigationBar.viewDidAppear()
         refreshLayout()
     }
     

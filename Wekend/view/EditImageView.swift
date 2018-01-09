@@ -10,13 +10,18 @@ import UIKit
 
 class EditImageView: UIView {
 
+    @IBInspectable var index: Int = 0
+    
     var image: UIImageView!
     var plus: UIImageView!
     
-    override func draw(_ rect: CGRect) {
-        
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        initView()
+    }
+    
+    private func initView() {
         print("\(className) > \(#function)")
-
         image = UIImageView()
         image.clipsToBounds = true
         image.contentMode = .scaleAspectFill
@@ -38,5 +43,9 @@ class EditImageView: UIView {
         plus.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10).isActive = true
         plus.widthAnchor.constraint(equalToConstant: 20).isActive = true
         plus.heightAnchor.constraint(equalToConstant: 20).isActive = true
+    }
+    
+    override func draw(_ rect: CGRect) {
+        print("\(className) > \(#function)")
     }
 }

@@ -19,21 +19,16 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         print("\(className) > \(#function)")
     }
     
-    let minimumAlpha: CGFloat = 0.1
-    
     // MARK: Properties
-    
     var productId: Int?
     var productInfo: ProductInfo?
     var isLoading: Bool = false
     
     // MARK: For Map
-    
     var latitude: Double?
     var longitude: Double?
     
     // MARK: IBOutlet
-
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var pagerView: PagerView!
@@ -45,19 +40,14 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var locationButton: UIButton!
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var mapView: GMSMapView!
-    @IBOutlet weak var containerViewHeight: NSLayoutConstraint!
+    
     @IBOutlet weak var pagerViewOffsetY: NSLayoutConstraint!
     @IBOutlet weak var backViewOffsetY: NSLayoutConstraint!
     @IBOutlet weak var stackViewOffsetY: NSLayoutConstraint!
-    @IBOutlet weak var backgroundHeight: NSLayoutConstraint!
     
     // MARK: UIViewController override functions
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let backButton = UIBarButtonItem(image: #imageLiteral(resourceName: "btn_icon_back_w"), style: .plain, target: self, action: #selector(self.backButtonTapped(_:)))
-        navigationItem.leftBarButtonItem = backButton
         
         initShareButton()
         initMapView()
@@ -73,20 +63,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         if #available(iOS 11.0, *) {
             scrollView.contentInsetAdjustmentBehavior = .never
         }
-        
-        navigationController?.navigationBar.viewWillAppear()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        navigationController?.navigationBar.viewDidAppear()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        UIApplication.shared.isStatusBarHidden = false
+        navigationController?.isNavigationBarHidden = true
     }
     
     override func didReceiveMemoryWarning() {
@@ -94,7 +71,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-    func backButtonTapped(_ sender: Any) {
+    @IBAction func onBackButtonTapped(_ sender: Any) {
         if let views = navigationController?.viewControllers {
             if views.count > 1 {
                 navigationController?.popViewController(animated: true)
@@ -107,8 +84,6 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     
     // Data
     private func loadProductInfo() {
-        
-//        startLoading()
         
         isLoading = true
         self.containerView.alpha = 0.0
@@ -191,8 +166,6 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
                     self.likeButton.addTarget(self, action: #selector(self.likeButtonTapped(_:)), for: .touchUpInside)
                     
                     self.likeButton.loadingIndicator(false)
-                    
-                    self.refreshLayout()
                 }
                 
                 return nil
@@ -210,40 +183,12 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
                     self.likeButton.addTarget(self, action: #selector(self.recommendButtonTapped(_:)), for: .touchUpInside)
                     
                     self.likeButton.loadingIndicator(false)
-                    
-                    self.refreshLayout()
                 }
                 return nil
             }
             return nil
         }
         
-    }
-    
-    // Scroll
-    private func refreshLayout() {
-        
-        print("\(className) > \(#function) > pagerViewHeight : \(pagerView.frame.height)")
-        
-        // 673 => scrolled height
-        var scrollableHeight = pagerView.frame.height
-        scrollableHeight += 20
-        scrollableHeight += titleLabel.frame.height
-        scrollableHeight += titleEngLabel.frame.height
-        scrollableHeight += 20
-        scrollableHeight += subTitleLabel.frame.height
-        scrollableHeight += 20
-        scrollableHeight += descriptionLabel.frame.height
-        scrollableHeight += 31
-        scrollableHeight += phoneTextButton.frame.height
-        scrollableHeight += 23
-        scrollableHeight += locationButton.frame.height
-        scrollableHeight += 32
-        scrollableHeight += mapView.frame.height
-        scrollableHeight += 20
-        
-        containerViewHeight.constant = scrollableHeight
-        backgroundHeight.constant = scrollableHeight - self.pagerView.frame.size.height
     }
     
     // Scroll
@@ -264,8 +209,6 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     }
     
     // MARK: addTarget functions
-    
-    // View
     func likeButtonTapped(_ sender: Any) {
         
         guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
@@ -290,7 +233,6 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     }
     
     // MARK: IBAction
-    
     @IBAction func phoneIconTapped(_ sender: Any) {
         print("\(className) > \(#function)")
         callPhone()
@@ -329,7 +271,6 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     }
     
     // MARK: - Navigation
-
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
@@ -368,7 +309,6 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
 }
 
 // MARK: Observerable
-
 extension CampaignViewController: Observerable {
     
     func addNotificationObservers() {
@@ -408,11 +348,9 @@ extension CampaignViewController: Observerable {
             self.likeButton.removeTarget(self, action: #selector(self.recommendButtonTapped(_:)), for: .touchUpInside)
         }
     }
-    
 }
 
 // MARK: PagerView Delegate
-
 extension CampaignViewController: PagerViewDelegate {
     
     func loadPageViewItem(imageView: UIImageView, page: Int) {
@@ -435,11 +373,9 @@ extension CampaignViewController: PagerViewDelegate {
     func onPageTapped(page: Int) {
         print("\(className) > \(#function) > page : \(page)")
     }
-    
 }
 
 // MARK: For Map
-
 extension CampaignViewController: GMSMapViewDelegate {
     
     func initMapView() {
@@ -493,7 +429,6 @@ extension CampaignViewController: GMSMapViewDelegate {
 }
 
 // MARK: For Share
-
 extension CampaignViewController: FBSDKSharingDelegate {
     
     func initShareButton() {

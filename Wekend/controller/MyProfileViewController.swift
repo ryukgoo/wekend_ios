@@ -127,6 +127,13 @@ class MyProfileViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        print("\(className) > \(#function)")
+        
+        guard let editViewController = segue.destination as? EditProfileViewController else { return }
+        editViewController.viewModel = EditProfileViewModel()
+    }
+    
     private func initViews() {
         
         guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
@@ -389,6 +396,7 @@ extension MyProfileViewController: PagerViewDelegate, UIScrollViewDelegate {
         
         imageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "default_profile"), options: .cacheMemoryOnly) {
             (image, error, cacheType, imageURL) in
+            print("\(self.className) > \(#function) > url: \(String(describing: imageURL))")
         }
         
     }

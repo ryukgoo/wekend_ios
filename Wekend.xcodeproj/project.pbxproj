@@ -98,6 +98,7 @@
 		B890EC301F00EFC800D62307 /* UINavigationBar+GradientBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = B890EC2F1F00EFC800D62307 /* UINavigationBar+GradientBackground.swift */; };
 		B895CF101ED6CE1800891559 /* UIImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = B895CF0F1ED6CE1800891559 /* UIImage+Resize.swift */; };
 		B895CF121ED6CF8700891559 /* UIView+Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B895CF111ED6CF8700891559 /* UIView+Animation.swift */; };
+		B89734C62003A09100994DCA /* EditProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89734C52003A09100994DCA /* EditProfileViewModel.swift */; };
 		B89EFADC1F6A6E02000ACF72 /* GuideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89EFADA1F6A6E02000ACF72 /* GuideViewController.swift */; };
 		B89EFADF1F6A6F98000ACF72 /* DrawerViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B89EFADE1F6A6F98000ACF72 /* DrawerViewController.storyboard */; };
 		B89EFAE11F6A715B000ACF72 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89EFAE01F6A715B000ACF72 /* UIViewController+Alert.swift */; };
@@ -251,6 +252,7 @@
 		B890EC2F1F00EFC800D62307 /* UINavigationBar+GradientBackground.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UINavigationBar+GradientBackground.swift"; sourceTree = "<group>"; };
 		B895CF0F1ED6CE1800891559 /* UIImage+Resize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Resize.swift"; sourceTree = "<group>"; };
 		B895CF111ED6CF8700891559 /* UIView+Animation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Animation.swift"; sourceTree = "<group>"; };
+		B89734C52003A09100994DCA /* EditProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
 		B89EFADA1F6A6E02000ACF72 /* GuideViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuideViewController.swift; sourceTree = "<group>"; };
 		B89EFADE1F6A6F98000ACF72 /* DrawerViewController.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = DrawerViewController.storyboard; sourceTree = "<group>"; };
 		B89EFAE01F6A715B000ACF72 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
@@ -342,8 +344,9 @@
 			isa = PBXGroup;
 			children = (
 				B88AB2151EF12763005EDC48 /* SettingViewModel.swift */,
-				B832FF391FD693BF0009BB95 /* Dynamic.swift */,
 				B80E7F9E1FD9018200C742D2 /* MailProfileViewModel.swift */,
+				B89734C52003A09100994DCA /* EditProfileViewModel.swift */,
+				B832FF391FD693BF0009BB95 /* Dynamic.swift */,
 				B8D6FF851FDF927C00899C44 /* LoadingState.swift */,
 				B8D6FF891FE0034600899C44 /* MailOperations.swift */,
 			);
@@ -924,6 +927,7 @@
 				B82D89231FD7AD9B0027A7EC /* MailProfileSourceViewController.swift in Sources */,
 				B8C6C3851DE41E7000FBDF6C /* AppDelegate.swift in Sources */,
 				B830D8741EADDEE70005E87E /* EnumCollection.swift in Sources */,
+				B89734C62003A09100994DCA /* EditProfileViewModel.swift in Sources */,
 				B8AE5BC11F97A31A00796751 /* DeepLinkManager.swift in Sources */,
 				B837CEF01EB1C55F00598EF4 /* UIColor+RBG_Hex.swift in Sources */,
 				B870C82B1F29CFC0004802F4 /* ObjC.m in Sources */,

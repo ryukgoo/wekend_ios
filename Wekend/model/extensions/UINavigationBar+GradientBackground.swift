@@ -34,28 +34,3 @@ extension CAGradientLayer {
     }
     
 }
-
-extension UINavigationBar {
-    
-    func setGradientBackground(colors: [UIColor]) {
-        
-        let updatedFrame = bounds
-        let gradientLayer = CAGradientLayer(frame: updatedFrame, colors: colors)
-        
-        setBackgroundImage(gradientLayer.creatGradientImage(), for: UIBarMetrics.default)
-    }
-    
-    func viewWillAppear() {
-//        UIApplication.shared.isStatusBarHidden = true
-        setBackgroundImage(UIImage(), for: .default)
-        shadowImage = UIImage()
-        tintColor = .white
-    }
-    
-    func viewDidAppear() {
-        var colors = [UIColor]()
-        colors.append(UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.5))
-        colors.append(UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0))
-        setGradientBackground(colors: colors)
-    }
-}

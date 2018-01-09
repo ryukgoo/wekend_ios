@@ -33,7 +33,6 @@ class MailProfileViewController: UIViewController {
     @IBOutlet weak var pointLabel: UILabel!
     @IBOutlet weak var proposeButton: UIButton!
     
-    @IBOutlet weak var containerViewHeight: NSLayoutConstraint!
     @IBOutlet weak var pagerViewOffsetY: NSLayoutConstraint!
     @IBOutlet weak var stackViewOffsetY: NSLayoutConstraint!
     @IBOutlet weak var backViewOffsetY: NSLayoutConstraint!
@@ -152,7 +151,6 @@ class MailProfileViewController: UIViewController {
                                               action: #selector(self?.proposeButtonTapped(_:)),
                                               for: .touchUpInside)
             }
-            self?.refreshLayout()
         }
         
         self.viewModel?.onShowAlert = { [weak self] alert in
@@ -169,25 +167,7 @@ class MailProfileViewController: UIViewController {
         
         self.viewModel?.onShowMessage = { [weak self] _ in self?.sendMessage() }
     }
-    
-    private func refreshLayout() {
-        
-        var scrollableHeight = pagerView.frame.height
-        if (!messageStackView.isHidden) { scrollableHeight += messageStackView.frame.height }
-        if (!nicknameStackView.isHidden) { scrollableHeight += nicknameStackView.frame.height }
-        if (!ageStackView.isHidden) { scrollableHeight += ageStackView.frame.height }
-        if (!phoneStackView.isHidden) { scrollableHeight += phoneStackView.frame.height }
-        if (!descriptionLabel.isHidden) { scrollableHeight += descriptionLabel.frame.height }
-        scrollableHeight += 27 // margin
-        scrollableHeight += 20 // bottom margin
-        
-        let maxHeight = UIScreen.main.bounds.height - proposeButton.frame.height - pointLabel.frame.height + pagerView.frame.height - UIApplication.shared.statusBarFrame.height
-        containerViewHeight.constant = max(scrollableHeight, maxHeight)
-        
-        backgroundHeight.constant = scrollableHeight - pagerView.frame.size.height
-    }
 }
-
 
 extension MailProfileViewController {
     
@@ -231,7 +211,7 @@ extension MailProfileViewController {
     }
 }
 
-// MARK: - Delegates
+// MARK: - UIScrollViewDelegate
 extension MailProfileViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let yOffset = scrollView.contentOffset.y
@@ -245,6 +225,7 @@ extension MailProfileViewController: UIScrollViewDelegate {
     }
 }
 
+// MARK: - PagerViewDelegate
 extension MailProfileViewController: PagerViewDelegate {
     func loadPageViewItem(imageView: UIImageView, page: Int) {
         print("\(className) > \(#function) > page : \(page)")
