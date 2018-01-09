@@ -157,9 +157,8 @@ extension LikeCollectionViewController {
     }
 }
 
-// MARK: Observerable
-
-extension LikeCollectionViewController: Observerable {
+// MARK: Notification Observers
+extension LikeCollectionViewController {
     
     func addNotificationObservers() {
         

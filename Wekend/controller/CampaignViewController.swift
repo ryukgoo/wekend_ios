@@ -308,8 +308,8 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     }
 }
 
-// MARK: Observerable
-extension CampaignViewController: Observerable {
+// Notification Observers
+extension CampaignViewController {
     
     func addNotificationObservers() {
         

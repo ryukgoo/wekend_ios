@@ -40,12 +40,12 @@ class SignupViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        addNotificationObservers()
+        addKeyboardObserver(self)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        removeNotificationObservers()
+        removeKeyboardObserver(self)
     }
     
     override func viewWillLayoutSubviews() {
@@ -178,7 +178,7 @@ extension SignupViewController: UITextFieldDelegate {
         return toolbar
     }
     
-    func doneKeyboard(_ sender: Any) {
+    override func doneKeyboard(_ sender: Any) {
         
         guard let textField = activeTextField else {
             return
@@ -259,8 +259,14 @@ extension SignupViewController: UITextFieldDelegate {
     }
 }
 
-extension SignupViewController: Observerable {
+// MARK: - Notification Observers
+extension SignupViewController {
     
+    override func getFocusView() -> UIView? {
+        return activeTextField
+    }
+    
+    /*
     func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)),
                                                name: .UIKeyboardWillShow, object: nil)
@@ -304,4 +310,5 @@ extension SignupViewController: Observerable {
             }
         })
     }
+ */
 }

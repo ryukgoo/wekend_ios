@@ -727,7 +727,6 @@
                         <outlet property="backViewOffsetY" destination="MHF-ax-YiE" id="LUG-wT-Zzw"/>
                         <outlet property="backgroundHeight" destination="dFJ-We-o0N" id="rsl-uS-wQt"/>
                         <outlet property="buttonStackView" destination="HMT-k9-tKC" id="J39-XE-aPf"/>
-                        <outlet property="container" destination="NQh-7E-Hqk" id="6ak-qh-hfA"/>
                         <outlet property="descriptionLabel" destination="6Se-Us-OkN" id="LK7-7l-vLQ"/>
                         <outlet property="messageLabel" destination="MgJ-zq-mCO" id="QpZ-3X-sqc"/>
                         <outlet property="messageStackView" destination="5GL-Nb-Pph" id="w9z-Fd-Jte"/>

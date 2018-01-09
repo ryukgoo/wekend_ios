@@ -132,8 +132,8 @@ class LikeTableViewController: UIViewController {
     */
 }
 
-// MARK: -Observerable
-extension LikeTableViewController: Observerable {
+// MARK: -Notification Observers
+extension LikeTableViewController {
     
     func addNotificationObservers() {
         

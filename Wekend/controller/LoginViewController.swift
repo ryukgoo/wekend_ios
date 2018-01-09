@@ -39,39 +39,35 @@ class LoginViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.tintColor = UIColor.white
         navigationController?.navigationBar.isTranslucent = true
         
-        addNotificationObservers()
+        addKeyboardObserver(self)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        removeNotificationObservers()
+        super.viewDidDisappear(animated)
+        removeKeyboardObserver(self)
     }
     
     override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
         usernameInputText.layer.addBorder(edge: .bottom, color: .white, thickness: 1.0)
         passwordInputText.layer.addBorder(edge: .bottom, color: .white, thickness: 1.0)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
-    
-    
     
     // MARK: IBAction
     
-    @IBAction func loginButtonTapped(_ sender: Any) {
-        login()
-    }
+    @IBAction func loginButtonTapped(_ sender: Any) { login() }
     
-    @IBAction func signupButtonTapped(_ sender: Any) {
-        showAgreementViewController()
-    }
+    @IBAction func signupButtonTapped(_ sender: Any) { showAgreementViewController() }
     
     func login() {
         
@@ -205,7 +201,7 @@ extension LoginViewController: UITextFieldDelegate {
         return toolbar
     }
     
-    func doneKeyboard(_ sender: Any) {
+    override func doneKeyboard(_ sender: Any) {
         self.view.endEditing(true)
     }
     
@@ -263,8 +259,14 @@ extension LoginViewController: AgreementDelegate {
     }
 }
 
-extension LoginViewController: Observerable {
+// MARK: - Notification Observers
+extension LoginViewController {
     
+    override func getFocusView() -> UIView? {
+        return activeTextField
+    }
+    
+    /*
     func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)),
                                                name: .UIKeyboardWillShow, object: nil)
@@ -308,4 +310,5 @@ extension LoginViewController: Observerable {
             }
         })
     }
+ */
 }

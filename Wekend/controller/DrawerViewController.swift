@@ -254,7 +254,7 @@ extension DrawerViewController: MFMailComposeViewControllerDelegate {
     
 }
 
-extension DrawerViewController: Observerable {
+extension DrawerViewController {
     
     func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(DrawerViewController.handleUpdateUserInfoNotification(_:)),

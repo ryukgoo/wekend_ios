@@ -17,7 +17,6 @@ import KRWordWrapLabel
 class MailProfileViewController: UIViewController {
     
     // MARK: IBOutlet
-    @IBOutlet weak var container: UIView!
     @IBOutlet weak var pagerView: PagerView!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var messageStackView: UIStackView!
@@ -243,7 +242,8 @@ extension MailProfileViewController: PagerViewDelegate {
     }
 }
 
-extension MailProfileViewController: Observerable {
+// MARK: -Notification Observers
+extension MailProfileViewController {
     
     func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(MailProfileViewController.handleUpdatePointNotification(_:)),

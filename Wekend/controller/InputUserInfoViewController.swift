@@ -169,7 +169,7 @@ extension InputUserInfoViewController: UITextFieldDelegate {
         return toolbar
     }
     
-    func doneKeyboard(_ sender: Any) {
+    override func doneKeyboard(_ sender: Any) {
         self.view.endEditing(true)
     }
     

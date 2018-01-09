@@ -194,9 +194,8 @@ extension StoreCollectionViewController: UICollectionViewDelegateFlowLayout {
     
 }
 
-// MARK: -Observerable
-
-extension StoreCollectionViewController: Observerable {
+// MARK: -Notification Observers
+extension StoreCollectionViewController {
     func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(StoreCollectionViewController.handlePurchaseNotification(_:)),
                                                name: Notification.Name(rawValue: IAPHelper.IAPHelperPurchaseNotification),

@@ -144,9 +144,8 @@ class MailBoxViewController: UIViewController {
      */
 }
 
-// MARK: Observserable
-
-extension MailBoxViewController: Observerable {
+// MARK: Notification Observers
+extension MailBoxViewController {
     
     func addNotificationObservers() {
         

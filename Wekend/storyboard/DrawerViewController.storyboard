@@ -573,7 +573,7 @@
                                                     <textField opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fRD-RY-vA0">
                                                         <rect key="frame" x="64" y="0.0" width="281" height="80"/>
                                                         <color key="textColor" red="0.26274509800000001" green="0.26274509800000001" blue="0.2901960784" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                         <textInputTraits key="textInputTraits"/>
                                                     </textField>
                                                 </subviews>
@@ -603,7 +603,7 @@
                                                     <textField opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="oCH-WG-Te8">
                                                         <rect key="frame" x="64" y="0.0" width="281" height="80"/>
                                                         <color key="textColor" red="0.26274509800000001" green="0.26274509800000001" blue="0.2901960784" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                         <textInputTraits key="textInputTraits"/>
                                                     </textField>
                                                 </subviews>
@@ -633,7 +633,7 @@
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="직장 입력" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="BLo-OI-LKL">
                                                         <rect key="frame" x="64" y="0.0" width="281" height="80"/>
                                                         <color key="textColor" red="0.26274509800000001" green="0.26274509800000001" blue="0.2901960784" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                         <textInputTraits key="textInputTraits"/>
                                                     </textField>
                                                 </subviews>
@@ -663,7 +663,7 @@
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="출신학교 입력" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="uOY-uh-a8B">
                                                         <rect key="frame" x="64" y="0.0" width="281" height="80"/>
                                                         <color key="textColor" red="0.26274509800000001" green="0.26274509800000001" blue="0.2901960784" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                         <textInputTraits key="textInputTraits"/>
                                                     </textField>
                                                 </subviews>
@@ -696,7 +696,7 @@
                                                         <constraints>
                                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="80" id="SLb-iL-iUL"/>
                                                         </constraints>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                     </textView>
                                                 </subviews>
@@ -730,7 +730,7 @@
                                                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="숫자로만 입력" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Th4-9j-I80">
                                                                 <rect key="frame" x="54" y="0.0" width="234" height="80"/>
                                                                 <color key="textColor" red="0.29411764709999999" green="0.29411764709999999" blue="0.29411764709999999" alpha="1" colorSpace="calibratedRGB"/>
-                                                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                                 <textInputTraits key="textInputTraits"/>
                                                             </textField>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gIP-wj-0Sk" customClass="WhiteRoundedButton" customModule="Wekend" customModuleProvider="target">
@@ -887,13 +887,19 @@
                     </view>
                     <size key="freeformSize" width="375" height="1200"/>
                     <connections>
+                        <outlet property="age" destination="oCH-WG-Te8" id="FH8-ar-ohC"/>
+                        <outlet property="code" destination="Ubl-GK-bTz" id="ecj-i9-pdk"/>
+                        <outlet property="company" destination="BLo-OI-LKL" id="PwD-IP-SF1"/>
                         <outlet property="editImage1" destination="qF6-j7-94E" id="FQn-1K-01q"/>
                         <outlet property="editImage2" destination="XZO-eX-aNe" id="yEa-49-u13"/>
                         <outlet property="editImage3" destination="8mD-Hv-t0T" id="fQJ-eH-HX3"/>
                         <outlet property="editImage4" destination="Oyj-0e-WfE" id="53g-iF-7Xs"/>
                         <outlet property="editImage5" destination="BF2-uM-Q0F" id="FYo-5M-YYi"/>
-                        <outlet property="introductTextView" destination="GP5-Xv-Hmi" id="ZqL-qM-bRv"/>
+                        <outlet property="introduce" destination="GP5-Xv-Hmi" id="ZqL-qM-bRv"/>
                         <outlet property="mainEditImage" destination="Gdd-5N-dwb" id="m2X-UR-MRp"/>
+                        <outlet property="nickname" destination="fRD-RY-vA0" id="syj-zy-BDG"/>
+                        <outlet property="phone" destination="Th4-9j-I80" id="1Ij-0t-JWY"/>
+                        <outlet property="school" destination="uOY-uh-a8B" id="ruO-UJ-B4H"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dLL-F9-r3S" userLabel="First Responder" sceneMemberID="firstResponder"/>

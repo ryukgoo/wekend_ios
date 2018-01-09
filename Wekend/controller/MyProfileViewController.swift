@@ -13,10 +13,7 @@ import SDWebImage
 @available(iOS 9.0, *)
 class MyProfileViewController: UIViewController {
     
-    let minimumAlpha: CGFloat = 0.1
-    
     // MARK: Properties
-    
     var selectedPhoto: UIImage?
     var isLoading: Bool = false
     var verificationCode: String?
@@ -115,12 +112,12 @@ class MyProfileViewController: UIViewController {
             scrollView.contentInsetAdjustmentBehavior = .never
         }
         navigationController?.isNavigationBarHidden = true
-        addKeyboardObserver()
+        addKeyboardObserver(self)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        removeKeyboardObserver()
+        removeKeyboardObserver(self)
     }
 
     override func didReceiveMemoryWarning() {
@@ -164,7 +161,7 @@ class MyProfileViewController: UIViewController {
         
         initTextFields()
         
-        isEditingMode = false
+        isEditingMode = true
     }
     
     private func refreshLayout() {
@@ -380,7 +377,6 @@ class MyProfileViewController: UIViewController {
 }
 
 // MARK: - PagerViewDelegate, UIScrollViewDelegate
-
 @available(iOS 9.0, *)
 extension MyProfileViewController: PagerViewDelegate, UIScrollViewDelegate {
     
@@ -426,7 +422,6 @@ extension MyProfileViewController: PagerViewDelegate, UIScrollViewDelegate {
 }
 
 // MARK: - UIImagePickerControllerDelegate
-
 @available(iOS 9.0, *)
 extension MyProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
@@ -575,12 +570,6 @@ extension MyProfileViewController: UITextFieldDelegate {
         return toolbar
     }
     
-    func doneKeyboard(_ sender: Any) {
-        view.endEditing(true)
-        
-//        validateInputPhoneNumber()
-    }
-    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.text = ""
         activeTextField = textField
@@ -625,6 +614,11 @@ extension MyProfileViewController: UITextFieldDelegate {
 
 extension MyProfileViewController {
     
+    override func getFocusView() -> UIView? {
+        return activeTextField
+    }
+    
+    /*
     func addKeyboardObserver() {
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)),
                                                name: .UIKeyboardWillShow,
@@ -683,4 +677,5 @@ extension MyProfileViewController {
             }
         })
     }
+ */
 }

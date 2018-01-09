@@ -48,6 +48,11 @@ class MainViewController: UITabBarController {
         // Dispose of any resources that can be recreated.
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.isNavigationBarHidden = false
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -89,9 +94,8 @@ class MainViewController: UITabBarController {
 
 }
 
-// MARK: -Observerable
-
-extension MainViewController: Observerable {
+// MARK: -Notification Observers
+extension MainViewController {
     
     func addNotificationObservers() {
         

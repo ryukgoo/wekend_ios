@@ -14,6 +14,7 @@
 		B8221F091E03D9D900BCC06C /* LikeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8221F081E03D9D900BCC06C /* LikeTableViewCell.swift */; };
 		B8221F0B1E03DEB000BCC06C /* LikeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8221F0A1E03DEB000BCC06C /* LikeItem.swift */; };
 		B82598FD1F260DAA003999BE /* AgreementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82598FC1F260DAA003999BE /* AgreementViewController.swift */; };
+		B828E2232004E29100B37E91 /* UIViewController+Keyborad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B828E2222004E29100B37E91 /* UIViewController+Keyborad.swift */; };
 		B82AC1311DFE7F3700C9EFC2 /* CampaignViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82AC1301DFE7F3700C9EFC2 /* CampaignViewController.swift */; };
 		B82AE10D1DEBE0FB00325F34 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82AE10C1DEBE0FB00325F34 /* Utilities.swift */; };
 		B82D89231FD7AD9B0027A7EC /* MailProfileSourceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82D89221FD7AD9B0027A7EC /* MailProfileSourceViewController.swift */; };
@@ -91,7 +92,6 @@
 		B88B677F1EA8B2AC006E2F9C /* UserDefaultsProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88B677E1EA8B2AC006E2F9C /* UserDefaultsProtocol.swift */; };
 		B88B68AF1EDECF99003FD8FB /* IAPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88B68AE1EDECF99003FD8FB /* IAPHelper.swift */; };
 		B88B68B11EDEE746003FD8FB /* StoreProducts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88B68B01EDEE746003FD8FB /* StoreProducts.swift */; };
-		B88C1D1B1ED57FB100B0E0DC /* Observerable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88C1D1A1ED57FB100B0E0DC /* Observerable.swift */; };
 		B88D36251E40C2F000B977E5 /* Login.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B88D36241E40C2F000B977E5 /* Login.storyboard */; };
 		B88DD0C71F303C140000DB90 /* UIApplication+TopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88DD0C61F303C140000DB90 /* UIApplication+TopViewController.swift */; };
 		B88E99251EC44A7500EFEDF9 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88E99241EC44A7500EFEDF9 /* MapViewController.swift */; };
@@ -156,6 +156,7 @@
 		B8221F081E03D9D900BCC06C /* LikeTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LikeTableViewCell.swift; sourceTree = "<group>"; };
 		B8221F0A1E03DEB000BCC06C /* LikeItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LikeItem.swift; sourceTree = "<group>"; };
 		B82598FC1F260DAA003999BE /* AgreementViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgreementViewController.swift; sourceTree = "<group>"; };
+		B828E2222004E29100B37E91 /* UIViewController+Keyborad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Keyborad.swift"; sourceTree = "<group>"; };
 		B82AC1301DFE7F3700C9EFC2 /* CampaignViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CampaignViewController.swift; sourceTree = "<group>"; };
 		B82AE10C1DEBE0FB00325F34 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		B82D89221FD7AD9B0027A7EC /* MailProfileSourceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailProfileSourceViewController.swift; sourceTree = "<group>"; };
@@ -245,7 +246,6 @@
 		B88B677E1EA8B2AC006E2F9C /* UserDefaultsProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultsProtocol.swift; sourceTree = "<group>"; };
 		B88B68AE1EDECF99003FD8FB /* IAPHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPHelper.swift; sourceTree = "<group>"; };
 		B88B68B01EDEE746003FD8FB /* StoreProducts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreProducts.swift; sourceTree = "<group>"; };
-		B88C1D1A1ED57FB100B0E0DC /* Observerable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Observerable.swift; sourceTree = "<group>"; };
 		B88D36241E40C2F000B977E5 /* Login.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Login.storyboard; sourceTree = "<group>"; };
 		B88DD0C61F303C140000DB90 /* UIApplication+TopViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+TopViewController.swift"; sourceTree = "<group>"; };
 		B88E99241EC44A7500EFEDF9 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
@@ -442,7 +442,6 @@
 		B895CF0E1ED6CB3200891559 /* extensions */ = {
 			isa = PBXGroup;
 			children = (
-				B88C1D1A1ED57FB100B0E0DC /* Observerable.swift */,
 				B830D8731EADDEE70005E87E /* EnumCollection.swift */,
 				B88B677E1EA8B2AC006E2F9C /* UserDefaultsProtocol.swift */,
 				B8BA5DDB1EC8515400D3CAE0 /* NSObject+Log.swift */,
@@ -455,6 +454,7 @@
 				B89EFAE01F6A715B000ACF72 /* UIViewController+Alert.swift */,
 				B837CEF91EB1D7E400598EF4 /* UIViewController+Loading.swift */,
 				B8B5A2881F6BC2E300D899D5 /* UIViewController+Instance.swift */,
+				B828E2222004E29100B37E91 /* UIViewController+Keyborad.swift */,
 				B837CEE91EB1C46600598EF4 /* UIImageView+Mask.swift */,
 				B837CEEB1EB1C4EB00598EF4 /* UISegmentedControl+Custom.swift */,
 				B837CEED1EB1C54400598EF4 /* UIImage+Color.swift */,
@@ -956,12 +956,12 @@
 				B88B677F1EA8B2AC006E2F9C /* UserDefaultsProtocol.swift in Sources */,
 				B8EF62891F558584007B0583 /* SelectableButton.swift in Sources */,
 				B8D6FF8A1FE0034600899C44 /* MailOperations.swift in Sources */,
+				B828E2232004E29100B37E91 /* UIViewController+Keyborad.swift in Sources */,
 				B8221F091E03D9D900BCC06C /* LikeTableViewCell.swift in Sources */,
 				B88B68B11EDEE746003FD8FB /* StoreProducts.swift in Sources */,
 				B837CEEA1EB1C46600598EF4 /* UIImageView+Mask.swift in Sources */,
 				B837CEF41EB1C5A100598EF4 /* Date+Formatting.swift in Sources */,
 				B82598FD1F260DAA003999BE /* AgreementViewController.swift in Sources */,
-				B88C1D1B1ED57FB100B0E0DC /* Observerable.swift in Sources */,
 				B837CEEC1EB1C4EB00598EF4 /* UISegmentedControl+Custom.swift in Sources */,
 				B830D2FF1E0920BD00EAEFE2 /* LikeCollectionViewCell.swift in Sources */,
 				B889C7B01DF1555A00D05E7D /* Constants.swift in Sources */,

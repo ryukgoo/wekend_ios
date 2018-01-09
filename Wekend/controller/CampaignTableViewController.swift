@@ -616,8 +616,8 @@ extension CampaignTableViewController: UISearchBarDelegate {
     }
 }
 
-// MARK: Observerable
-extension CampaignTableViewController: Observerable {
+// MARK: Notification Observers
+extension CampaignTableViewController {
     
     func addNotificationObservers() {
         
