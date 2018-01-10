@@ -43,10 +43,11 @@
 		B837CEF41EB1C5A100598EF4 /* Date+Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = B837CEF31EB1C5A100598EF4 /* Date+Formatting.swift */; };
 		B837CEF61EB1C5E700598EF4 /* UITableViewCell+Reuseable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B837CEF51EB1C5E700598EF4 /* UITableViewCell+Reuseable.swift */; };
 		B837CEFA1EB1D7E400598EF4 /* UIViewController+Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = B837CEF91EB1D7E400598EF4 /* UIViewController+Loading.swift */; };
+		B83916822005D24E00E0318A /* UserOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B83916812005D24E00E0318A /* UserOperation.swift */; };
 		B83D80C41E07EC8B00B3E507 /* MailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B83D80C31E07EC8B00B3E507 /* MailTableViewCell.swift */; };
 		B83D80C81E07FD0100B3E507 /* Mail.swift in Sources */ = {isa = PBXBuildFile; fileRef = B83D80C71E07FD0100B3E507 /* Mail.swift */; };
 		B842469C2003682200EB8F94 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B842469B2003682200EB8F94 /* GradientView.swift */; };
-		B842DB2920039138000432E7 /* EditImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B842DB2820039138000432E7 /* EditImageView.swift */; };
+		B842DB2920039138000432E7 /* EditCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B842DB2820039138000432E7 /* EditCell.swift */; };
 		B842DB2B2003972B000432E7 /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B842DB2A2003972B000432E7 /* EditProfileViewController.swift */; };
 		B847E9851E3600DC007392F4 /* NonCursorTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B847E9841E3600DB007392F4 /* NonCursorTextField.swift */; };
 		B847E9871E361249007392F4 /* FilterMenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B847E9861E361249007392F4 /* FilterMenuCell.swift */; };
@@ -98,7 +99,7 @@
 		B890EC301F00EFC800D62307 /* UINavigationBar+GradientBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = B890EC2F1F00EFC800D62307 /* UINavigationBar+GradientBackground.swift */; };
 		B895CF101ED6CE1800891559 /* UIImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = B895CF0F1ED6CE1800891559 /* UIImage+Resize.swift */; };
 		B895CF121ED6CF8700891559 /* UIView+Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B895CF111ED6CF8700891559 /* UIView+Animation.swift */; };
-		B89734C62003A09100994DCA /* EditProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89734C52003A09100994DCA /* EditProfileViewModel.swift */; };
+		B89734C62003A09100994DCA /* UserProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89734C52003A09100994DCA /* UserProfileViewModel.swift */; };
 		B89EFADC1F6A6E02000ACF72 /* GuideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89EFADA1F6A6E02000ACF72 /* GuideViewController.swift */; };
 		B89EFADF1F6A6F98000ACF72 /* DrawerViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B89EFADE1F6A6F98000ACF72 /* DrawerViewController.storyboard */; };
 		B89EFAE11F6A715B000ACF72 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89EFAE01F6A715B000ACF72 /* UIViewController+Alert.swift */; };
@@ -114,7 +115,6 @@
 		B8C6C3B51DE42D4F00FBDF6C /* MailBoxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C6C3B41DE42D4F00FBDF6C /* MailBoxViewController.swift */; };
 		B8C6C3BB1DE4355F00FBDF6C /* CampaignTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C6C3BA1DE4355F00FBDF6C /* CampaignTableViewCell.swift */; };
 		B8C6FB111F4470BA0049E4F2 /* StoreHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C6FB101F4470BA0049E4F2 /* StoreHeaderView.swift */; };
-		B8D6FF861FDF927C00899C44 /* LoadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D6FF851FDF927C00899C44 /* LoadingState.swift */; };
 		B8D6FF881FDFC9E100899C44 /* IntExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D6FF871FDFC9E100899C44 /* IntExtension.swift */; };
 		B8D6FF8A1FE0034600899C44 /* MailOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D6FF891FE0034600899C44 /* MailOperations.swift */; };
 		B8E1E1C41F9625F600355CD7 /* SubItems.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B8E1E1C31F9625F600355CD7 /* SubItems.storyboard */; };
@@ -188,10 +188,11 @@
 		B837CEF31EB1C5A100598EF4 /* Date+Formatting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+Formatting.swift"; sourceTree = "<group>"; };
 		B837CEF51EB1C5E700598EF4 /* UITableViewCell+Reuseable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+Reuseable.swift"; sourceTree = "<group>"; };
 		B837CEF91EB1D7E400598EF4 /* UIViewController+Loading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Loading.swift"; sourceTree = "<group>"; };
+		B83916812005D24E00E0318A /* UserOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserOperation.swift; sourceTree = "<group>"; };
 		B83D80C31E07EC8B00B3E507 /* MailTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MailTableViewCell.swift; sourceTree = "<group>"; };
 		B83D80C71E07FD0100B3E507 /* Mail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mail.swift; sourceTree = "<group>"; };
 		B842469B2003682200EB8F94 /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
-		B842DB2820039138000432E7 /* EditImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditImageView.swift; sourceTree = "<group>"; };
+		B842DB2820039138000432E7 /* EditCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCell.swift; sourceTree = "<group>"; };
 		B842DB2A2003972B000432E7 /* EditProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		B847E9841E3600DB007392F4 /* NonCursorTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonCursorTextField.swift; sourceTree = "<group>"; };
 		B847E9861E361249007392F4 /* FilterMenuCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterMenuCell.swift; sourceTree = "<group>"; };
@@ -252,7 +253,7 @@
 		B890EC2F1F00EFC800D62307 /* UINavigationBar+GradientBackground.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UINavigationBar+GradientBackground.swift"; sourceTree = "<group>"; };
 		B895CF0F1ED6CE1800891559 /* UIImage+Resize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Resize.swift"; sourceTree = "<group>"; };
 		B895CF111ED6CF8700891559 /* UIView+Animation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Animation.swift"; sourceTree = "<group>"; };
-		B89734C52003A09100994DCA /* EditProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
+		B89734C52003A09100994DCA /* UserProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewModel.swift; sourceTree = "<group>"; };
 		B89EFADA1F6A6E02000ACF72 /* GuideViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuideViewController.swift; sourceTree = "<group>"; };
 		B89EFADE1F6A6F98000ACF72 /* DrawerViewController.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = DrawerViewController.storyboard; sourceTree = "<group>"; };
 		B89EFAE01F6A715B000ACF72 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
@@ -274,7 +275,6 @@
 		B8C6C3B41DE42D4F00FBDF6C /* MailBoxViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MailBoxViewController.swift; sourceTree = "<group>"; };
 		B8C6C3BA1DE4355F00FBDF6C /* CampaignTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CampaignTableViewCell.swift; sourceTree = "<group>"; };
 		B8C6FB101F4470BA0049E4F2 /* StoreHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreHeaderView.swift; sourceTree = "<group>"; };
-		B8D6FF851FDF927C00899C44 /* LoadingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingState.swift; sourceTree = "<group>"; };
 		B8D6FF871FDFC9E100899C44 /* IntExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntExtension.swift; sourceTree = "<group>"; };
 		B8D6FF891FE0034600899C44 /* MailOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailOperations.swift; sourceTree = "<group>"; };
 		B8E1E1C31F9625F600355CD7 /* SubItems.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SubItems.storyboard; sourceTree = "<group>"; };
@@ -345,10 +345,10 @@
 			children = (
 				B88AB2151EF12763005EDC48 /* SettingViewModel.swift */,
 				B80E7F9E1FD9018200C742D2 /* MailProfileViewModel.swift */,
-				B89734C52003A09100994DCA /* EditProfileViewModel.swift */,
+				B89734C52003A09100994DCA /* UserProfileViewModel.swift */,
 				B832FF391FD693BF0009BB95 /* Dynamic.swift */,
-				B8D6FF851FDF927C00899C44 /* LoadingState.swift */,
 				B8D6FF891FE0034600899C44 /* MailOperations.swift */,
+				B83916812005D24E00E0318A /* UserOperation.swift */,
 			);
 			path = viewmodel;
 			sourceTree = "<group>";
@@ -483,7 +483,7 @@
 				B8EA29111E8B992200DEB0B1 /* VerticallyCenteredTextView.swift */,
 				B8EF62881F558584007B0583 /* SelectableButton.swift */,
 				B842469B2003682200EB8F94 /* GradientView.swift */,
-				B842DB2820039138000432E7 /* EditImageView.swift */,
+				B842DB2820039138000432E7 /* EditCell.swift */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -891,10 +891,9 @@
 				B88B68AF1EDECF99003FD8FB /* IAPHelper.swift in Sources */,
 				B88295C71E49CF6F009AACCA /* WEKENDGetTokenResponseModel.m in Sources */,
 				B847E9851E3600DC007392F4 /* NonCursorTextField.swift in Sources */,
-				B8D6FF861FDF927C00899C44 /* LoadingState.swift in Sources */,
 				B8221F0B1E03DEB000BCC06C /* LikeItem.swift in Sources */,
 				B83D80C81E07FD0100B3E507 /* Mail.swift in Sources */,
-				B842DB2920039138000432E7 /* EditImageView.swift in Sources */,
+				B842DB2920039138000432E7 /* EditCell.swift in Sources */,
 				B837CEE21EB1C3B100598EF4 /* ArrayExtension.swift in Sources */,
 				B82E4E6F1DE59B4200E4488B /* AmazonClientManager.swift in Sources */,
 				B8FB469A1E5B08460084D7D2 /* CampaignTableViewController.swift in Sources */,
@@ -910,6 +909,7 @@
 				B88DD0C71F303C140000DB90 /* UIApplication+TopViewController.swift in Sources */,
 				B86B33901E30AD29008C8C8B /* AlarmSettingTableViewController.swift in Sources */,
 				B8893A2E1E5B1C7A00C135CE /* LikeTableViewController.swift in Sources */,
+				B83916822005D24E00E0318A /* UserOperation.swift in Sources */,
 				B8F370851DFFCDD9006E010D /* PagerView.swift in Sources */,
 				B86DFF5A1EE551F500E93246 /* UITableView+Reload.swift in Sources */,
 				B8C6C3B51DE42D4F00FBDF6C /* MailBoxViewController.swift in Sources */,
@@ -927,7 +927,7 @@
 				B82D89231FD7AD9B0027A7EC /* MailProfileSourceViewController.swift in Sources */,
 				B8C6C3851DE41E7000FBDF6C /* AppDelegate.swift in Sources */,
 				B830D8741EADDEE70005E87E /* EnumCollection.swift in Sources */,
-				B89734C62003A09100994DCA /* EditProfileViewModel.swift in Sources */,
+				B89734C62003A09100994DCA /* UserProfileViewModel.swift in Sources */,
 				B8AE5BC11F97A31A00796751 /* DeepLinkManager.swift in Sources */,
 				B837CEF01EB1C55F00598EF4 /* UIColor+RBG_Hex.swift in Sources */,
 				B870C82B1F29CFC0004802F4 /* ObjC.m in Sources */,

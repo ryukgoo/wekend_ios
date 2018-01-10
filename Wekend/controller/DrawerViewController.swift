@@ -62,7 +62,7 @@ class DrawerViewController: UIViewController {
     
     func initViews() {
         
-        guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
+        guard let userInfo = UserInfoManager.shared.userInfo else {
             fatalError("\(className) > \(#function) > userInfo Error")
         }
         
@@ -101,29 +101,21 @@ class DrawerViewController: UIViewController {
     }
     
     func onProfileImageTapped(_ gestureRecognizer: UITapGestureRecognizer) {
-        
         performSegue(withIdentifier: MyProfileViewController.className, sender: nil)
     }
 
     // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
         if segue.identifier == NoticeTableViewController.className {
-            
-            guard let navigationController = segue.destination as? UINavigationController else {
-                return
-            }
-            
-            guard let noticeTableViewController = navigationController.topViewController as? NoticeTableViewController else {
-                return
-            }
-            
-            noticeTableViewController.noticeType = sender as? String
+            guard let navigation = segue.destination as? UINavigationController else { return }
+            guard let topVC = navigation.topViewController as? NoticeTableViewController else { return }
+            topVC.noticeType = sender as? String
+        } else if segue.identifier == MyProfileViewController.className {
+            guard let navigation = segue.destination as? UINavigationController else { return }
+            guard let topVC = navigation.topViewController as? MyProfileViewController else { return }
+            topVC.viewModel = UserProfileViewModel()
         }
     }
-
 }
 
 // MARK: -UITableViewDelegate, UITableViewDataSource
@@ -270,7 +262,7 @@ extension DrawerViewController {
     func handleUpdateUserInfoNotification(_ notification: Notification) {
         print("\(className) > \(#function)")
         
-        guard let userInfo = UserInfoManager.sharedInstance.userInfo else { return }
+        guard let userInfo = UserInfoManager.shared.userInfo else { return }
         
         let defaultImage : UIImage
         if userInfo.gender == UserInfo.RawValue.GENDER_MALE {

@@ -72,7 +72,7 @@ class InsertPhoneViewController: UIViewController {
             return
         }
         
-        UserInfoManager.sharedInstance.sendVerificationCode(phoneNumber: phoneNumber).continueWith(block: {
+        UserInfoManager.shared.sendVerificationCode(phoneNumber: phoneNumber).continueWith(block: {
             (task: AWSTask) -> Any! in
             
             if task.error == nil {
@@ -166,12 +166,12 @@ class InsertPhoneViewController: UIViewController {
                             fatalError("\(self.className) > \(#function) > token is nil")
                         }
                         
-                        UserInfoManager.sharedInstance.getOwnedUserInfo(userId: userId as String)
+                        UserInfoManager.shared.getOwnedUserInfo(userId: userId as String)
                             .continueWith(executor: AWSExecutor.mainThread()) { getUserTask in
                             
                             if getUserTask.error != nil { return nil }
                             
-                            UserInfoManager.sharedInstance.registEndpointARN()
+                            UserInfoManager.shared.registEndpointARN()
                             
                             DispatchQueue.main.async {
                                 self.endLoading()

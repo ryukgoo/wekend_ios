@@ -24,7 +24,7 @@ class MainViewController: UITabBarController {
         
         tabBar.tintColor = UIColor(netHex: Constants.ColorInfo.MAIN)
         
-        guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
+        guard let userInfo = UserInfoManager.shared.userInfo else {
             fatalError("\(className) > \(#function) > get UserInfo Error")
         }
         
@@ -40,7 +40,7 @@ class MainViewController: UITabBarController {
         mailTab.badgeValue = mailCount == 0 ? nil : String(mailCount)
         
         addNotificationObservers()
-        UserInfoManager.sharedInstance.registEndpointARN()
+        UserInfoManager.shared.registEndpointARN()
     }
 
     override func didReceiveMemoryWarning() {
@@ -170,7 +170,7 @@ extension MainViewController: UITabBarControllerDelegate {
             break
             
         case .like:
-            UserInfoManager.sharedInstance.clearNotificationCount(selectedType).continueWith {
+            UserInfoManager.shared.clearNotificationCount(selectedType).continueWith {
                 task -> Any! in return nil
             }
             UserDefaults.NotificationCount.set(0, forKey: .like)
@@ -178,7 +178,7 @@ extension MainViewController: UITabBarControllerDelegate {
             break
             
         case .mail:
-            UserInfoManager.sharedInstance.clearNotificationCount(selectedType).continueWith {
+            UserInfoManager.shared.clearNotificationCount(selectedType).continueWith {
                 task -> Any! in return nil
             }
             UserDefaults.NotificationCount.set(0, forKey: .receiveMail)

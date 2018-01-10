@@ -50,7 +50,7 @@ class ProductInfoManager : NSObject {
         
         let loadTask = AWSTaskCompletionSource<AnyObject>()
         
-        guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
+        guard let userInfo = UserInfoManager.shared.userInfo else {
             fatalError("\(className) > \(#function) > userInfo not loaded")
         }
         

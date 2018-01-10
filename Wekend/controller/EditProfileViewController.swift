@@ -11,12 +11,12 @@ import UIKit
 class EditProfileViewController: UIViewController {
 
     // MARK: IBOutlet
-    @IBOutlet weak var mainEditImage: EditImageView!
-    @IBOutlet weak var editImage1: EditImageView!
-    @IBOutlet weak var editImage2: EditImageView!
-    @IBOutlet weak var editImage3: EditImageView!
-    @IBOutlet weak var editImage4: EditImageView!
-    @IBOutlet weak var editImage5: EditImageView!
+    @IBOutlet weak var mainEditCell: EditCell!
+    @IBOutlet weak var editCell1: EditCell!
+    @IBOutlet weak var editCell2: EditCell!
+    @IBOutlet weak var editCell3: EditCell!
+    @IBOutlet weak var editCell4: EditCell!
+    @IBOutlet weak var editCell5: EditCell!
     
     @IBOutlet weak var nickname: UITextField!
     @IBOutlet weak var age: UITextField!
@@ -26,9 +26,13 @@ class EditProfileViewController: UIViewController {
     @IBOutlet weak var phone: UITextField!
     @IBOutlet weak var code: UITextField!
     
-    var editImages: [EditImageView]!
-    var viewModel: EditProfileViewModel?
+    @IBOutlet weak var requestCodeButton: WhiteRoundedButton!
+    @IBOutlet weak var confirmCodeButton: WhiteRoundedButton!
+    
+    var editCells: [EditCell]!
+    var viewModel: UserProfileViewModel?
     var activeTextView: UIView?
+    var activeEditCell: EditCell?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,10 +69,10 @@ class EditProfileViewController: UIViewController {
         guard let viewModel = viewModel else { return }
         viewModel.user.bindAndFire { [weak self] user in
             guard let user = user else { return }
-            guard let editImages = self?.editImages else { return }
+            guard let editImages = self?.editCells else { return }
             for editImage in editImages {
                 guard let imageUrl = self?.getImageUrl(id: user.userid, index: editImage.index) else { return }
-                editImage.image.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "default_profile"), options: .cacheMemoryOnly) {
+                editImage.imageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "default_profile"), options: .cacheMemoryOnly) {
                     (image, error, cachedType, url) in
                 }
             }
@@ -80,12 +84,33 @@ class EditProfileViewController: UIViewController {
             self?.introduce.text = user.introduce
             self?.phone.text = user.phone
         }
+        
+        self.viewModel?.onUploadPrepare = { [weak self] image in
+            self?.activeEditCell?.imageView.image = image
+            self?.activeEditCell = nil
+            
+            self?.startLoading(message: "저장중...")
+        }
+        
+        self.viewModel?.onUploadComplete = { [weak self] _ in
+            self?.endLoading()
+            self?.alert(message: "프로필 이미지가 수정되었습니다")
+        }
+        
+        self.viewModel?.onUploadFailed = { [weak self] _ in
+            self?.endLoading()
+            self?.alert(message: "프로필 이미지 수정에 실패하였습니다.\n다시 시도해 주세요")
+        }
+        
+        self.viewModel?.onUpdateUser = { [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
+        }
     }
     
     private func initEditImages() {
-        editImages = [mainEditImage, editImage1, editImage2, editImage3, editImage4, editImage5]
+        editCells = [mainEditCell, editCell1, editCell2, editCell3, editCell4, editCell5]
         
-        for image in editImages {
+        for image in editCells {
             image.addGestureRecognizer(getTapGestureRecognizer())
         }
     }
@@ -100,32 +125,73 @@ class EditProfileViewController: UIViewController {
     }
     
     func editImageTapped(_ tapGestureRecognizer: UITapGestureRecognizer) {
-        guard let editView = tapGestureRecognizer.view as? EditImageView else {
+        guard let editView = tapGestureRecognizer.view as? EditCell else {
             print("\(className) > \(#function) > sender : \(tapGestureRecognizer)")
             return
         }
         print("\(className) > \(#function) > \(editView.index)")
+        
+        activeEditCell = editView
+        
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.sourceType = .photoLibrary
+        imagePickerController.delegate = self
+        imagePickerController.allowsEditing = true
+        
+        present(imagePickerController, animated: true, completion: nil)
     }
     
+    @IBAction func onRequestCodeButtonTapped(_ sender: Any) {
+        
+    }
+    
+    @IBAction func onConfirmCodeButtonTapped(_ sender: Any) {
+        
+    }
+    
+    @IBAction func onDoneButtonTapped(_ sender: Any) {
+        viewModel?.updateUser()
+    }
     /*
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) { }
     */
 }
 
-extension EditProfileViewController: UITextFieldDelegate {
+extension EditProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        guard let viewModel = self.viewModel else { return }
+        guard let editView = self.activeEditCell else { return }
+        dismiss(animated: true) { viewModel.uploadImage(info: info, index: editView.index) }
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+    }
+}
+
+extension EditProfileViewController: UITextFieldDelegate, UITextViewDelegate {
     
     func initTextFields() {
         company.delegate = self
         company.inputAccessoryView = getKeyboardToolbar()
+        
         school.delegate = self
         school.inputAccessoryView = getKeyboardToolbar()
+        
         phone.delegate = self
-        phone.keyboardType = .numberPad
         phone.inputAccessoryView = getKeyboardToolbar()
+        phone.addTarget(self, action: #selector(self.phoneDidChanged(_:)), for: .editingChanged)
+        
         code.delegate = self
-        code.keyboardType = .numberPad
         code.inputAccessoryView = getKeyboardToolbar()
+        code.layer.addBorder(edge: .bottom, color: UIColor(netHex: 0x909090), thickness: 1.0)
+        code.addTarget(self, action: #selector(self.codeDidChanged(_:)), for: .editingChanged)
+        
+        introduce.delegate = self
+        introduce.inputAccessoryView = getKeyboardToolbar()
+        
+        confirmCodeButton.isEnabled = false
     }
     
     override func getFocusView() -> UIView? {
@@ -139,6 +205,19 @@ extension EditProfileViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        print("\(className) > \(#function)")
+        activeTextView = textView
+    }
+    
+    func phoneDidChanged(_ textField: UITextField) {
+        requestCodeButton.isEnabled = textField.text!.count == 11
+    }
+    
+    func codeDidChanged(_ textField: UITextField) {
+        confirmCodeButton.isEnabled = textField.text!.count == 6
     }
 }
 

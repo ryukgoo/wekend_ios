@@ -287,7 +287,7 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
         UserDefaults.NotificationCount.remove(forKey: .sendMail)
         UserDefaults.RemoteNotification.remove(forKey: .deviceToken)
         
-        UserInfoManager.sharedInstance.destroy()
+        UserInfoManager.shared.destroy()
         ProductInfoManager.sharedInstance.destroy()
         LikeDBManager.sharedInstance.destroy()
         ReceiveMailRepository.shared.destroy()

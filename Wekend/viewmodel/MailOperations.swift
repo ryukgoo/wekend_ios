@@ -47,7 +47,7 @@ struct LoadUserOperation {
     }
     
     func execute(completion: @escaping (Result<UserInfo, FailureReason>) -> Void) {
-        UserInfoManager.sharedInstance.getUserInfo(userId: userId)
+        UserInfoManager.shared.getUserInfo(userId: userId)
             .continueWith(executor: AWSExecutor.mainThread()) { task in
                 guard let userInfo = task.result as? UserInfo else {
                     DispatchQueue.main.async {
@@ -98,9 +98,8 @@ struct ProposeOperation {
     
     func execute(completion: @escaping (Result<Any?, FailureReason>) -> Void) {
         do {
-            try UserInfoManager.sharedInstance.consumePoint { isSuccess in
+            try UserInfoManager.shared.consumePoint { isSuccess in
                 if isSuccess {
-                    
                     self.dataSource.updateMail(mail: self.mail) { isUpdateSuccess in
                         if isUpdateSuccess {
                             completion(.success(object: nil))

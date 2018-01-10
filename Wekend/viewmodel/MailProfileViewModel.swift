@@ -8,17 +8,17 @@
 
 import Foundation
 
-protocol UserViewModel {
+protocol UserLoadable {
     var user: Dynamic<UserInfo?> { get }
     func loadUser()
 }
 
-protocol MailViewModel {
+protocol MailLoadable {
     var mail: Dynamic<Mail?> { get }
     func loadMail()
 }
 
-protocol MailProposable{
+protocol MailViewModel{
     func propose(message: String?)
     func accept()
     func reject()
@@ -26,17 +26,17 @@ protocol MailProposable{
     var onShowMessage: (() -> Void)? { get set }
 }
 
-protocol CampaignViewModel {
+protocol CampaignLoadable {
     var product: Dynamic<ProductInfo?> { get }
     func loadProduct()
 }
 
-protocol FriendViewModel {
+protocol FriendLoadable {
     var friend: Dynamic<UserInfo?> { get }
     func loadFriend()
 }
 
-typealias MailProfileViewModelProtocol = UserViewModel & MailViewModel & CampaignViewModel & FriendViewModel & MailProposable
+typealias MailProfileViewModelProtocol = UserLoadable & MailLoadable & CampaignLoadable & FriendLoadable & MailViewModel
 
 struct MailProfileViewModel: MailProfileViewModelProtocol {
     
@@ -65,7 +65,7 @@ struct MailProfileViewModel: MailProfileViewModelProtocol {
     }
     
     func loadUser() {
-        guard let userInfo = UserInfoManager.sharedInstance.userInfo else { return }
+        guard let userInfo = UserInfoManager.shared.userInfo else { return }
         self.user.value = userInfo
     }
     
@@ -91,10 +91,8 @@ struct MailProfileViewModel: MailProfileViewModelProtocol {
     }
     
     func loadMail() {
-        
-        print("\(#function) > start")
-        
-        guard let userId = UserInfoManager.sharedInstance.userInfo?.userid else { return }
+        print(#function)
+        guard let userId = UserInfoManager.shared.userInfo?.userid else { return }
         let operation = LoadMailOperation(userId: userId, friendId: friendId, productId: productId, dataSource: dataSource)
         operation.execute { result in
             print("\(#function) > in")
@@ -111,7 +109,7 @@ struct MailProfileViewModel: MailProfileViewModelProtocol {
     
     func propose(message: String?) {
         print(#function)
-        guard let user = UserInfoManager.sharedInstance.userInfo else { return }
+        guard let user = UserInfoManager.shared.userInfo else { return }
         let mail = SendMail()
         mail?.UserId = user.userid
         mail?.ReceiverId = friendId

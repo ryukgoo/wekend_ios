@@ -247,7 +247,7 @@ extension CampaignTableViewController: UITableViewDelegate {
             fatalError("\(className) > \(#function) > productInfo Error")
         }
         
-        guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
+        guard let userInfo = UserInfoManager.shared.userInfo else {
             fatalError("\(className) > \(#function) > userInfo Error")
         }
         

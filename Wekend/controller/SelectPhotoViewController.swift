@@ -65,7 +65,7 @@ class SelectPhotoViewController: UIViewController, UIImagePickerControllerDelega
             print("\(className) > \(#function) > imageData write error : \(error)")
         }
         
-        guard let userId = UserInfoManager.sharedInstance.userInfo?.userid else {
+        guard let userId = UserInfoManager.shared.userInfo?.userid else {
             fatalError("\(className) > \(#function) > userId Error")
         }
         
@@ -122,14 +122,14 @@ class SelectPhotoViewController: UIViewController, UIImagePickerControllerDelega
                 return nil
             }
             
-            guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
+            guard let userInfo = UserInfoManager.shared.userInfo else {
                 fatalError("\(self.className) > \(#function) > upload get UserInfo Failed")
             }
             
             let photos: Set = [uploadRequest.key!]
             userInfo.photos = photos
             
-            UserInfoManager.sharedInstance.saveUserInfo(userInfo: userInfo) { isSuccess in
+            UserInfoManager.shared.saveUserInfo(userInfo: userInfo) { isSuccess in
                 self.endLoading()
                 if isSuccess {
                     DispatchQueue.main.async {

@@ -60,25 +60,24 @@ extension UIViewController: KeyboardObservable {
         
         if let keyboardSize = (info[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             
-            print("\(className) > \(#function) > keyboardSize : \(keyboardSize)")
+            guard let focusView = self.getFocusView() else { return }
             
-            guard let textField = self.getFocusView() else { return }
+            let point = focusView.convert(focusView.frame.origin, to: self.view)
             
-            let point = textField.convert(textField.frame.origin, to: self.view)
-            
-            let textFieldBottomY = point.y + textField.frame.size.height
+            let textFieldBottomY = point.y + focusView.frame.size.height
             let keyboardY = self.view.frame.height - keyboardSize.height
             let moveY = textFieldBottomY - keyboardY
             
 //            print("\(className) > \(#function) > textFieldBottomY : \(textFieldBottomY)")
 //            print("\(className) > \(#function) > keyboardY : \(keyboardY)")
-//            print("\(className) > \(#function) > moveY : \(moveY)")
+            print("\(className) > \(#function) > moveY : \(moveY)")
+//            print("\(className) > \(#function) > y : \(self.view.frame.origin.y)")
             
             UIView.animate(withDuration: 0.1, animations: {
                 () -> Void in
                 
                 if moveY > 0 {
-                    self.view.frame.origin.y -= moveY
+                    self.view.frame.origin.y = -moveY
                 }
             })
         }

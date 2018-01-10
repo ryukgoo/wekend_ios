@@ -15,7 +15,7 @@ class UserInfoManager: NSObject {
     static let UpdateUserInfoNotification = "com.entution.wekend.Notification.UpdateUser"
     static let NotificationDataPoint = "com.entuition.wekend.Notification.Data.Point"
     
-    static let sharedInstance = UserInfoManager()
+    static let shared = UserInfoManager()
     
     private let mapper: AWSDynamoDBObjectMapper
     var userInfo: UserInfo?

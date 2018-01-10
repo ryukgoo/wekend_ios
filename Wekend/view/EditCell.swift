@@ -8,11 +8,11 @@
 
 import UIKit
 
-class EditImageView: UIView {
+class EditCell: UIView {
 
     @IBInspectable var index: Int = 0
     
-    var image: UIImageView!
+    var imageView: UIImageView!
     var plus: UIImageView!
     
     required init?(coder aDecoder: NSCoder) {
@@ -21,19 +21,18 @@ class EditImageView: UIView {
     }
     
     private func initView() {
-        print("\(className) > \(#function)")
-        image = UIImageView()
-        image.clipsToBounds = true
-        image.contentMode = .scaleAspectFill
-        self.addSubview(image)
+        imageView = UIImageView()
+        imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFill
+        self.addSubview(imageView)
         
-        image.translatesAutoresizingMaskIntoConstraints = false
-        image.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 5).isActive = true
-        image.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -5).isActive = true
-        image.topAnchor.constraint(equalTo: self.topAnchor, constant: 5).isActive = true
-        image.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -5).isActive = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 5).isActive = true
+        imageView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -5).isActive = true
+        imageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 5).isActive = true
+        imageView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -5).isActive = true
         
-        image.image = #imageLiteral(resourceName: "default_profile")
+        imageView.image = #imageLiteral(resourceName: "default_profile")
         
         plus = UIImageView(image: #imageLiteral(resourceName: "img_icon_plus"))
         self.addSubview(plus)
@@ -46,6 +45,6 @@ class EditImageView: UIView {
     }
     
     override func draw(_ rect: CGRect) {
-        print("\(className) > \(#function)")
+//        print("\(className) > \(#function)")
     }
 }

@@ -148,7 +148,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         
         likeButton.loadingIndicator(true)
         
-        guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
+        guard let userInfo = UserInfoManager.shared.userInfo else {
             fatalError("\(className) > \(#function) > getUserInfo Failed")
         }
         
@@ -211,7 +211,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     // MARK: addTarget functions
     func likeButtonTapped(_ sender: Any) {
         
-        guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
+        guard let userInfo = UserInfoManager.shared.userInfo else {
             fatalError("\(className) > \(#function) > get UserInfo Error")
         }
         

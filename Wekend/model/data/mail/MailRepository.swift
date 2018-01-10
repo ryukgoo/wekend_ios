@@ -53,7 +53,7 @@ class ReceiveMailRepository: NSObject, MailDataSource {
     
     func loadMails(completion: @escaping (Result<Array<Mail>, FailureReason>) -> ()) {
         
-        guard let user = UserInfoManager.sharedInstance.userInfo else { return }
+        guard let user = UserInfoManager.shared.userInfo else { return }
         
         let expression = AWSDynamoDBQueryExpression()
         expression.indexName = ReceiveMail.Schema.INDEX_USERID_RESPONSETIME
@@ -85,7 +85,7 @@ class ReceiveMailRepository: NSObject, MailDataSource {
     
     func getMail(friendId: String, productId: Int, completion: @escaping (Result<Mail, FailureReason>) -> ()) {
         
-        guard let user = UserInfoManager.sharedInstance.userInfo else { return }
+        guard let user = UserInfoManager.shared.userInfo else { return }
         
         let expression = AWSDynamoDBQueryExpression()
         expression.keyConditionExpression = "\(ReceiveMail.Attribute.USER_ID) = :userId"
@@ -161,7 +161,7 @@ class SendMailRepository: NSObject, MailDataSource {
     
     func loadMails(completion: @escaping (Result<Array<Mail>, FailureReason>) -> ()) {
         
-        guard let user = UserInfoManager.sharedInstance.userInfo else { return }
+        guard let user = UserInfoManager.shared.userInfo else { return }
         
         let expression = AWSDynamoDBQueryExpression()
         expression.indexName = SendMail.Schema.INDEX_USERID_RESPONSETIME
@@ -192,7 +192,7 @@ class SendMailRepository: NSObject, MailDataSource {
     
     func getMail(friendId: String, productId: Int, completion: @escaping (Result<Mail, FailureReason>) -> ()) {
         
-        guard let user = UserInfoManager.sharedInstance.userInfo else { return }
+        guard let user = UserInfoManager.shared.userInfo else { return }
         
         let expression = AWSDynamoDBQueryExpression()
         expression.keyConditionExpression = "\(SendMail.Attribute.USER_ID) = :userId"

@@ -157,7 +157,7 @@ class NotificationParser {
     
     func displayNotification() {
         
-        guard let userId = UserInfoManager.sharedInstance.userInfo?.userid else {
+        guard let userId = UserInfoManager.shared.userInfo?.userid else {
             print("\(#function) > userId is nil")
             return
         }
@@ -166,10 +166,10 @@ class NotificationParser {
         let receiveCount = UserDefaults.NotificationCount.integer(forKey: .receiveMail)
         let sendCount = UserDefaults.NotificationCount.integer(forKey: .sendMail)
         
-        UserInfoManager.sharedInstance.getOwnedUserInfo(userId: userId).continueWith(block:  {
+        UserInfoManager.shared.getOwnedUserInfo(userId: userId).continueWith(block:  {
             (task: AWSTask) -> Any? in
             
-            guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
+            guard let userInfo = UserInfoManager.shared.userInfo else {
                 print("\(#function) > userInfo is nil")
                 return nil
             }

@@ -257,7 +257,7 @@ extension MailProfileViewController {
     }
     
     func handleUpdatePointNotification(_ notification: Notification) {
-        guard let point = UserInfoManager.sharedInstance.userInfo?.balloon as? Int else { return }
+        guard let point = UserInfoManager.shared.userInfo?.balloon as? Int else { return }
         
         DispatchQueue.main.async {
             self.pointLabel.text = "보유포인트 \(point)P"

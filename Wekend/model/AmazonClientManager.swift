@@ -58,7 +58,7 @@ class AmazonClientManager: NSObject {
                 return
         }
         
-        UserInfoManager.sharedInstance.getOwnedUserInfo(userId: userId).continueWith(executor: AWSExecutor.mainThread()) { task in
+        UserInfoManager.shared.getOwnedUserInfo(userId: userId).continueWith(executor: AWSExecutor.mainThread()) { task in
             
             if task.error != nil || task.result == nil {
                 completion(false)

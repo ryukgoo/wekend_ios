@@ -63,7 +63,7 @@ class InputUserInfoViewController: UIViewController {
             return
         }
         
-        UserInfoManager.sharedInstance.isNicknameAvailable(nickname: inputNickname)
+        UserInfoManager.shared.isNicknameAvailable(nickname: inputNickname)
             .continueWith(executor: AWSExecutor.mainThread()) { task in
             
             if task.error != nil {

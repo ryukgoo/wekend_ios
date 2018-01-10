@@ -80,7 +80,7 @@ class SignupViewController: UIViewController {
         
         startLoading(message: "중복 확인중 입니다")
         
-        UserInfoManager.sharedInstance.isUsernameAvailable(username: username).continueWith {
+        UserInfoManager.shared.isUsernameAvailable(username: username).continueWith {
             (task: AWSTask) -> Any! in
             
             if task.error != nil {

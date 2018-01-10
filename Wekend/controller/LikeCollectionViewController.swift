@@ -59,7 +59,7 @@ class LikeCollectionViewController: UICollectionViewController {
         print("\(className) > \(#function)")
         startLoading()
         
-        guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
+        guard let userInfo = UserInfoManager.shared.userInfo else {
             fatalError("\(className) > \(#function) > get UserInfo Error")
         }
         
@@ -246,7 +246,7 @@ extension LikeCollectionViewController: UICollectionViewDelegateFlowLayout {
             fatalError("\(className) > \(#function) > get data Error")
         }
         
-        guard let userId = UserInfoManager.sharedInstance.userInfo?.userid else {
+        guard let userId = UserInfoManager.shared.userInfo?.userid else {
             fatalError("\(className) > \(#function) > get UserId Error")
         }
         

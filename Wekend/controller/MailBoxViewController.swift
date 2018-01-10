@@ -309,7 +309,7 @@ extension MailBoxViewController: UITableViewDelegate {
         
         let cell = tableView.dequeueReusableCell(for: indexPath) as MailTableViewCell
         
-        guard let userInfo = UserInfoManager.sharedInstance.userInfo else { return cell }
+        guard let userInfo = UserInfoManager.shared.userInfo else { return cell }
         
         let defaultImage : UIImage
         if userInfo.gender != UserInfo.RawValue.GENDER_MALE {

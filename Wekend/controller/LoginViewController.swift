@@ -120,7 +120,7 @@ class LoginViewController: UIViewController {
                     fatalError("\(self.className) > \(#function) > get UserId from UserDefaults Error")
                 }
                 
-                UserInfoManager.sharedInstance.getOwnedUserInfo(userId: userId)
+                UserInfoManager.shared.getOwnedUserInfo(userId: userId)
                     .continueWith(executor: AWSExecutor.mainThread()) { getUserTask in
                     
                     print("\(self.className) > \(#function) >  Fetch UserInfo Complete")
@@ -129,7 +129,7 @@ class LoginViewController: UIViewController {
                         fatalError("\(self.className) > \(#function) > result Error")
                     }
                     
-                    UserInfoManager.sharedInstance.registEndpointARN()
+                    UserInfoManager.shared.registEndpointARN()
                     
                     DispatchQueue.main.async {
                         self.endLoading()

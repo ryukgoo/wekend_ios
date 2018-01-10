@@ -75,7 +75,7 @@ class LikeTableViewController: UIViewController {
         
         print("\(#function) > startFromBegin : \(startFromBegin)")
         
-        guard let userInfo = UserInfoManager.sharedInstance.userInfo else {
+        guard let userInfo = UserInfoManager.shared.userInfo else {
             fatalError("\(self.className) > \(#function) > getUserInfo Failed")
         }
         
