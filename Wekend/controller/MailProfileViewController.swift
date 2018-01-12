@@ -10,10 +10,6 @@ import UIKit
 import AWSCore
 import KRWordWrapLabel
 
-/*
- *
- */
-@available(iOS 9.0, *)
 class MailProfileViewController: UIViewController {
     
     // MARK: IBOutlet
@@ -247,17 +243,17 @@ extension MailProfileViewController {
     
     func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(MailProfileViewController.handleUpdatePointNotification(_:)),
-                                               name: Notification.Name(rawValue: UserInfoManager.UpdateUserInfoNotification),
+                                               name: Notification.Name(rawValue: UserNotification.Update),
                                                object: nil)
     }
     
     func removeNotificationObservers() {
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: UserInfoManager.UpdateUserInfoNotification),
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: UserNotification.Update),
                                                   object: nil)
     }
     
     func handleUpdatePointNotification(_ notification: Notification) {
-        guard let point = UserInfoManager.shared.userInfo?.balloon as? Int else { return }
+        guard let point = UserInfoRepository.shared.userInfo?.balloon as? Int else { return }
         
         DispatchQueue.main.async {
             self.pointLabel.text = "보유포인트 \(point)P"

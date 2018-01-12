@@ -63,7 +63,21 @@ class InputUserInfoViewController: UIViewController {
             return
         }
         
-        UserInfoManager.shared.isNicknameAvailable(nickname: inputNickname)
+        UserInfoRepository.shared.validateNickname(name: inputNickname) { available in
+            if available {
+                DispatchQueue.main.async {
+                    self.nextButton.isEnabled = true
+                    self.alert(message: "사용가능한 닉네임입니다.", title: "닉네임 중복확인")
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.alert(message: "사용중인 닉네임입니다.", title: "닉네임 중복확인")
+                }
+            }
+        }
+        
+        /*
+        UserInfoRepository.shared.isNicknameAvailable(nickname: inputNickname)
             .continueWith(executor: AWSExecutor.mainThread()) { task in
             
             if task.error != nil {
@@ -92,7 +106,7 @@ class InputUserInfoViewController: UIViewController {
             
             return nil
         }
-        
+        */
     }
     
     @IBAction func nextButtonTapped(_ sender: Any) {

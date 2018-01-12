@@ -58,7 +58,17 @@ class AmazonClientManager: NSObject {
                 return
         }
         
-        UserInfoManager.shared.getOwnedUserInfo(userId: userId).continueWith(executor: AWSExecutor.mainThread()) { task in
+        UserInfoRepository.shared.getUserInfo(id: userId) { result in
+            if case Result.success(object: _) = result {
+                completion(true)
+            } else if case Result.failure(_) = result {
+                completion(false)
+            }
+        }
+        
+        /*
+        UserInfoRepository.shared.getOwnedUserInfo(userId: userId)
+            .continueWith(executor: AWSExecutor.mainThread()) { task in
             
             if task.error != nil || task.result == nil {
                 completion(false)
@@ -67,7 +77,7 @@ class AmazonClientManager: NSObject {
             completion(true)
             
             return nil
-        }
+        }*/
     }
     
     func clearCredentials() {

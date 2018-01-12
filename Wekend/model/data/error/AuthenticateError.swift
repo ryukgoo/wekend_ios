@@ -16,4 +16,14 @@ enum AuthenticateError: Error {
 
 enum PurchaseError: Error {
     case notEnoughPoint
+    case notAvailable
+}
+
+enum Result<T, U> where U: Error {
+    case success(object: T)
+    case failure(U?)
+}
+
+enum FailureReason: Error {
+    case notFound, notAvailable, notEnough
 }

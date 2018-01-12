@@ -72,36 +72,19 @@ class InsertPhoneViewController: UIViewController {
             return
         }
         
-        UserInfoManager.shared.sendVerificationCode(phoneNumber: phoneNumber).continueWith(block: {
-            (task: AWSTask) -> Any! in
-            
-            if task.error == nil {
-                
-                guard let result = task.result else {
-                    print("\(self.className) > \(#function) > getVerificationCode Failed")
-                    
-                    DispatchQueue.main.async {
-                        self.alert(message: "다시 시도해주세요", title: "인증번호 발송오류")
-                    }
-                    
-                    return nil
-                }
-                
-                DispatchQueue.main.async {
+        UserInfoRepository.shared.requestVerificationCode(phone: phoneNumber) { result in
+            DispatchQueue.main.async {
+                if case Result.success(object: _) = result {
                     self.requestCodeButton.isEnabled = false
                     self.alert(message: "인증번호가 발송되었습니다", title: "인증번호 발송", completion: {
                         action -> Void in
                         self.inputCodeText.becomeFirstResponder()
                     })
-                    
+                } else {
+                    self.alert(message: "다시 시도해주세요", title: "인증번호 발송오류")
                 }
-                
-                self.verficationCode = result as String
             }
-            
-            return nil
-        })
-        
+        }        
     }
     
     @IBAction func confirmCodeButtonTapped(_ sender: Any) {
@@ -145,7 +128,7 @@ class InsertPhoneViewController: UIViewController {
         AmazonClientManager.sharedInstance.devIdentityProvider?.register(username: username, password: password, nickname: nickname, gender: gender, birth: birth, phone: phone)
             .continueWith(executor: AWSExecutor.mainThread()) { task in
             
-            guard let userId = task.result as NSString? else {
+            guard let userId = task.result as String? else {
                 fatalError("\(self.className) > \(#function) > userId is nil")
             }
             
@@ -165,27 +148,22 @@ class InsertPhoneViewController: UIViewController {
                         guard let _ = tokenTask.result else {
                             fatalError("\(self.className) > \(#function) > token is nil")
                         }
-                        
-                        UserInfoManager.shared.getOwnedUserInfo(userId: userId as String)
-                            .continueWith(executor: AWSExecutor.mainThread()) { getUserTask in
                             
-                            if getUserTask.error != nil { return nil }
-                            
-                            UserInfoManager.shared.registEndpointARN()
-                            
-                            DispatchQueue.main.async {
-                                self.endLoading()
-                                self.performSegue(withIdentifier: SelectPhotoViewController.className, sender: self)
-                            }
-                            
-                            return nil
-                        }
-                        
-                        if tokenTask.error != nil {
-                            DispatchQueue.main.async {
-                                self.endLoading()
+                        UserInfoRepository.shared.getUserInfo(id: userId) { result in
+                            if case Result.success(object: _) = result {
+                                UserInfoRepository.shared.registerEndpoint()
+                                
+                                DispatchQueue.main.async {
+                                    self.endLoading()
+                                    self.performSegue(withIdentifier: SelectPhotoViewController.className, sender: self)
+                                }
+                            } else {
+                                DispatchQueue.main.async {
+                                    self.endLoading()
+                                }
                             }
                         }
+                            
                         return nil
                     }
                 } else {

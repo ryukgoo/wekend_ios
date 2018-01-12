@@ -120,24 +120,19 @@ class LoginViewController: UIViewController {
                     fatalError("\(self.className) > \(#function) > get UserId from UserDefaults Error")
                 }
                 
-                UserInfoManager.shared.getOwnedUserInfo(userId: userId)
-                    .continueWith(executor: AWSExecutor.mainThread()) { getUserTask in
-                    
-                    print("\(self.className) > \(#function) >  Fetch UserInfo Complete")
-                    
-                    if getUserTask.error != nil {
-                        fatalError("\(self.className) > \(#function) > result Error")
+                UserInfoRepository.shared.getUserInfo(id: userId) { result in
+                    if case Result.success(object: _) = result {
+                        UserInfoRepository.shared.registerEndpoint()
+                    } else if case Result.failure(_) = result {
+                        DispatchQueue.main.async {
+                            self.endLoading()
+                            guard let mainVC = MainViewController.storyboardInstance(from: "Main") as? MainViewController else { return }
+                            self.present(mainVC, animated: true, completion: nil)
+                        }
                     }
-                    
-                    UserInfoManager.shared.registEndpointARN()
-                    
-                    DispatchQueue.main.async {
-                        self.endLoading()
-                        guard let mainVC = MainViewController.storyboardInstance(from: "Main") as? MainViewController else { return }
-                        self.present(mainVC, animated: true, completion: nil)
-                    }
-                    return nil
                 }
+                
+                
             }
             return nil
         }

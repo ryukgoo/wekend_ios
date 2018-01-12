@@ -24,7 +24,7 @@ class MainViewController: UITabBarController {
         
         tabBar.tintColor = UIColor(netHex: Constants.ColorInfo.MAIN)
         
-        guard let userInfo = UserInfoManager.shared.userInfo else {
+        guard let userInfo = UserInfoRepository.shared.userInfo else {
             fatalError("\(className) > \(#function) > get UserInfo Error")
         }
         
@@ -40,7 +40,7 @@ class MainViewController: UITabBarController {
         mailTab.badgeValue = mailCount == 0 ? nil : String(mailCount)
         
         addNotificationObservers()
-        UserInfoManager.shared.registEndpointARN()
+        UserInfoRepository.shared.registerEndpoint()
     }
 
     override func didReceiveMemoryWarning() {
@@ -100,7 +100,7 @@ extension MainViewController {
     func addNotificationObservers() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleLikeRemoteNotification(_:)),
-                                               name: Notification.Name(rawValue: LikeDBManager.NewRemoteNotification),
+                                               name: Notification.Name(rawValue: LikeNotification.New),
                                                object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleMailNotification(_:)),
@@ -118,7 +118,7 @@ extension MainViewController {
     
     func removeNotificationObservers() {
         
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.NewRemoteNotification),
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeNotification.New),
                                                   object: nil)
         
         NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: MailNotification.Receive.New),
@@ -170,17 +170,18 @@ extension MainViewController: UITabBarControllerDelegate {
             break
             
         case .like:
-            UserInfoManager.shared.clearNotificationCount(selectedType).continueWith {
-                task -> Any! in return nil
-            }
+            guard let userInfo = UserInfoRepository.shared.userInfo else { return }
+            userInfo.NewLikeCount = 0
+            UserInfoRepository.shared.updateUser(info: userInfo) { _ in }
             UserDefaults.NotificationCount.set(0, forKey: .like)
             displayTabbarBadge()
             break
             
         case .mail:
-            UserInfoManager.shared.clearNotificationCount(selectedType).continueWith {
-                task -> Any! in return nil
-            }
+            guard let userInfo = UserInfoRepository.shared.userInfo else { return }
+            userInfo.NewSendCount = 0
+            userInfo.NewReceiveCount = 0
+            UserInfoRepository.shared.updateUser(info: userInfo) { _ in }
             UserDefaults.NotificationCount.set(0, forKey: .receiveMail)
             UserDefaults.NotificationCount.set(0, forKey: .sendMail)
             displayTabbarBadge()

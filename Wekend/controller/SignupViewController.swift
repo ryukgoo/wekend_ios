@@ -80,7 +80,20 @@ class SignupViewController: UIViewController {
         
         startLoading(message: "중복 확인중 입니다")
         
-        UserInfoManager.shared.isUsernameAvailable(username: username).continueWith {
+        UserInfoRepository.shared.validateUsername(name: username) { available in
+            if available {
+                DispatchQueue.main.async {
+                    self.endLoading()
+                    self.alert(message: "이미 등록된 E-mail입니다", title: "E-mail 중복오류")
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.performSegue(withIdentifier: InputUserInfoViewController.className, sender: self)
+                }
+            }
+        }
+        /*
+        UserInfoRepository.shared.isUsernameAvailable(username: username).continueWith {
             (task: AWSTask) -> Any! in
             
             if task.error != nil {
@@ -111,6 +124,7 @@ class SignupViewController: UIViewController {
             
             return nil
         }
+        */
     }
 
     // MARK: - Navigation

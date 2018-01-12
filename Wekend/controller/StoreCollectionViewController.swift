@@ -80,10 +80,9 @@ class StoreCollectionViewController: UICollectionViewController {
         guard let productId = notification.object as? String else { return }
         
         let point = BillingPoint(id: productId)
-        
-        UserInfoManager.shared.chargePoint(point: point.rawValue) { isSuccess in
+        UserInfoRepository.shared.chargePoint(point: point.rawValue) { result in
             DispatchQueue.main.async {
-                if isSuccess {
+                if case Result.success(object: _) = result {
                     self.alert(message: "상품을 구매하였습니다")
                     self.collectionView?.reloadData()
                 }
@@ -179,7 +178,7 @@ extension StoreCollectionViewController: UICollectionViewDelegateFlowLayout {
         case UICollectionElementKindSectionHeader:
             let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "header", for: indexPath) as! StoreHeaderView
             
-            guard let userInfo = UserInfoManager.shared.userInfo else {
+            guard let userInfo = UserInfoRepository.shared.userInfo else {
                 return headerView
             }
             

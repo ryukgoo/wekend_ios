@@ -65,7 +65,7 @@ class SelectPhotoViewController: UIViewController, UIImagePickerControllerDelega
             print("\(className) > \(#function) > imageData write error : \(error)")
         }
         
-        guard let userId = UserInfoManager.shared.userInfo?.userid else {
+        guard let userId = UserInfoRepository.shared.userId else {
             fatalError("\(className) > \(#function) > userId Error")
         }
         
@@ -122,14 +122,15 @@ class SelectPhotoViewController: UIViewController, UIImagePickerControllerDelega
                 return nil
             }
             
-            guard let userInfo = UserInfoManager.shared.userInfo else {
+            guard let userInfo = UserInfoRepository.shared.userInfo else {
                 fatalError("\(self.className) > \(#function) > upload get UserInfo Failed")
             }
             
             let photos: Set = [uploadRequest.key!]
             userInfo.photos = photos
             
-            UserInfoManager.shared.saveUserInfo(userInfo: userInfo) { isSuccess in
+            /*
+            UserInfoRepository.shared.saveUserInfo(userInfo: userInfo) { isSuccess in
                 self.endLoading()
                 if isSuccess {
                     DispatchQueue.main.async {
@@ -139,6 +140,19 @@ class SelectPhotoViewController: UIViewController, UIImagePickerControllerDelega
                 } else {
                     // user save error
                     self.alert(message: "프로필 이미지 저장에 실패하였습니다.\n다시 시도해 주세요")
+                }
+            }
+            */
+            
+            UserInfoRepository.shared.updateUser(info: userInfo) { result in
+                DispatchQueue.main.async {
+                    self.endLoading()
+                    if case Result.success(object: _) = result {
+                        guard let mainVC = MainViewController.storyboardInstance(from: "Main") as? MainViewController else { return }
+                        self.present(mainVC, animated: true, completion: nil)
+                    } else {
+                        self.alert(message: "프로필 이미지 저장에 실패하였습니다.\n다시 시도해 주세요")
+                    }
                 }
             }
             

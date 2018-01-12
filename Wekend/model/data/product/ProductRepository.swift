@@ -9,9 +9,9 @@
 import Foundation
 import AWSDynamoDB
 
-class ProductInfoManager : NSObject {
+class ProductRepository : NSObject {
     
-    static let sharedInstance = ProductInfoManager()
+    static let shared = ProductRepository()
     
     override init() {
         self.mapper = AWSDynamoDBObjectMapper.default()
@@ -50,11 +50,11 @@ class ProductInfoManager : NSObject {
         
         let loadTask = AWSTaskCompletionSource<AnyObject>()
         
-        guard let userInfo = UserInfoManager.shared.userInfo else {
+        guard let userInfo = UserInfoRepository.shared.userInfo else {
             fatalError("\(className) > \(#function) > userInfo not loaded")
         }
         
-        LikeDBManager.sharedInstance.getDatas(userId: userInfo.userid).continueWith(executor: AWSExecutor.mainThread()) { likeTask in
+        LikeRepository.shared.getDatas(userId: userInfo.userid).continueWith(executor: AWSExecutor.mainThread()) { likeTask in
             
             guard let _ = likeTask.result as! Array<LikeItem>? else {
                 fatalError("\(self.className) > \(#function) > Failed Like > getDatas")

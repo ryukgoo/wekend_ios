@@ -41,25 +41,20 @@ struct LoadMailOperation {
 struct LoadUserOperation {
     
     let userId: String
+    let dataSource: UserInfoDataSource
     
-    init(userId: String) {
+    init(userId: String, dataSource: UserInfoDataSource) {
         self.userId = userId
+        self.dataSource = dataSource
     }
     
     func execute(completion: @escaping (Result<UserInfo, FailureReason>) -> Void) {
-        UserInfoManager.shared.getUserInfo(userId: userId)
-            .continueWith(executor: AWSExecutor.mainThread()) { task in
-                guard let userInfo = task.result as? UserInfo else {
-                    DispatchQueue.main.async {
-                        completion(.failure(.notFound))
-                    }
-                    return nil
-                }
-                
-                DispatchQueue.main.async {
-                    completion(.success(object: userInfo))
-                }
-            return nil
+        dataSource.getUserInfo(id: userId) { result in
+            if case let Result.success(object: value) = result {
+                completion(.success(object: value))
+            } else if case Result.failure(_) = result {
+                completion(.failure(.notAvailable))
+            }
         }
     }
 }
@@ -71,7 +66,7 @@ struct LoadProductOperation {
     }
     
     func execute(completion: @escaping (Result<ProductInfo, FailureReason>) -> Void) {
-        ProductInfoManager.sharedInstance.getProductInfo(productId: productId)
+        ProductRepository.shared.getProductInfo(productId: productId)
             .continueWith(executor: AWSExecutor.mainThread()) { task in
                 guard let productInfo = task.result as? ProductInfo else {
                     DispatchQueue.main.async {
@@ -89,30 +84,26 @@ struct LoadProductOperation {
 }
 
 struct ProposeOperation {
+    
     let mail: Mail
-    let dataSource: MailDataSource
-    init(mail: Mail, dataSource: MailDataSource) {
+    let mailDataSource: MailDataSource
+    let userDataSource: UserInfoDataSource
+    init(mail: Mail, mailDataSource: MailDataSource, userDataSource: UserInfoDataSource) {
         self.mail = mail
-        self.dataSource = dataSource
+        self.mailDataSource = mailDataSource
+        self.userDataSource = userDataSource
     }
     
     func execute(completion: @escaping (Result<Any?, FailureReason>) -> Void) {
-        do {
-            try UserInfoManager.shared.consumePoint { isSuccess in
-                if isSuccess {
-                    self.dataSource.updateMail(mail: self.mail) { isUpdateSuccess in
-                        if isUpdateSuccess {
-                            completion(.success(object: nil))
-                        } else {
-                            completion(.failure(.notAvailable))
-                        }
-                    }
-                }
+        
+        userDataSource.consumePoint(point: 500) { result in
+            if case Result.success(object: _) = result {
+                completion(.success(object: nil))
+            } else if case Result.failure(.notEnoughPoint?) = result {
+                completion(.failure(.notEnough))
+            } else {
+                completion(.failure(.notAvailable))
             }
-        } catch PurchaseError.notEnoughPoint {
-            completion(.failure(.notEnough))
-        } catch {
-            completion(.failure(.notAvailable))
         }
     }
 }
@@ -132,13 +123,4 @@ struct UpdateOperation {
             }
         }
     }
-}
-
-enum Result<T, U> where U: Error {
-    case success(object: T)
-    case failure(U?)
-}
-
-enum FailureReason: Error {
-    case notFound, notAvailable, notEnough
 }

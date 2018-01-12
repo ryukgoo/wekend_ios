@@ -104,7 +104,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("\(className) > \(#function)")
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         
-        if let _ = UserInfoManager.shared.userInfo {
+        if let _ = UserInfoRepository.shared.userInfo {
             DeepLinker.checkDeepLink()
             NotificationParser.shared.displayNotification()
         } else {

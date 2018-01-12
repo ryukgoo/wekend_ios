@@ -119,7 +119,7 @@ extension CampaignTableViewController {
             self.tabBarController?.startLoading()
         }
         
-        ProductInfoManager.sharedInstance.loadData(startFromBeginning: startFromBeginning).continueWith(block: {
+        ProductRepository.shared.loadData(startFromBeginning: startFromBeginning).continueWith(block: {
             (task: AWSTask) -> Any? in
             
             if let _ = task.result as? Array<ProductInfo> {
@@ -131,7 +131,7 @@ extension CampaignTableViewController {
                     self.refreshControl.endRefreshing()
                     self.tabBarController?.endLoading()
                     
-                    if let count = ProductInfoManager.sharedInstance.datas?.count {
+                    if let count = ProductRepository.shared.datas?.count {
                         if count == 0 {
                             self.noResultLabel.isHidden = false
                         } else {
@@ -163,7 +163,7 @@ extension CampaignTableViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let rowCount = ProductInfoManager.sharedInstance.datas?.count {
+        if let rowCount = ProductRepository.shared.datas?.count {
             return rowCount
         } else {
             return 0
@@ -178,7 +178,7 @@ extension CampaignTableViewController: UITableViewDelegate {
         
         let cell = tableView.dequeueReusableCell(for: indexPath) as CampaignTableViewCell
         
-        guard let productInfo = ProductInfoManager.sharedInstance.datas?[indexPath.row] else {
+        guard let productInfo = ProductRepository.shared.datas?[indexPath.row] else {
             fatalError("\(className) > \(#function) > get ProductInfo Error")
         }
         
@@ -199,7 +199,7 @@ extension CampaignTableViewController: UITableViewDelegate {
         }
         
         cell.campaignHeart.setTitle(String(productInfo.realLikeCount), for: .normal)
-        cell.campaignHeart.isSelected = LikeDBManager.sharedInstance.hasLike(productId: productInfo.ProductId)
+        cell.campaignHeart.isSelected = LikeRepository.shared.hasLike(productId: productInfo.ProductId)
         
         cell.campaignHeart.tag = indexPath.row
         cell.campaignHeart.addTarget(self, action: #selector(self.heartButtonTapped(_:)), for: .touchUpInside)
@@ -219,7 +219,7 @@ extension CampaignTableViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == ProductInfoManager.sharedInstance.datas?.count {
+        if indexPath.row == ProductRepository.shared.datas?.count {
             
             print("\(className) > \(#function) > refreshList")
             refreshList(false)
@@ -233,7 +233,7 @@ extension CampaignTableViewController: UITableViewDelegate {
             fatalError("\(className) > \(#function) > initialize CampaignViewcontroller Error")
         }
         
-        let selectedCampaign = ProductInfoManager.sharedInstance.datas?[indexPath.row]
+        let selectedCampaign = ProductRepository.shared.datas?[indexPath.row]
         detailVC.productId = selectedCampaign?.ProductId
         
         navigationController?.pushViewController(detailVC, animated: true)
@@ -243,20 +243,20 @@ extension CampaignTableViewController: UITableViewDelegate {
         
         let index = sender.tag
         
-        guard let productInfo = ProductInfoManager.sharedInstance.datas?[index] else {
+        guard let productInfo = ProductRepository.shared.datas?[index] else {
             fatalError("\(className) > \(#function) > productInfo Error")
         }
         
-        guard let userInfo = UserInfoManager.shared.userInfo else {
+        guard let userInfo = UserInfoRepository.shared.userInfo else {
             fatalError("\(className) > \(#function) > userInfo Error")
         }
         
         if sender.isSelected {
             
-            if let likeIndex = LikeDBManager.sharedInstance.datas?.index(where: { $0.ProductId == productInfo.ProductId } ) {
-                if let deleteItem = LikeDBManager.sharedInstance.datas?[likeIndex] {
+            if let likeIndex = LikeRepository.shared.datas?.index(where: { $0.ProductId == productInfo.ProductId } ) {
+                if let deleteItem = LikeRepository.shared.datas?[likeIndex] {
                     tableView.isUserInteractionEnabled = false
-                    LikeDBManager.sharedInstance.deleteLike(item: deleteItem).continueWith(executor: AWSExecutor.mainThread()) { task in
+                    LikeRepository.shared.deleteLike(item: deleteItem).continueWith(executor: AWSExecutor.mainThread()) { task in
                         if task.error != nil { print("\(self.className) > \(#function) > error : \(String(describing: task.error))") }
                         return nil
                     }
@@ -264,7 +264,7 @@ extension CampaignTableViewController: UITableViewDelegate {
             }
         } else {
             tableView.isUserInteractionEnabled = false
-            LikeDBManager.sharedInstance.addLike(userInfo: userInfo, productInfo: productInfo)
+            LikeRepository.shared.addLike(userInfo: userInfo, productInfo: productInfo)
         }
     }
     
@@ -534,8 +534,8 @@ extension CampaignTableViewController: FilterMenuCellDelegate {
         dropDownTitleView.title = titleText
         navigationItem.titleView = dropDownTitleView
         
-        ProductInfoManager.sharedInstance.filterOptions = filterOptions
-        ProductInfoManager.sharedInstance.searchKeyword = nil
+        ProductRepository.shared.filterOptions = filterOptions
+        ProductRepository.shared.searchKeyword = nil
         
         refreshList(true)
         
@@ -605,8 +605,8 @@ extension CampaignTableViewController: UISearchBarDelegate {
         navigationItem.rightBarButtonItem = getSearchBarItem()
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
-        ProductInfoManager.sharedInstance.filterOptions = nil
-        ProductInfoManager.sharedInstance.searchKeyword = searchText
+        ProductRepository.shared.filterOptions = nil
+        ProductRepository.shared.searchKeyword = searchText
         refreshList(true)
         
     }
@@ -622,30 +622,30 @@ extension CampaignTableViewController {
     func addNotificationObservers() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.addLikeNotification(_:)),
-                                               name: Notification.Name(rawValue: LikeDBManager.AddNotification),
+                                               name: Notification.Name(rawValue: LikeNotification.Add),
                                                object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.deleteLikeNotification(_:)),
-                                               name: NSNotification.Name(rawValue: LikeDBManager.DeleteNotification),
+                                               name: NSNotification.Name(rawValue: LikeNotification.Delete),
                                                object: nil)
     }
     
     func removeNotificationObservers() {
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.AddNotification),
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeNotification.Add),
                                                   object: nil)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: LikeDBManager.DeleteNotification),
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: LikeNotification.Delete),
                                                   object: nil)
     }
     
     func addLikeNotification(_ notification: Notification) -> Void {
         
-        guard let productId = notification.userInfo![LikeDBManager.NotificationDataProductId] as? Int else {
+        guard let productId = notification.userInfo![LikeNotification.Data.ProductId] as? Int else {
             return
         }
         
         print("\(className) > \(#function) > productId : \(productId)")
         
-        if let index = ProductInfoManager.sharedInstance.datas?.index(where: { $0.ProductId == productId }) {
+        if let index = ProductRepository.shared.datas?.index(where: { $0.ProductId == productId }) {
             
             DispatchQueue.main.async {
                 self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .none)
@@ -657,13 +657,13 @@ extension CampaignTableViewController {
     
     func deleteLikeNotification(_ notification: Notification) -> Void {
         
-        guard let productId = notification.userInfo![LikeDBManager.NotificationDataProductId] as? Int else {
+        guard let productId = notification.userInfo![LikeNotification.Data.ProductId] as? Int else {
             return
         }
         
         print("\(className) > \(#function) > productId : \(productId)")
         
-        if let index = ProductInfoManager.sharedInstance.datas?.index(where: { $0.ProductId == productId }) {
+        if let index = ProductRepository.shared.datas?.index(where: { $0.ProductId == productId }) {
             
             DispatchQueue.main.async {
                 self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .none)

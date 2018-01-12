@@ -75,11 +75,11 @@ class LikeTableViewController: UIViewController {
         
         print("\(#function) > startFromBegin : \(startFromBegin)")
         
-        guard let userInfo = UserInfoManager.shared.userInfo else {
+        guard let userInfo = UserInfoRepository.shared.userInfo else {
             fatalError("\(self.className) > \(#function) > getUserInfo Failed")
         }
         
-        LikeDBManager.sharedInstance.getDatas(userId: userInfo.userid).continueWith(executor: AWSExecutor.mainThread()) { task in
+        LikeRepository.shared.getDatas(userId: userInfo.userid).continueWith(executor: AWSExecutor.mainThread()) { task in
             guard let _ = task.result else {
                 fatalError("\(self.className) > \(#function) > getDatas Failed")
             }
@@ -138,46 +138,46 @@ extension LikeTableViewController {
     func addNotificationObservers() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(LikeTableViewController.handleAddLikeNotification(_:)),
-                                               name: Notification.Name(rawValue: LikeDBManager.AddNotification),
+                                               name: Notification.Name(rawValue: LikeNotification.Add),
                                                object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(LikeTableViewController.handleRemoteNotification(_:)),
-                                               name: Notification.Name(rawValue: LikeDBManager.NewRemoteNotification),
+                                               name: Notification.Name(rawValue: LikeNotification.New),
                                                object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(LikeTableViewController.handleReadNotification(_:)),
-                                               name: Notification.Name(rawValue: LikeDBManager.ReadNotification),
+                                               name: Notification.Name(rawValue: LikeNotification.Read),
                                                object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(LikeTableViewController.handleDeleteNotification(_:)),
-                                               name: Notification.Name(rawValue: LikeDBManager.DeleteNotification),
+                                               name: Notification.Name(rawValue: LikeNotification.Delete),
                                                object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(LikeTableViewController.refresh(_:)),
-                                               name: Notification.Name(rawValue: LikeDBManager.RefreshNotification),
+                                               name: Notification.Name(rawValue: LikeNotification.Refresh),
                                                object: nil)
     }
     
     func removeNotificationObservers() {
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.AddNotification),
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeNotification.Add),
                                                   object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.NewRemoteNotification),
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeNotification.New),
                                                   object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.ReadNotification),
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeNotification.Read),
                                                   object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.DeleteNotification),
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeNotification.Delete),
                                                   object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.RefreshNotification),
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeNotification.Refresh),
                                                   object: nil)
     }
     
     func handleAddLikeNotification(_ notification: Notification) {
         
-        guard let productId = notification.userInfo![LikeDBManager.NotificationDataProductId] as? Int else {
+        guard let productId = notification.userInfo![LikeNotification.Data.ProductId] as? Int else {
             return
         }
         
-        if let index = LikeDBManager.sharedInstance.datas?.index(where: { $0.ProductId == productId }) {
+        if let index = LikeRepository.shared.datas?.index(where: { $0.ProductId == productId }) {
             DispatchQueue.main.async {
                 self.tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .left)
                 self.handleNoResultLabel()
@@ -194,11 +194,11 @@ extension LikeTableViewController {
     
     func handleReadNotification(_ notification: Notification) {
         print("\(className) > \(#function) > notification : \(notification)")
-        guard let productId = notification.userInfo![LikeDBManager.NotificationDataProductId] as? Int else {
+        guard let productId = notification.userInfo![LikeNotification.Data.ProductId] as? Int else {
             return
         }
         
-        if let index = LikeDBManager.sharedInstance.datas?.index(where: { $0.ProductId == productId }) {
+        if let index = LikeRepository.shared.datas?.index(where: { $0.ProductId == productId }) {
             DispatchQueue.main.async {
                 self.tableView.reloadIndex(index: index)
             }
@@ -209,11 +209,11 @@ extension LikeTableViewController {
         
         print("\(className) > \(#function) > notification : \(notification)")
         
-        guard let productId = notification.userInfo![LikeDBManager.NotificationDataProductId] as? Int else {
+        guard let productId = notification.userInfo![LikeNotification.Data.ProductId] as? Int else {
             return
         }
         
-        if let index = LikeDBManager.sharedInstance.datas?.index(where: { $0.ProductId == productId }) {
+        if let index = LikeRepository.shared.datas?.index(where: { $0.ProductId == productId }) {
             DispatchQueue.main.async {
                 self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .fade)
                 self.handleNoResultLabel()
@@ -231,14 +231,14 @@ extension LikeTableViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         print("\(className) > \(#function)")
-        guard let datas = LikeDBManager.sharedInstance.datas else {
+        guard let datas = LikeRepository.shared.datas else {
             return 0
         }
         return datas.count
     }
     
     func handleNoResultLabel() {
-        if LikeDBManager.sharedInstance.datas?.count == 0 {
+        if LikeRepository.shared.datas?.count == 0 {
             noResultLabel.isHidden = false
         } else {
             noResultLabel.isHidden = true
@@ -254,7 +254,7 @@ extension LikeTableViewController: UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(for: indexPath) as LikeTableViewCell
         
         print("\(className) > \(#function) > indexPath : \(indexPath.row)")
-        guard let likeItem = LikeDBManager.sharedInstance.datas?[indexPath.row] else {
+        guard let likeItem = LikeRepository.shared.datas?[indexPath.row] else {
             return cell
         }
         
@@ -280,13 +280,13 @@ extension LikeTableViewController: UITableViewDelegate {
             fatalError("\(self.className) > \(#function) > initialize CampaignViewcontroller Error")
         }
         
-        guard let selectedLikeItem = LikeDBManager.sharedInstance.datas?[indexPath.row] else {
+        guard let selectedLikeItem = LikeRepository.shared.datas?[indexPath.row] else {
             return
         }
         detailVC.productId = selectedLikeItem.ProductId
         
         navigationController?.pushViewController(detailVC, animated: true)
-        LikeDBManager.sharedInstance.updateReadTime(likeItem: selectedLikeItem)
+        LikeRepository.shared.updateReadTime(likeItem: selectedLikeItem)
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -309,11 +309,11 @@ extension LikeTableViewController: UITableViewDelegate {
         let whitespace = whitespaceString(width: tableView.rowHeight)
         let deleteAction = UITableViewRowAction(style: .normal, title: whitespace) {
             (rowAction, indexPath) in
-            guard let deleteItem = LikeDBManager.sharedInstance.datas?[indexPath.row] else {
+            guard let deleteItem = LikeRepository.shared.datas?[indexPath.row] else {
                 fatalError("\(self.className) > \(#function) > deleteItem Failed")
             }
             
-            LikeDBManager.sharedInstance.deleteLike(item: deleteItem).continueWith(executor: AWSExecutor.mainThread()) { task in
+            LikeRepository.shared.deleteLike(item: deleteItem).continueWith(executor: AWSExecutor.mainThread()) { task in
                 if task.error == nil {
 //                    DispatchQueue.main.async {
 //                        self.tableView.deleteRows(at: [indexPath], with: .fade)

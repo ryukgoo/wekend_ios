@@ -59,11 +59,11 @@ class LikeCollectionViewController: UICollectionViewController {
         print("\(className) > \(#function)")
         startLoading()
         
-        guard let userInfo = UserInfoManager.shared.userInfo else {
+        guard let userInfo = UserInfoRepository.shared.userInfo else {
             fatalError("\(className) > \(#function) > get UserInfo Error")
         }
         
-        LikeDBManager.sharedInstance.getFriends(productId: self.productId!, userId: userInfo.userid, gender: userInfo.gender!)
+        LikeRepository.shared.getFriends(productId: self.productId!, userId: userInfo.userid, gender: userInfo.gender!)
             .continueWith(executor: AWSExecutor.mainThread()) { task in
             
             self.datas = []
@@ -163,13 +163,13 @@ extension LikeCollectionViewController {
     func addNotificationObservers() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(LikeCollectionViewController.handleReadFriendNotification(_:)),
-                                               name: Notification.Name(rawValue: LikeDBManager.FriendReadNotification),
+                                               name: Notification.Name(rawValue: LikeNotification.Friend),
                                                object: nil)
         
     }
     
     func removeNotificationObservers() {
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeDBManager.FriendReadNotification),
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeNotification.Friend),
                                                   object: nil)
     }
     
@@ -177,7 +177,7 @@ extension LikeCollectionViewController {
         
         print("\(className) > \(#function) > notification : \(notification.description)")
         
-        guard let likeUserId = notification.userInfo![LikeDBManager.NotificationDataUserId] as? String else { return }
+        guard let likeUserId = notification.userInfo![LikeNotification.Data.UserId] as? String else { return }
         
         if let index = datas?.index(where: { $0.UserId == likeUserId }) {
             datas?[index].isRead = true
@@ -246,7 +246,7 @@ extension LikeCollectionViewController: UICollectionViewDelegateFlowLayout {
             fatalError("\(className) > \(#function) > get data Error")
         }
         
-        guard let userId = UserInfoManager.shared.userInfo?.userid else {
+        guard let userId = UserInfoRepository.shared.userInfo?.userid else {
             fatalError("\(className) > \(#function) > get UserId Error")
         }
         
@@ -256,9 +256,10 @@ extension LikeCollectionViewController: UICollectionViewDelegateFlowLayout {
         
         profileViewController.viewModel = MailProfileViewModel(productId: selectedLike.ProductId,
                                                                friendId: selectedLike.UserId,
-                                                               dataSource: SendMailRepository.shared)
+                                                               mailDataSource: SendMailRepository.shared,
+                                                               userDataSource: UserInfoRepository.shared)
         
         navigationController?.pushViewController(profileViewController, animated: true)
-        LikeDBManager.sharedInstance.updateReadState(id: likeId, userId: userId, productId: selectedLike.ProductId, likeUserId: selectedLike.UserId)
+        LikeRepository.shared.updateReadState(id: likeId, userId: userId, productId: selectedLike.ProductId, likeUserId: selectedLike.UserId)
     }
 }

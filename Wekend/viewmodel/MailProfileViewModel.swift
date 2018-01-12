@@ -8,55 +8,29 @@
 
 import Foundation
 
-protocol UserLoadable {
-    var user: Dynamic<UserInfo?> { get }
-    func loadUser()
-}
+typealias MailProfileViewModelProtocol = UserLoadable & MailLoadable & ProductLoadable & FriendLoadable & MailViewModel
 
-protocol MailLoadable {
-    var mail: Dynamic<Mail?> { get }
-    func loadMail()
-}
-
-protocol MailViewModel{
-    func propose(message: String?)
-    func accept()
-    func reject()
-    var onShowAlert: ((MultipleButtonAlert) -> Void)? { get set }
-    var onShowMessage: (() -> Void)? { get set }
-}
-
-protocol CampaignLoadable {
-    var product: Dynamic<ProductInfo?> { get }
-    func loadProduct()
-}
-
-protocol FriendLoadable {
-    var friend: Dynamic<UserInfo?> { get }
-    func loadFriend()
-}
-
-typealias MailProfileViewModelProtocol = UserLoadable & MailLoadable & CampaignLoadable & FriendLoadable & MailViewModel
-
-struct MailProfileViewModel: MailProfileViewModelProtocol {
+struct MailProfileViewModel: MailProfileViewModelProtocol, Alertable {
     
     let productId: Int
     let friendId: String
-    let dataSource: MailDataSource
+    let userDataSource: UserInfoDataSource
+    let mailDataSource: MailDataSource
     
     var user: Dynamic<UserInfo?>
     var mail: Dynamic<Mail?>
     var product: Dynamic<ProductInfo?>
     var friend: Dynamic<UserInfo?>
     
-    var onShowAlert: ((MultipleButtonAlert) -> Void)?
+    var onShowAlert: ((ButtonAlert) -> Void)?
     var onShowMessage: (() -> Void)?
     
-    init(productId: Int, friendId: String, dataSource: MailDataSource) {
+    init(productId: Int, friendId: String, mailDataSource: MailDataSource, userDataSource: UserInfoDataSource) {
         
         self.productId = productId
         self.friendId = friendId
-        self.dataSource = dataSource
+        self.mailDataSource = mailDataSource
+        self.userDataSource = userDataSource
         
         self.user = Dynamic(nil)
         self.product = Dynamic(nil)
@@ -65,12 +39,12 @@ struct MailProfileViewModel: MailProfileViewModelProtocol {
     }
     
     func loadUser() {
-        guard let userInfo = UserInfoManager.shared.userInfo else { return }
+        guard let userInfo = userDataSource.userInfo else { return }
         self.user.value = userInfo
     }
     
     func loadFriend() {
-        let operation = LoadUserOperation(userId: self.friendId)
+        let operation = LoadUserOperation(userId: self.friendId, dataSource: userDataSource)
         operation.execute { result in
             print(#function)
             if case let Result.success(object: value) = result {
@@ -92,8 +66,9 @@ struct MailProfileViewModel: MailProfileViewModelProtocol {
     
     func loadMail() {
         print(#function)
-        guard let userId = UserInfoManager.shared.userInfo?.userid else { return }
-        let operation = LoadMailOperation(userId: userId, friendId: friendId, productId: productId, dataSource: dataSource)
+        guard let userId = userDataSource.userId else { return }
+        let operation = LoadMailOperation(userId: userId, friendId: friendId, productId: productId,
+                                          dataSource: mailDataSource)
         operation.execute { result in
             print("\(#function) > in")
             if case let Result.success(object: value) = result {
@@ -109,7 +84,7 @@ struct MailProfileViewModel: MailProfileViewModelProtocol {
     
     func propose(message: String?) {
         print(#function)
-        guard let user = UserInfoManager.shared.userInfo else { return }
+        guard let user = userDataSource.userInfo else { return }
         let mail = SendMail()
         mail?.UserId = user.userid
         mail?.ReceiverId = friendId
@@ -124,23 +99,21 @@ struct MailProfileViewModel: MailProfileViewModelProtocol {
         mail?.UpdatedTime = timestamp
         mail?.ResponseTime = timestamp
         
-        let operation = ProposeOperation(mail: mail!, dataSource: dataSource)
+        let operation = ProposeOperation(mail: mail!, mailDataSource: mailDataSource, userDataSource: userDataSource)
         operation.execute { result in
             if case Result.success(object: _) = result {
                 print(#function)
                 self.mail.value = mail
                 guard let nickname = mail?.FriendNickname else { return }
-                let action = AlertAction(buttonTitle: "확인", style: .default, handler: nil)
-                let alert = MultipleButtonAlert(title: "함께가기 신청",
+                let alert = ButtonAlert(title: "함께가기 신청",
                                                 message: "\(nickname)에게 함께가기를 신청하였습니다",
-                                                actions: [action])
+                                                actions: [AlertAction.done])
                 self.onShowAlert?(alert)
             } else if case let Result.failure(error) = result {
                 if error == .notAvailable {
-                    let action = AlertAction(buttonTitle: "확인", style: .default, handler: nil)
-                    let alert = MultipleButtonAlert(title: "함께가기 신청 실패",
-                                                    message: "다시 시도해 주십시오",
-                                                    actions: [action])
+                    let alert = ButtonAlert(title: "함께가기 신청 실패",
+                                            message: "다시 시도해 주십시오",
+                                            actions: [AlertAction.done])
                     self.onShowAlert?(alert)
                 }
             }
@@ -170,16 +143,15 @@ struct MailProfileViewModel: MailProfileViewModelProtocol {
         operation.execute { result in
             if case Result.success(object: _) = result {
                 self.mail.value = acceptedMail
-                let action = AlertAction(buttonTitle: "확인", style: .default, handler: nil)
-                let alert = MultipleButtonAlert(title: "함께가기 성공",
-                                                message: "\(self.friend.value?.nickname ?? "")님과 함께가기를 수락하였습니다",
-                    actions: [action])
+                guard let nickname = self.friend.value?.nickname else { return }
+                let alert = ButtonAlert(title: "함께가기 성공",
+                                        message: "\(nickname)님과 함께가기를 수락하였습니다",
+                                        actions: [AlertAction.done])
                 self.onShowAlert?(alert)
                 NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Receive.Add), object: nil)
             } else if case let Result.failure(error) = result {
                 if error == .notAvailable {
-                    let action = AlertAction(buttonTitle: "확인", style: .default, handler: nil)
-                    let alert = MultipleButtonAlert(title: "오류", message: "다시 시도해 주세요", actions: [action])
+                    let alert = ButtonAlert(title: "오류", message: "다시 시도해 주세요", actions: [AlertAction.done])
                     self.onShowAlert?(alert)
                 }
             }
@@ -208,16 +180,15 @@ struct MailProfileViewModel: MailProfileViewModelProtocol {
         operation.execute { result in
             if case Result.success(object: _) = result {
                 self.mail.value = rejectedMail
-                let action = AlertAction(buttonTitle: "확인", style: .default, handler: nil)
-                let alert = MultipleButtonAlert(title: "함께가기 거절",
-                                                message: "\(self.friend.value?.nickname ?? "")님과 함께가기를 거절하였습니다",
-                    actions: [action])
+                guard let nickname = self.friend.value?.nickname else { return }
+                let alert = ButtonAlert(title: "함께가기 거절",
+                                        message: "\(nickname)님과 함께가기를 거절하였습니다",
+                                        actions: [AlertAction.done])
                 self.onShowAlert?(alert)
                 NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Receive.Add), object: nil)
             } else if case let Result.failure(error) = result {
                 if error == .notAvailable {
-                    let action = AlertAction(buttonTitle: "확인", style: .default, handler: nil)
-                    let alert = MultipleButtonAlert(title: "오류", message: "다시 시도해 주세요", actions: [action])
+                    let alert = ButtonAlert(title: "오류", message: "다시 시도해 주세요", actions: [AlertAction.done])
                     self.onShowAlert?(alert)
                 }
             }
@@ -226,23 +197,10 @@ struct MailProfileViewModel: MailProfileViewModelProtocol {
     
     func proposeButtonTapped() {
         guard let nickname = friend.value?.nickname else { return }
-        let cancelAction = AlertAction(buttonTitle: "취소", style: .cancel, handler: nil)
         let okAction = AlertAction(buttonTitle: "확인", style: .default, handler: { _ in self.onShowMessage?() })
-        let alert = MultipleButtonAlert(title: "함께가기 신청\n",
+        let alert = ButtonAlert(title: "함께가기 신청\n",
                                         message: "\(nickname)님에게 함께가기를 신청하시겠습니까?\n(500포인트가 차감됩니다)",
-                                        actions: [cancelAction, okAction])
+                                        actions: [AlertAction.cancel, okAction])
         self.onShowAlert?(alert)
     }
-}
-
-struct AlertAction {
-    let buttonTitle: String
-    let style: UIAlertActionStyle
-    let handler: (() -> Void)?
-}
-
-struct MultipleButtonAlert {
-    let title: String
-    let message: String?
-    let actions: [AlertAction]
 }

@@ -309,7 +309,7 @@ extension MailBoxViewController: UITableViewDelegate {
         
         let cell = tableView.dequeueReusableCell(for: indexPath) as MailTableViewCell
         
-        guard let userInfo = UserInfoManager.shared.userInfo else { return cell }
+        guard let userInfo = UserInfoRepository.shared.userInfo else { return cell }
         
         let defaultImage : UIImage
         if userInfo.gender != UserInfo.RawValue.GENDER_MALE {
@@ -426,14 +426,16 @@ extension MailBoxViewController: UITableViewDelegate {
             let mail = ReceiveMailRepository.shared.datas[indexPath.row]
             mailProfileViewController.viewModel = MailProfileViewModel(productId: mail.ProductId as! Int,
                                                                        friendId: mail.FriendId!,
-                                                                       dataSource: ReceiveMailRepository.shared)
+                                                                       mailDataSource: ReceiveMailRepository.shared,
+                                                                       userDataSource: UserInfoRepository.shared)
             navigationController?.pushViewController(mailProfileViewController, animated: true)
             break
         case Mode.send.rawValue:
             let mail = SendMailRepository.shared.datas[indexPath.row]
             mailProfileViewController.viewModel = MailProfileViewModel(productId: mail.ProductId as! Int,
                                                                        friendId: mail.FriendId!,
-                                                                       dataSource: SendMailRepository.shared)
+                                                                       mailDataSource: SendMailRepository.shared,
+                                                                       userDataSource: UserInfoRepository.shared)
             navigationController?.pushViewController(mailProfileViewController, animated: true)
             break
         default: return

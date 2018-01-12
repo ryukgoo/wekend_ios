@@ -62,7 +62,7 @@ class DrawerViewController: UIViewController {
     
     func initViews() {
         
-        guard let userInfo = UserInfoManager.shared.userInfo else {
+        guard let userInfo = UserInfoRepository.shared.userInfo else {
             fatalError("\(className) > \(#function) > userInfo Error")
         }
         
@@ -113,7 +113,7 @@ class DrawerViewController: UIViewController {
         } else if segue.identifier == MyProfileViewController.className {
             guard let navigation = segue.destination as? UINavigationController else { return }
             guard let topVC = navigation.topViewController as? MyProfileViewController else { return }
-            topVC.viewModel = UserProfileViewModel()
+            topVC.viewModel = UserProfileViewModel(userDataSource: UserInfoRepository.shared)
         }
     }
 }
@@ -250,19 +250,19 @@ extension DrawerViewController {
     
     func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(DrawerViewController.handleUpdateUserInfoNotification(_:)),
-                                               name: Notification.Name(rawValue: UserInfoManager.UpdateUserInfoNotification),
+                                               name: Notification.Name(rawValue: UserNotification.Update),
                                                object: nil)
     }
     
     func removeNotificationObservers() {
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: UserInfoManager.UpdateUserInfoNotification),
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: UserNotification.Update),
                                                   object: nil)
     }
     
     func handleUpdateUserInfoNotification(_ notification: Notification) {
         print("\(className) > \(#function)")
         
-        guard let userInfo = UserInfoManager.shared.userInfo else { return }
+        guard let userInfo = UserInfoRepository.shared.userInfo else { return }
         
         let defaultImage : UIImage
         if userInfo.gender == UserInfo.RawValue.GENDER_MALE {

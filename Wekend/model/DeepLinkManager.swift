@@ -157,7 +157,7 @@ class NotificationParser {
     
     func displayNotification() {
         
-        guard let userId = UserInfoManager.shared.userInfo?.userid else {
+        guard let userId = UserInfoRepository.shared.userInfo?.userid else {
             print("\(#function) > userId is nil")
             return
         }
@@ -166,38 +166,31 @@ class NotificationParser {
         let receiveCount = UserDefaults.NotificationCount.integer(forKey: .receiveMail)
         let sendCount = UserDefaults.NotificationCount.integer(forKey: .sendMail)
         
-        UserInfoManager.shared.getOwnedUserInfo(userId: userId).continueWith(block:  {
-            (task: AWSTask) -> Any? in
-            
-            guard let userInfo = UserInfoManager.shared.userInfo else {
-                print("\(#function) > userInfo is nil")
-                return nil
-            }
-            
-            NotificationCenter.default.post(name: Notification.Name(rawValue: AppDelegate.WillEnterForeground),
-                                            object: nil,
-                                            userInfo: nil)
-            
-            if userInfo.NewLikeCount > likeCount {
-                NotificationCenter.default.post(name: Notification.Name(rawValue: LikeDBManager.RefreshNotification),
+        UserInfoRepository.shared.getUserInfo(id: userId) { result in
+            if case let Result.success(object: value) = result {
+                NotificationCenter.default.post(name: Notification.Name(rawValue: AppDelegate.WillEnterForeground),
                                                 object: nil,
                                                 userInfo: nil)
+                
+                if value.NewLikeCount > likeCount {
+                    NotificationCenter.default.post(name: Notification.Name(rawValue: LikeNotification.Refresh),
+                                                    object: nil,
+                                                    userInfo: nil)
+                }
+                
+                if value.NewReceiveCount > receiveCount {
+                    NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Receive.New),
+                                                    object: nil,
+                                                    userInfo: nil)
+                }
+                
+                if value.NewSendCount > sendCount {
+                    NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Send.New),
+                                                    object: nil,
+                                                    userInfo: nil)
+                }
             }
-            
-            if userInfo.NewReceiveCount > receiveCount {
-                NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Receive.New),
-                                                object: nil,
-                                                userInfo: nil)
-            }
-            
-            if userInfo.NewSendCount > sendCount {
-                NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Send.New),
-                                                object: nil,
-                                                userInfo: nil)
-            }
-            
-            return nil
-        })
+        }
     }
 }
 

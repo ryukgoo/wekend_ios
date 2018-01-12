@@ -88,7 +88,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         isLoading = true
         self.containerView.alpha = 0.0
         
-        ProductInfoManager.sharedInstance.getProductInfo(productId: productId!)
+        ProductRepository.shared.getProductInfo(productId: productId!)
             .continueWith(executor: AWSExecutor.mainThread()) { task in
             
             guard let info = task.result as? ProductInfo else {
@@ -148,7 +148,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         
         likeButton.loadingIndicator(true)
         
-        guard let userInfo = UserInfoManager.shared.userInfo else {
+        guard let userInfo = UserInfoRepository.shared.userInfo else {
             fatalError("\(className) > \(#function) > getUserInfo Failed")
         }
         
@@ -156,7 +156,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
             fatalError("\(className) > \(#function) > no Data")
         }
         
-        LikeDBManager.sharedInstance.getLikeItem(userId: userInfo.userid, productId: productInfo.ProductId)
+        LikeRepository.shared.getLikeItem(userId: userInfo.userid, productId: productInfo.ProductId)
             .continueWith(executor: AWSExecutor.mainThread()) { task in
                 
             guard let _ = task.result else {
@@ -171,7 +171,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
                 return nil
             }
             
-            LikeDBManager.sharedInstance.getFriendCount(productId: productInfo.ProductId, gender: userInfo.gender!)
+            LikeRepository.shared.getFriendCount(productId: productInfo.ProductId, gender: userInfo.gender!)
                 .continueWith(executor: AWSExecutor.mainThread()) { getFriendTask in
                 
                 guard let friendCount = getFriendTask.result else {
@@ -211,7 +211,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     // MARK: addTarget functions
     func likeButtonTapped(_ sender: Any) {
         
-        guard let userInfo = UserInfoManager.shared.userInfo else {
+        guard let userInfo = UserInfoRepository.shared.userInfo else {
             fatalError("\(className) > \(#function) > get UserInfo Error")
         }
         
@@ -221,7 +221,7 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         
         likeButton.loadingIndicator(true)
         
-        LikeDBManager.sharedInstance.addLike(userInfo: userInfo, productInfo: productInfo)
+        LikeRepository.shared.addLike(userInfo: userInfo, productInfo: productInfo)
         
     }
     
@@ -314,20 +314,20 @@ extension CampaignViewController {
     func addNotificationObservers() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(CampaignViewController.handleLikeAddNotification(_:)),
-                                               name: Notification.Name(rawValue: LikeDBManager.AddNotification),
+                                               name: Notification.Name(rawValue: LikeNotification.Add),
                                                object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(CampaignViewController.handleLikeDeleteNotification(_:)),
-                                               name: Notification.Name(rawValue: LikeDBManager.DeleteNotification),
+                                               name: Notification.Name(rawValue: LikeNotification.Delete),
                                                object: nil)
     }
     
     func removeNotificationObservers() {
         NotificationCenter.default.removeObserver(self,
-                                                  name: Notification.Name(rawValue: LikeDBManager.AddNotification),
+                                                  name: Notification.Name(rawValue: LikeNotification.Add),
                                                   object: nil)
         NotificationCenter.default.removeObserver(self,
-                                                  name: Notification.Name(rawValue: LikeDBManager.DeleteNotification),
+                                                  name: Notification.Name(rawValue: LikeNotification.Delete),
                                                   object: nil)
     }
     
