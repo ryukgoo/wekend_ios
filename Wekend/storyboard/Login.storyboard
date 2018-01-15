@@ -132,6 +132,8 @@
                         <outlet property="buttonConfirm" destination="n5e-K0-1CB" id="KcF-UR-b0A"/>
                         <outlet property="checkBoxPrivacy" destination="QVP-C8-izb" id="8eh-Bp-olZ"/>
                         <outlet property="checkBoxTermsOfUse" destination="jm9-6v-caS" id="209-dR-dbQ"/>
+                        <outlet property="checkTextPrivacy" destination="yUQ-7q-wTj" id="uPE-qk-B1A"/>
+                        <outlet property="checkTextTermsOfUse" destination="mcf-Tw-1Sm" id="hwz-nQ-A9c"/>
                         <outlet property="textViewPrivacy" destination="Q0F-mV-bXE" id="840-VG-wqn"/>
                         <outlet property="textViewTermsOfUse" destination="H1a-QB-UnC" id="wJC-cr-GTU"/>
                     </connections>

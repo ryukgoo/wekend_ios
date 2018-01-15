@@ -14,15 +14,11 @@ import AWSCore
 
 class CampaignViewController: UIViewController, UIScrollViewDelegate {
     
-    deinit {
-        removeNotificationObservers()
-        print("\(className) > \(#function)")
-    }
-    
     // MARK: Properties
     var productId: Int?
     var productInfo: ProductInfo?
     var isLoading: Bool = false
+    var isButtonHidden: Bool = false
     
     // MARK: For Map
     var latitude: Double?
@@ -45,10 +41,16 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var backViewOffsetY: NSLayoutConstraint!
     @IBOutlet weak var stackViewOffsetY: NSLayoutConstraint!
     
+    deinit {
+        removeNotificationObservers()
+        print("\(className) > \(#function)")
+    }
+    
     // MARK: UIViewController override functions
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        likeButton.isHidden = isButtonHidden
         initShareButton()
         initMapView()
         

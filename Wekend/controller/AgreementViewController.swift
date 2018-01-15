@@ -13,7 +13,9 @@ class AgreementViewController: UIViewController {
     @IBOutlet weak var textViewTermsOfUse: UITextView!
     @IBOutlet weak var textViewPrivacy: UITextView!
     @IBOutlet weak var checkBoxTermsOfUse: UIButton!
+    @IBOutlet weak var checkTextTermsOfUse: UILabel!
     @IBOutlet weak var checkBoxPrivacy: UIButton!
+    @IBOutlet weak var checkTextPrivacy: UILabel!
     @IBOutlet weak var buttonConfirm: UIButton!
     
     // TODO : handle checkBox -> All checked -> button enabled
@@ -34,6 +36,11 @@ class AgreementViewController: UIViewController {
         
         textViewTermsOfUse.text = loadTextFile(filename: "AgreementTermsOfUse")
         textViewPrivacy.text = loadTextFile(filename: "AgreementPrivacy")
+        
+        checkTextTermsOfUse.isUserInteractionEnabled = true
+        checkTextTermsOfUse.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.onTermsOfUseTapped(_:))))
+        checkTextPrivacy.isUserInteractionEnabled = true
+        checkTextPrivacy.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.onPrivacyTapped(_:))))
     }
     
     override func viewDidAppear(_ animated: Bool) {

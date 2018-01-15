@@ -77,6 +77,9 @@ class UserInfoRepository: NSObject, UserInfoDataSource {
     }
     
     func validateUsername(name: String, completion: @escaping (Bool) -> Void) {
+        
+        print("\(className) > \(#function) > name : \(name)")
+        
         let queryExpression = AWSDynamoDBQueryExpression()
         queryExpression.indexName = UserInfo.Schema.INDEX_USERNAME
         queryExpression.keyConditionExpression = "\(UserInfo.Attribute.USERNAME) = :username"
@@ -87,6 +90,7 @@ class UserInfoRepository: NSObject, UserInfoDataSource {
                 
             if let results = task.result?.items {
                 if results.count > 0 {
+                    print("\(self.className) > \(#function) > count : \(results.count)")
                     completion(false)
                     return nil
                 }

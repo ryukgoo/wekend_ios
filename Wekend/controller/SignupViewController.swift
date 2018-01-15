@@ -81,14 +81,14 @@ class SignupViewController: UIViewController {
         startLoading(message: "중복 확인중 입니다")
         
         UserInfoRepository.shared.validateUsername(name: username) { available in
-            if available {
-                DispatchQueue.main.async {
+            
+            DispatchQueue.main.async {
+                if available {
+                    self.endLoading()
+                    self.performSegue(withIdentifier: InputUserInfoViewController.className, sender: self)
+                } else {
                     self.endLoading()
                     self.alert(message: "이미 등록된 E-mail입니다", title: "E-mail 중복오류")
-                }
-            } else {
-                DispatchQueue.main.async {
-                    self.performSegue(withIdentifier: InputUserInfoViewController.className, sender: self)
                 }
             }
         }

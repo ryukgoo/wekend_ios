@@ -18,7 +18,6 @@ class InsertPhoneViewController: UIViewController {
     var nickname: String?
     var gender: String?
     var birth: Int?
-    var verficationCode: String?
     
     var activeTextField: UITextField?
     
@@ -72,11 +71,13 @@ class InsertPhoneViewController: UIViewController {
             return
         }
         
+        startLoading(message: "인증번호 발송중입니다...")
+        
         UserInfoRepository.shared.requestVerificationCode(phone: phoneNumber) { result in
             DispatchQueue.main.async {
                 if case Result.success(object: _) = result {
                     self.requestCodeButton.isEnabled = false
-                    self.alert(message: "인증번호가 발송되었습니다", title: "인증번호 발송", completion: {
+                    self.alert(message: "인증번호가 발송되었습니다\n잠시만 기다려 주세요", title: nil, completion: {
                         action -> Void in
                         self.inputCodeText.becomeFirstResponder()
                     })
@@ -94,7 +95,7 @@ class InsertPhoneViewController: UIViewController {
             return
         }
         
-        if inputVerificationCode != verficationCode {
+        if !UserInfoRepository.shared.confirmVerificationCode(code: inputVerificationCode) {
             alert(message: "인증번호가 맞지 않습니다", title: "인증번호 확인")
             return
         }

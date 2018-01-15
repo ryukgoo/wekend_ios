@@ -10,7 +10,7 @@ import Foundation
 
 extension UIViewController {
     
-    func alert(message: String, title: String = "", completion: ((UIAlertAction) -> Void)? = nil) {
+    func alert(message: String, title: String? = nil, completion: ((UIAlertAction) -> Void)? = nil) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let OKAction = UIAlertAction(title: "OK", style: .default, handler: completion)
         alertController.addAction(OKAction)

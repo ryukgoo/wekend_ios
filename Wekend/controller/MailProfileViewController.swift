@@ -15,23 +15,23 @@ class MailProfileViewController: UIViewController {
     // MARK: IBOutlet
     @IBOutlet weak var pagerView: PagerView!
     @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var messageStackView: UIStackView!
-    @IBOutlet weak var nicknameStackView: UIStackView!
-    @IBOutlet weak var ageStackView: UIStackView!
-    @IBOutlet weak var phoneStackView: UIStackView!
     @IBOutlet weak var buttonStackView: UIStackView!
-    @IBOutlet weak var messageLabel: UILabel!
-    @IBOutlet weak var nicknameLabel: UILabel!
-    @IBOutlet weak var ageLabel: UILabel!
-    @IBOutlet weak var phoneLabel: UILabel!
-    @IBOutlet weak var descriptionLabel: KRWordWrapLabel!
-    @IBOutlet weak var pointLabel: UILabel!
     @IBOutlet weak var proposeButton: UIButton!
     
+    @IBOutlet weak var message: UILabel!
+    @IBOutlet weak var messageStackView: UIStackView!
+    @IBOutlet weak var messageUnderline: UIView!
+    @IBOutlet weak var nickname: UILabel!
+    @IBOutlet weak var company: UILabel!
+    @IBOutlet weak var school: UILabel!
+    @IBOutlet weak var phone: UILabel!
+    @IBOutlet weak var introduce: UILabel!
+    @IBOutlet weak var introductUnderline: UIView!
+    @IBOutlet weak var productDesc: KRWordWrapLabel!
+    @IBOutlet weak var point: UILabel!
+    
     @IBOutlet weak var pagerViewOffsetY: NSLayoutConstraint!
-    @IBOutlet weak var stackViewOffsetY: NSLayoutConstraint!
     @IBOutlet weak var backViewOffsetY: NSLayoutConstraint!
-    @IBOutlet weak var backgroundHeight: NSLayoutConstraint!
     
     var viewModel: MailProfileViewModel?
     
@@ -43,6 +43,7 @@ class MailProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        initView()
         bindViewModel()
         
         viewModel?.loadUser()
@@ -64,29 +65,72 @@ class MailProfileViewController: UIViewController {
         navigationController?.isNavigationBarHidden = true
     }
     
+    private func initView() {
+        productDesc.isUserInteractionEnabled = true
+        productDesc.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.onDescTapped(_:))))
+    }
+    
+    func onDescTapped(_ tapGestureRecognizer: UITapGestureRecognizer) {
+        print("\(className) > \(#function)")
+        
+        guard let detailVC: CampaignViewController = CampaignViewController.storyboardInstance(from: "SubItems") else {
+            fatalError("\(className) > \(#function) > initialize CampaignViewcontroller Error")
+        }
+        
+        guard let productId = viewModel?.product.value?.ProductId else { return }
+        detailVC.productId = productId
+        detailVC.isButtonHidden = true
+        
+        navigationController?.pushViewController(detailVC, animated: true)
+    }
+    
     fileprivate func bindViewModel() {
         guard let viewModel = viewModel else { return }
         
         viewModel.user.bindAndFire { [weak self] user in
             if let point = user?.balloon as? Int {
-                self?.pointLabel.text = "보유포인트 \(point)P"
+                self?.point.text = "보유포인트 \(point)P"
             }
         }
         
         viewModel.friend.bindAndFire { [weak self] friend in
             
             guard let friend = friend else { return }
-            guard let photos = friend.photos as? Set<String> else { return }
+            guard let nickname = friend.nickname else { return }
+            self?.nickname.text = "\(nickname), \((friend.birth as! Int).toAge.description)"
             
-            self?.nicknameLabel.text = friend.nickname
-            self?.ageLabel.text = (friend.birth as! Int).toAge.description
-            self?.phoneLabel.text = friend.phone?.toPhoneFormat() ?? friend.phone
-            self?.pagerView.pageCount = max(photos.count, 1)
+            if let company = friend.company {
+                self?.company.isHidden = false
+                self?.company.text = company
+            } else {
+                self?.company.isHidden = true
+            }
+            
+            if let school = friend.school {
+                self?.school.isHidden = false
+                self?.school.text = school
+            } else {
+                self?.school.isHidden = true
+            }
+            
+            self?.phone.text = friend.phone?.toPhoneFormat()
+            if let introduce = friend.introduce {
+                self?.introduce.isHidden = false
+                self?.introductUnderline.isHidden = false
+                self?.introduce.text = introduce
+            } else {
+                self?.introduce.isHidden = true
+                self?.introductUnderline.isHidden = true
+            }
+            
+            if let photos = friend.photos as? Set<String> {
+                self?.pagerView.pageCount = max(photos.count, 1)
+            }
         }
         
         viewModel.product.bindAndFire { [weak self] product in
             guard let product = product else { return }
-            self?.descriptionLabel.text = product.toDescriptionForProfile
+            self?.productDesc.text = product.toDescriptionForProfile
         }
         
         viewModel.mail.bindAndFire { [weak self] mail in
@@ -97,7 +141,8 @@ class MailProfileViewController: UIViewController {
                 guard let status = ProposeStatus(rawValue: proposeStatus) else { return }
                 
                 self?.messageStackView.isHidden = false
-                self?.messageLabel.text = mail.Message
+                self?.messageUnderline.isHidden = false
+                self?.message.text = mail.Message
                 self?.proposeButton.setTitle(status.message(), for: .normal)
                 
                 self?.buttonStackView.isHidden = true
@@ -105,7 +150,7 @@ class MailProfileViewController: UIViewController {
                 switch status {
                 case .none: break
                 case .notMade:
-                    self?.phoneStackView.isHidden = true
+                    self?.phone.isHidden = true
                     self?.proposeButton.isUserInteractionEnabled = false
                     
                     if let _ = mail as? ReceiveMail {
@@ -114,20 +159,20 @@ class MailProfileViewController: UIViewController {
                     }
                     break
                 case .made:
-                    self?.phoneStackView.isHidden = false
+                    self?.phone.isHidden = false
                     self?.proposeButton.isUserInteractionEnabled = false
                     break
                 case .alreadyMade:
-                    self?.phoneStackView.isHidden = true
+                    self?.phone.isHidden = true
                     self?.proposeButton.isUserInteractionEnabled = false
                     break
                 case .reject:
-                    self?.phoneStackView.isHidden = true
+                    self?.phone.isHidden = true
                     self?.proposeButton.isUserInteractionEnabled = false
                     self?.proposeButton.setTitle("함께가기 거절", for: .normal)
                     break
                 case .delete:
-                    self?.phoneStackView.isHidden = true
+                    self?.phone.isHidden = true
                     self?.proposeButton.isUserInteractionEnabled = false
                     break
                 }
@@ -139,7 +184,8 @@ class MailProfileViewController: UIViewController {
                 print("\(String(describing: self?.className)) > \(#function) > mail is nil")
                 
                 self?.messageStackView.isHidden = true
-                self?.phoneStackView.isHidden = true
+                self?.messageUnderline.isHidden = true
+                self?.phone.isHidden = true
                 self?.proposeButton.isUserInteractionEnabled = true
                 self?.proposeButton.setTitle(ProposeStatus.none.message(), for: .normal)
                 self?.proposeButton.addTarget(self,
@@ -216,7 +262,6 @@ extension MailProfileViewController: UIScrollViewDelegate {
         pagerView.alpha = alpha
         pagerViewOffsetY.constant = halfOffsetY
         backViewOffsetY.constant = -halfOffsetY
-        stackViewOffsetY.constant = -halfOffsetY
     }
 }
 
@@ -256,7 +301,7 @@ extension MailProfileViewController {
         guard let point = UserInfoRepository.shared.userInfo?.balloon as? Int else { return }
         
         DispatchQueue.main.async {
-            self.pointLabel.text = "보유포인트 \(point)P"
+            self.point.text = "보유포인트 \(point)P"
         }
     }
 }

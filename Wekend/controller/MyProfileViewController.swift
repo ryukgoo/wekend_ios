@@ -14,7 +14,6 @@ class MyProfileViewController: UIViewController {
     
     // MARK: IBOutlet
     
-    @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var pagerView: PagerView!
     @IBOutlet weak var scrollView: UIScrollView!
     
@@ -23,6 +22,7 @@ class MyProfileViewController: UIViewController {
     @IBOutlet weak var school: UILabel!
     @IBOutlet weak var phone: UILabel!
     @IBOutlet weak var introduce: UILabel!
+    @IBOutlet weak var introductUnderline: UIView!
     @IBOutlet weak var point: UILabel!
     @IBOutlet weak var pagerViewOffsetY: NSLayoutConstraint!
     @IBOutlet weak var backViewOffsetY: NSLayoutConstraint!
@@ -85,7 +85,14 @@ class MyProfileViewController: UIViewController {
             }
             
             self?.phone.text = user.phone?.toPhoneFormat()
-            self?.introduce.text = user.introduce
+            if let introduce = user.introduce {
+                self?.introduce.isHidden = false
+                self?.introductUnderline.isHidden = false
+                self?.introduce.text = introduce
+            } else {
+                self?.introduce.isHidden = true
+                self?.introductUnderline.isHidden = true
+            }
             
             if let point = user.balloon as? Int {
                 self?.point.text = "보유포인트 \(point)P"
@@ -120,7 +127,6 @@ extension MyProfileViewController: PagerViewDelegate, UIScrollViewDelegate {
             (image, error, cacheType, imageURL) in
             print("\(self.className) > \(#function) > url: \(String(describing: imageURL))")
         }
-        
     }
     
     func onPageTapped(page: Int) {}

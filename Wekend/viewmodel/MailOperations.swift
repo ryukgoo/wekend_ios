@@ -98,7 +98,13 @@ struct ProposeOperation {
         
         userDataSource.consumePoint(point: 500) { result in
             if case Result.success(object: _) = result {
-                completion(.success(object: nil))
+                self.mailDataSource.updateMail(mail: self.mail) { isSuccess in
+                    if isSuccess {
+                        completion(.success(object: nil))
+                    } else {
+                        completion(.failure(.notAvailable))
+                    }
+                }
             } else if case Result.failure(.notEnoughPoint?) = result {
                 completion(.failure(.notEnough))
             } else {

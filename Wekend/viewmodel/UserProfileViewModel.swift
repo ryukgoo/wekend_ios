@@ -128,13 +128,13 @@ struct UserProfileViewModel: UserProfileViewModelProtocol, Alertable {
             if case let Result.success(object: code) = result {
                 print("\(#function) > code: \(code)")
                 let alert = ButtonAlert(title: nil,
-                                        message: "인증번호가 발송되었습니다\n잠시만 기다려 주십시오",
+                                        message: "인증번호가 발송되었습니다\n잠시만 기다려 주세요",
                                         actions: [AlertAction.done])
                 self.onShowAlert?(alert)
             } else if case let Result.failure(error) = result {
                 print("\(#function) > error: \(String(describing: error))")
                 let alert = ButtonAlert(title: nil,
-                                        message: "인증번호 발송에 실패하였습니다\n다시 시도새 주십시오",
+                                        message: "인증번호 발송에 실패하였습니다\n다시 시도해 주십시오",
                                         actions: [AlertAction.done])
                 self.onShowAlert?(alert)
             }

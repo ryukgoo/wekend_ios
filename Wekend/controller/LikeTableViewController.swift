@@ -39,9 +39,7 @@ class LikeTableViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        navigationController?.navigationBar.tintColor = .black
-        self.navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
-        self.navigationController?.navigationBar.shadowImage = nil
+        navigationController?.isNavigationBarHidden = false
     }
  
     func initTableView() {

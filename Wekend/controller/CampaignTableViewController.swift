@@ -60,11 +60,7 @@ class CampaignTableViewController: UIViewController {
         super.viewWillAppear(animated)
         
         print("\(className) > \(#function)")
-        
-        navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
-        navigationController?.navigationBar.shadowImage = nil
-        navigationController?.navigationBar.tintColor = .black
-        
+        navigationController?.isNavigationBarHidden = false
     }
     
     override func viewDidAppear(_ animated: Bool) {

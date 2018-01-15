@@ -138,14 +138,7 @@ extension ProductInfo {
     }
     
     var toDescriptionForProfile : String {
-        var result: String = ""
-        if let title = TitleKor {
-            result += title
-        }
-        if let description = Description {
-            result += "\n\n" + description.htmlToString
-        }
-        return result
+        return "\(TitleKor ?? "캠페인") 바로가기"
     }
 }
 
