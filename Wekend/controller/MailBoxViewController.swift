@@ -427,7 +427,8 @@ extension MailBoxViewController: UITableViewDelegate {
             mailProfileViewController.viewModel = MailProfileViewModel(productId: mail.ProductId as! Int,
                                                                        friendId: mail.FriendId!,
                                                                        mailDataSource: ReceiveMailRepository.shared,
-                                                                       userDataSource: UserInfoRepository.shared)
+                                                                       userDataSource: UserInfoRepository.shared,
+                                                                       productDataSource: ProductRepository.shared)
             navigationController?.pushViewController(mailProfileViewController, animated: true)
             break
         case Mode.send.rawValue:
@@ -435,7 +436,8 @@ extension MailBoxViewController: UITableViewDelegate {
             mailProfileViewController.viewModel = MailProfileViewModel(productId: mail.ProductId as! Int,
                                                                        friendId: mail.FriendId!,
                                                                        mailDataSource: SendMailRepository.shared,
-                                                                       userDataSource: UserInfoRepository.shared)
+                                                                       userDataSource: UserInfoRepository.shared,
+                                                                       productDataSource: ProductRepository.shared)
             navigationController?.pushViewController(mailProfileViewController, animated: true)
             break
         default: return

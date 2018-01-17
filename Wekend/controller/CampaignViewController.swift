@@ -90,27 +90,19 @@ class CampaignViewController: UIViewController, UIScrollViewDelegate {
         isLoading = true
         self.containerView.alpha = 0.0
         
-        ProductRepository.shared.getProductInfo(productId: productId!)
-            .continueWith(executor: AWSExecutor.mainThread()) { task in
-            
-            guard let info = task.result as? ProductInfo else {
-                fatalError("\(self.className) > \(#function) > error")
-            }
-            
-            self.productInfo = info
-            
+        guard let productId = productId else { return }
+        
+        ProductRepository.shared.getProductInfo(id: productId) { result in
             DispatchQueue.main.async {
-                self.initViews()
-                self.endLoading()
-                
-                UIView.animate(withDuration: 0.3, animations: {
-                    self.containerView.alpha = 1.0
-                })
+                if case let Result.success(object: value) = result {
+                    self.productInfo = value
+                    self.initViews()
+                    self.endLoading()
+                    self.containerView.fadeIn()
+                } else {
+                    print("\(self.className) > \(#function) > error")
+                }
             }
-            
-            self.isLoading = false
-            
-            return nil
         }
     }
     

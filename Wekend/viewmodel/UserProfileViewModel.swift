@@ -42,9 +42,24 @@ struct UserProfileViewModel: UserProfileViewModelProtocol, Alertable {
     func updateUser(company: String?, school: String?, introduce: String?) {
         
         guard let userInfo = user.value else { return }
-        userInfo.company = company
-        userInfo.school = school
-        userInfo.introduce = introduce
+        
+        if let company = company, company.isEmpty {
+            userInfo.company = nil
+        } else {
+            userInfo.company = company
+        }
+        
+        if let school = school, school.isEmpty {
+            userInfo.school = nil
+        } else {
+            userInfo.school = school
+        }
+        
+        if let introduce = introduce, introduce.isEmpty {
+            userInfo.introduce = nil
+        } else {
+            userInfo.introduce = introduce
+        }
         
         let operation = UpdateUserOperation(userInfo: userInfo, dataSource: userDataSource)
         operation.execute { isSuceess in

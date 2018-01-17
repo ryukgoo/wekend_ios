@@ -118,10 +118,12 @@ extension MyProfileViewController: PagerViewDelegate, UIScrollViewDelegate {
     func loadPageViewItem(imageView: UIImageView, page: Int) {
         print("\(className) > \(#function)")
         
-        guard let user = viewModel?.user.value else { return }
+        guard let photos = viewModel?.user.value?.photosArr else {
+            imageView.image = #imageLiteral(resourceName: "default_profile")
+            return
+        }
         
-        let imageName = "\(user.userid)/\(Configuration.S3.PROFILE_IMAGE_NAME(page))"
-        let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + imageName
+        let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + photos[page]
         
         imageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "default_profile"), options: .cacheMemoryOnly) {
             (image, error, cacheType, imageURL) in

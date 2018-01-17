@@ -251,7 +251,8 @@ extension LikeCollectionViewController: UICollectionViewDelegateFlowLayout {
         profileViewController.viewModel = MailProfileViewModel(productId: selectedLike.ProductId,
                                                                friendId: selectedLike.UserId,
                                                                mailDataSource: SendMailRepository.shared,
-                                                               userDataSource: UserInfoRepository.shared)
+                                                               userDataSource: UserInfoRepository.shared,
+                                                               productDataSource: ProductRepository.shared)
         
         navigationController?.pushViewController(profileViewController, animated: true)
         LikeRepository.shared.updateReadState(id: likeId, userId: userId, productId: selectedLike.ProductId, likeUserId: selectedLike.UserId)

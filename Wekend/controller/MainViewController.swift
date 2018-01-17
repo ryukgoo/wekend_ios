@@ -85,10 +85,7 @@ class MainViewController: UITabBarController {
     }
     
     // MARK: - Navigation
-
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
         print("\(className) > \(#function) > segue.identifier : \(String(describing: segue.identifier))")
     }
 
@@ -159,7 +156,7 @@ extension MainViewController {
 extension MainViewController: UITabBarControllerDelegate {
     
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        print("\(className) > \(#function) > selectedIndex : \(selectedIndex)")
+        print("\(className) > \(#function) > viewController : \(viewController.className)")
         guard let selectedType = NavigationType(rawValue: selectedIndex) else {
             fatalError("\(className) > \(#function) > no viewController Title")
         }
@@ -167,6 +164,7 @@ extension MainViewController: UITabBarControllerDelegate {
         switch selectedType {
             
         case .campaign:
+            
             break
             
         case .like:
@@ -198,9 +196,7 @@ extension MainViewController: UITabBarControllerDelegate {
         
         print("\(className) > \(#function) > shouldSelect : \(selectedIndex)")
         
-        guard let previousType = NavigationType(rawValue: selectedIndex) else {
-            fatalError("\(className) > \(#function) > no viewController Title")
-        }
+        guard let previousType = NavigationType(rawValue: selectedIndex) else { return false }
         
         guard let navigationController = viewController as? UINavigationController else {
             // Goto Drawer

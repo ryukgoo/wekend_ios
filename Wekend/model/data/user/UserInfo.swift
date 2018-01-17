@@ -59,13 +59,19 @@ class UserInfo: AWSDynamoDBObjectModel, AWSDynamoDBModeling {
     var school: String?
     var introduce: String?
     var phone: String?
-    var photos: Any?
-    var photosArr: [String] = []
     var balloon: Any?
     var EndpointARN: String?
     var NewLikeCount: Int = 0
     var NewSendCount: Int = 0
     var NewReceiveCount: Int = 0
+    
+    var photos: Any? {
+        didSet {
+            guard let photos = photos as? Set<String> else { return }
+            photosArr = photos.sorted(by: <)
+        }
+    }
+    var photosArr: [String] = []
     
     static func dynamoDBTableName() -> String {
         return Schema.TABLE_NAME

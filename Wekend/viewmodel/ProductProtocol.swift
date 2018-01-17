@@ -14,3 +14,7 @@ protocol ProductLoadable {
     var product: Dynamic<ProductInfo?> { get }
     func loadProduct()
 }
+
+protocol ProductListLoadable {
+    func loadProductList()
+}

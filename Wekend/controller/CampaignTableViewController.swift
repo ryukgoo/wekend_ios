@@ -115,6 +115,7 @@ extension CampaignTableViewController {
             self.tabBarController?.startLoading()
         }
         
+        
         ProductRepository.shared.loadData(startFromBeginning: startFromBeginning).continueWith(block: {
             (task: AWSTask) -> Any? in
             
@@ -171,34 +172,14 @@ extension CampaignTableViewController: UITableViewDataSource {
 extension CampaignTableViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
+//        print("\(className) > \(#function) > index: \(indexPath.row)")
         let cell = tableView.dequeueReusableCell(for: indexPath) as CampaignTableViewCell
+        guard let productInfo = ProductRepository.shared.datas?[indexPath.row] else { return cell }
         
-        guard let productInfo = ProductRepository.shared.datas?[indexPath.row] else {
-            fatalError("\(className) > \(#function) > get ProductInfo Error")
-        }
-        
-        if let productRegion = productInfo.ProductRegion, let regionEnum = ProductRegion(rawValue: productRegion as! Int) {
-            cell.campaignTitle.text = "[\(regionEnum.toString)] " + productInfo.TitleKor!
-        } else {
-            cell.campaignTitle.text = "[지역정보없음] \(productInfo.TitleKor!)"
-        }
-        
-        cell.campaignDescription.text = productInfo.SubTitle
-        
-        let imageName = String(productInfo.ProductId) + "/" + Configuration.S3.PRODUCT_IMAGE_NAME(0)
-        let imageUrl = Configuration.S3.PRODUCT_IMAGE_URL + imageName
-        
-        cell.campaignImage.tag = indexPath.row
-        cell.campaignImage.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "bg_default_logo_gray"), options: .refreshCached) {
-            (image, error, cacheType, imageURL) in
-        }
-        
-        cell.campaignHeart.setTitle(String(productInfo.realLikeCount), for: .normal)
-        cell.campaignHeart.isSelected = LikeRepository.shared.hasLike(productId: productInfo.ProductId)
-        
-        cell.campaignHeart.tag = indexPath.row
-        cell.campaignHeart.addTarget(self, action: #selector(self.heartButtonTapped(_:)), for: .touchUpInside)
+        let isSelected = LikeRepository.shared.hasLike(productId: productInfo.ProductId)
+        var viewModel = CampaignCell(info: productInfo, isSelected: isSelected)
+        viewModel.listener = { info in self.heartButtonTapped(info) }
+        cell.viewModel = viewModel
         
         return cell
     }
@@ -235,27 +216,16 @@ extension CampaignTableViewController: UITableViewDelegate {
         navigationController?.pushViewController(detailVC, animated: true)
     }
     
-    func heartButtonTapped(_ sender: UIButton) {
+    func heartButtonTapped(_ productInfo: ProductInfo) {
         
-        let index = sender.tag
+        guard let userInfo = UserInfoRepository.shared.userInfo else { return }
         
-        guard let productInfo = ProductRepository.shared.datas?[index] else {
-            fatalError("\(className) > \(#function) > productInfo Error")
-        }
-        
-        guard let userInfo = UserInfoRepository.shared.userInfo else {
-            fatalError("\(className) > \(#function) > userInfo Error")
-        }
-        
-        if sender.isSelected {
-            
-            if let likeIndex = LikeRepository.shared.datas?.index(where: { $0.ProductId == productInfo.ProductId } ) {
-                if let deleteItem = LikeRepository.shared.datas?[likeIndex] {
-                    tableView.isUserInteractionEnabled = false
-                    LikeRepository.shared.deleteLike(item: deleteItem).continueWith(executor: AWSExecutor.mainThread()) { task in
-                        if task.error != nil { print("\(self.className) > \(#function) > error : \(String(describing: task.error))") }
-                        return nil
-                    }
+        if let likeIndex = LikeRepository.shared.datas?.index(where: { $0.ProductId == productInfo.ProductId } ) {
+            if let deleteItem = LikeRepository.shared.datas?[likeIndex] {
+                tableView.isUserInteractionEnabled = false
+                LikeRepository.shared.deleteLike(item: deleteItem).continueWith(executor: AWSExecutor.mainThread()) { task in
+                    if task.error != nil { print("\(self.className) > \(#function) > error : \(String(describing: task.error))") }
+                    return nil
                 }
             }
         } else {

@@ -62,9 +62,6 @@ class UserInfoRepository: NSObject, UserInfoDataSource {
             .continueWith(executor: AWSExecutor.mainThread()) { task in
             
             if let result = task.result as? UserInfo {
-                if let photos = result.photos as? Set<String> {
-                    result.photosArr = photos.sorted(by: <)
-                }
                 self.userDictionary[result.userid] = result
                 completion(.success(object: result))
                 return nil

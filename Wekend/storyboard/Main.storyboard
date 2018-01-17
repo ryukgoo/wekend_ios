@@ -472,10 +472,10 @@ New+</string>
             </objects>
             <point key="canvasLocation" x="649" y="1035"/>
         </scene>
-        <!--NavigationStore-->
+        <!--store-->
         <scene sceneID="8cX-LE-31u">
             <objects>
-                <navigationController title="NavigationStore" automaticallyAdjustsScrollViewInsets="NO" id="lfH-Fe-jPR" sceneMemberID="viewController">
+                <navigationController title="store" automaticallyAdjustsScrollViewInsets="NO" id="lfH-Fe-jPR" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="상점" image="btn_icon_store_n" selectedImage="btn_icon_store_s" id="zH4-I8-CPi"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="XqQ-h8-5Eh">

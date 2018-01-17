@@ -38,51 +38,6 @@ struct LoadMailOperation {
     }
 }
 
-struct LoadUserOperation {
-    
-    let userId: String
-    let dataSource: UserInfoDataSource
-    
-    init(userId: String, dataSource: UserInfoDataSource) {
-        self.userId = userId
-        self.dataSource = dataSource
-    }
-    
-    func execute(completion: @escaping (Result<UserInfo, FailureReason>) -> Void) {
-        dataSource.getUserInfo(id: userId) { result in
-            if case let Result.success(object: value) = result {
-                completion(.success(object: value))
-            } else if case Result.failure(_) = result {
-                completion(.failure(.notAvailable))
-            }
-        }
-    }
-}
-
-struct LoadProductOperation {
-    let productId: Int
-    init(productId: Int) {
-        self.productId = productId
-    }
-    
-    func execute(completion: @escaping (Result<ProductInfo, FailureReason>) -> Void) {
-        ProductRepository.shared.getProductInfo(productId: productId)
-            .continueWith(executor: AWSExecutor.mainThread()) { task in
-                guard let productInfo = task.result as? ProductInfo else {
-                    DispatchQueue.main.async {
-                        completion(.failure(.notAvailable))
-                    }
-                    return nil
-                }
-                
-                DispatchQueue.main.async {
-                    completion(.success(object: productInfo))
-                }
-            return nil
-        }
-    }
-}
-
 struct ProposeOperation {
     
     let mail: Mail
@@ -114,7 +69,103 @@ struct ProposeOperation {
     }
 }
 
-struct UpdateOperation {
+struct AcceptOperation {
+    
+    let mail: Mail
+    let user: UserInfo
+    let friend: UserInfo
+    let product: ProductInfo
+    let dataSource: MailDataSource
+    
+    init(mail: Mail, user: UserInfo, friend: UserInfo, product: ProductInfo, dataSource: MailDataSource) {
+        self.mail = mail
+        self.user = user
+        self.friend = friend
+        self.product = product
+        self.dataSource = dataSource
+    }
+    
+    func execute(completion: @escaping (Result<Mail, FailureReason>) -> Void) {
+        guard let acceptedMail = ReceiveMail() else {
+            completion(.failure(.notAvailable))
+            return
+        }
+        
+        acceptedMail.UserId = user.userid
+        acceptedMail.SenderId = friend.userid
+        acceptedMail.ReceiverNickname = user.nickname
+        acceptedMail.SenderNickname = friend.nickname
+        acceptedMail.ProductId = product.ProductId
+        acceptedMail.ProductTitle = product.TitleKor
+        acceptedMail.Message = mail.Message
+        acceptedMail.IsRead = ReadState.read.rawValue
+        acceptedMail.ProposeStatus = ProposeStatus.made.rawValue
+        
+        let timestamp = Date().iso8601
+        acceptedMail.UpdatedTime = mail.UpdatedTime
+        acceptedMail.ResponseTime = timestamp
+        
+        dataSource.updateMail(mail: acceptedMail) { isSuccess in
+            DispatchQueue.main.async {
+                if isSuccess {
+                    completion(.success(object: acceptedMail))
+                } else {
+                    completion(.failure(.notAvailable))
+                }
+            }
+        }
+    }
+}
+
+struct RejectOperation {
+    
+    let mail: Mail
+    let user: UserInfo
+    let friend: UserInfo
+    let product: ProductInfo
+    let dataSource: MailDataSource
+    
+    init(mail: Mail, user: UserInfo, friend: UserInfo, product: ProductInfo, dataSource: MailDataSource) {
+        self.mail = mail
+        self.user = user
+        self.friend = friend
+        self.product = product
+        self.dataSource = dataSource
+    }
+    
+    func execute(completion: @escaping (Result<Mail, FailureReason>) -> Void) {
+        guard let rejectedMail = ReceiveMail() else {
+            completion(.failure(.notAvailable))
+            return
+        }
+        
+        rejectedMail.UserId = user.userid
+        rejectedMail.SenderId = friend.userid
+        rejectedMail.ReceiverNickname = user.nickname
+        rejectedMail.SenderNickname = friend.nickname
+        rejectedMail.ProductId = product.ProductId
+        rejectedMail.ProductTitle = product.TitleKor
+        rejectedMail.Message = mail.Message
+        rejectedMail.IsRead = ReadState.read.rawValue
+        rejectedMail.ProposeStatus = ProposeStatus.reject.rawValue
+        
+        let timestamp = Date().iso8601
+        rejectedMail.UpdatedTime = mail.UpdatedTime
+        rejectedMail.ResponseTime = timestamp
+        
+        dataSource.updateMail(mail: rejectedMail) { isSuccess in
+            DispatchQueue.main.async {
+                if isSuccess {
+                    completion(.success(object: rejectedMail))
+                } else {
+                    completion(.failure(.notAvailable))
+                }
+            }
+        }
+    }
+}
+
+struct UpdateMailOperation {
     let mail: ReceiveMail
     init(mail: ReceiveMail) {
         self.mail = mail

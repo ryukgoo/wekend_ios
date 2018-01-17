@@ -16,6 +16,7 @@ struct MailProfileViewModel: MailProfileViewModelProtocol, Alertable {
     let friendId: String
     let userDataSource: UserInfoDataSource
     let mailDataSource: MailDataSource
+    let productDataSource: ProductDataSource
     
     var user: Dynamic<UserInfo?>
     var mail: Dynamic<Mail?>
@@ -25,12 +26,16 @@ struct MailProfileViewModel: MailProfileViewModelProtocol, Alertable {
     var onShowAlert: ((ButtonAlert) -> Void)?
     var onShowMessage: (() -> Void)?
     
-    init(productId: Int, friendId: String, mailDataSource: MailDataSource, userDataSource: UserInfoDataSource) {
+    init(productId: Int, friendId: String,
+         mailDataSource: MailDataSource,
+         userDataSource: UserInfoDataSource,
+         productDataSource: ProductDataSource) {
         
         self.productId = productId
         self.friendId = friendId
         self.mailDataSource = mailDataSource
         self.userDataSource = userDataSource
+        self.productDataSource = productDataSource
         
         self.user = Dynamic(nil)
         self.product = Dynamic(nil)
@@ -55,7 +60,7 @@ struct MailProfileViewModel: MailProfileViewModelProtocol, Alertable {
     
     func loadProduct() {
         print("\(#function) > productId : \(self.productId)")
-        let operation = LoadProductOperation(productId: self.productId)
+        let operation = LoadProductOperation(productId: self.productId, dataSource: productDataSource)
         operation.execute { result in
             print(#function)
             if case let Result.success(object: value) = result {
@@ -121,76 +126,49 @@ struct MailProfileViewModel: MailProfileViewModelProtocol, Alertable {
     }
     
     func accept() {
+        guard let user = user.value,
+              let mail = mail.value,
+              let friend = friend.value,
+              let product = product.value else { return }
         
-        guard let user = self.user.value else { return }
-        guard let acceptedMail = ReceiveMail() else { return }
+        let operation = AcceptOperation(mail: mail, user: user, friend: friend, product: product, dataSource: mailDataSource)
         
-        acceptedMail.UserId = user.userid
-        acceptedMail.SenderId = friend.value?.userid
-        acceptedMail.ReceiverNickname = user.nickname
-        acceptedMail.SenderNickname = friend.value?.nickname
-        acceptedMail.ProductId = product.value?.ProductId
-        acceptedMail.ProductTitle = product.value?.TitleKor
-        acceptedMail.Message = mail.value?.Message
-        acceptedMail.IsRead = ReadState.read.rawValue
-        acceptedMail.ProposeStatus = ProposeStatus.made.rawValue
-        
-        let timestamp = Date().iso8601
-        acceptedMail.UpdatedTime = mail.value?.UpdatedTime ?? timestamp
-        acceptedMail.ResponseTime = timestamp
-        
-        let operation = UpdateOperation(mail: acceptedMail)
         operation.execute { result in
-            if case Result.success(object: _) = result {
-                self.mail.value = acceptedMail
+            if case let Result.success(object: value) = result {
+                self.mail.value = value
                 guard let nickname = self.friend.value?.nickname else { return }
                 let alert = ButtonAlert(title: "함께가기 성공",
                                         message: "\(nickname)님과 함께가기를 수락하였습니다",
-                                        actions: [AlertAction.done])
+                    actions: [AlertAction.done])
                 self.onShowAlert?(alert)
                 NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Receive.Add), object: nil)
-            } else if case let Result.failure(error) = result {
-                if error == .notAvailable {
-                    let alert = ButtonAlert(title: "오류", message: "다시 시도해 주세요", actions: [AlertAction.done])
-                    self.onShowAlert?(alert)
-                }
+            } else {
+                let alert = ButtonAlert(title: "오류", message: "다시 시도해 주세요", actions: [AlertAction.done])
+                self.onShowAlert?(alert)
             }
         }
     }
     
     func reject() {
-        guard let user = self.user.value else { return }
-        guard let rejectedMail = ReceiveMail() else { return }
+        guard let user = user.value,
+              let mail = mail.value,
+              let friend = friend.value,
+              let product = product.value else { return }
         
-        rejectedMail.UserId = user.userid
-        rejectedMail.SenderId = friend.value?.userid
-        rejectedMail.ReceiverNickname = user.nickname
-        rejectedMail.SenderNickname = friend.value?.nickname
-        rejectedMail.ProductId = product.value?.ProductId
-        rejectedMail.ProductTitle = product.value?.TitleKor
-        rejectedMail.Message = mail.value?.Message
-        rejectedMail.IsRead = ReadState.read.rawValue
-        rejectedMail.ProposeStatus = ProposeStatus.reject.rawValue
+        let operation = RejectOperation(mail: mail, user: user, friend: friend, product: product, dataSource: mailDataSource)
         
-        let timestamp = Date().iso8601
-        rejectedMail.UpdatedTime = mail.value?.UpdatedTime ?? timestamp
-        rejectedMail.ResponseTime = timestamp
-        
-        let operation = UpdateOperation(mail: rejectedMail)
         operation.execute { result in
-            if case Result.success(object: _) = result {
-                self.mail.value = rejectedMail
+            if case let Result.success(object: value) = result {
+                self.mail.value = value
                 guard let nickname = self.friend.value?.nickname else { return }
                 let alert = ButtonAlert(title: "함께가기 거절",
                                         message: "\(nickname)님과 함께가기를 거절하였습니다",
-                                        actions: [AlertAction.done])
+                    actions: [AlertAction.done])
                 self.onShowAlert?(alert)
                 NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Receive.Add), object: nil)
-            } else if case let Result.failure(error) = result {
-                if error == .notAvailable {
-                    let alert = ButtonAlert(title: "오류", message: "다시 시도해 주세요", actions: [AlertAction.done])
-                    self.onShowAlert?(alert)
-                }
+            } else {
+                let alert = ButtonAlert(title: "오류", message: "다시 시도해 주세요", actions: [AlertAction.done])
+                self.onShowAlert?(alert)
             }
         }
     }
