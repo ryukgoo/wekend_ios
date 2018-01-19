@@ -58,6 +58,12 @@ class UserInfoRepository: NSObject, UserInfoDataSource {
     }
     
     func getUserInfo(id: String, completion: @escaping (Result<UserInfo, FailureReason>) -> Void) {
+        
+        if let user = userDictionary[id] {
+            completion(.success(object: user))
+            return
+        }
+        
         mapper.load(UserInfo.self, hashKey: id, rangeKey: nil)
             .continueWith(executor: AWSExecutor.mainThread()) { task in
             

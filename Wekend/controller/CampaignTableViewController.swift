@@ -13,10 +13,9 @@ import AWSCore
 
 class CampaignTableViewController: UIViewController {
     
-    deinit {
-        removeNotificationObservers()
-        print("\(className) > \(#function)")
-    }
+    // MARK: IBOutlet
+    @IBOutlet weak var noResultLabel: UILabel!
+    @IBOutlet weak var tableView: UITableView!
     
     // MARK: Properties
     var isLoading: Bool = false
@@ -27,14 +26,15 @@ class CampaignTableViewController: UIViewController {
     var dropDownTitleView: DropDownTitleView!
     var dropDownMenu: DropDownMenu!
     var selectedMenuCell: FilterMenuCell?
-    
     var sortMode: SortMode = .date
     
-    // MARK: IBOutlet
-    @IBOutlet weak var noResultLabel: UILabel!
-    @IBOutlet weak var tableView: UITableView!
+    var viewModel: CampaignListViewModel?
     
-    // MARK: override Functions
+    deinit {
+        removeNotificationObservers()
+        print("\(className) > \(#function)")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -48,8 +48,32 @@ class CampaignTableViewController: UIViewController {
         dropDownMenu = getDropDownMenu()
         updateMenuContentOffsets()
         
-        refreshList(true)
+        viewModel = CampaignListViewModel(dataSource: ProductRepository.shared)
+        bindViewModel()
+        
+        loadProductData(options: nil, keyword: nil)
         addNotificationObservers()
+    }
+    
+    fileprivate func bindViewModel() {
+        guard let viewModel = viewModel else { return }
+        viewModel.datas.bind { [weak self] datas in
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+            self?.isLoading = false
+            self?.refreshControl.endRefreshing()
+            self?.tabBarController?.endLoading()
+            
+            if datas?.count == 0 {
+                self?.noResultLabel.isHidden = false
+            } else {
+                self?.noResultLabel.isHidden = true
+            }
+            
+            self?.tableView.reloadData()
+            self?.tableView.beginUpdates()
+            self?.tableView.setContentOffset(.zero, animated: false)
+            self?.tableView.endUpdates()
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -70,7 +94,6 @@ class CampaignTableViewController: UIViewController {
     
     // MARK: ScrollView Delegate
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        
         if ((scrollView.contentOffset.y + scrollView.frame.size.height) >= scrollView.contentSize.height) && self.isLoading != true {
 //            printLog("scrollViewDidScroll > refreshList")
 //            tableView.tableFooterView?.isHidden = false
@@ -91,7 +114,6 @@ extension CampaignTableViewController {
     }
     
     func initRefreshControl() {
-        
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to Refresh")
         refreshControl.addTarget(self, action: #selector(self.refresh(_:)), for: .valueChanged)
         
@@ -100,56 +122,19 @@ extension CampaignTableViewController {
         } else {
             tableView.addSubview(refreshControl)
         }
-        
     }
     
     func refresh(_ sender: Any) {
-        refreshList(true)
+        loadProductData(options: nil, keyword: nil)
     }
     
-    func refreshList(_ startFromBeginning: Bool) {
+    func loadProductData(options: FilterOptions?, keyword: String?) {
         
         isLoading = true
-
-        if startFromBeginning {
-            self.tabBarController?.startLoading()
-        }
+        self.tabBarController?.startLoading()
         
-        
-        ProductRepository.shared.loadData(startFromBeginning: startFromBeginning).continueWith(block: {
-            (task: AWSTask) -> Any? in
-            
-            if let _ = task.result as? Array<ProductInfo> {
-                
-                self.isLoading = false
-                
-                DispatchQueue.main.async {
-                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
-                    self.refreshControl.endRefreshing()
-                    self.tabBarController?.endLoading()
-                    
-                    if let count = ProductRepository.shared.datas?.count {
-                        if count == 0 {
-                            self.noResultLabel.isHidden = false
-                        } else {
-                            self.noResultLabel.isHidden = true
-                        }
-                    }
-                    
-                    self.tableView.reloadData()
-                    
-                    if startFromBeginning {
-                        self.tableView.beginUpdates()
-                        self.tableView.setContentOffset(.zero, animated: false)
-                        self.tableView.endUpdates()
-                    }
-                }
-            }
-            
-            return nil
-        })
+        viewModel?.loadProductList(options: options, keyword: keyword)
     }
-    
 }
 
 // MARK: TableView DataSource
@@ -160,11 +145,7 @@ extension CampaignTableViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let rowCount = ProductRepository.shared.datas?.count {
-            return rowCount
-        } else {
-            return 0
-        }
+        return ProductRepository.shared.cachedData.count
     }
 }
 
@@ -172,9 +153,9 @@ extension CampaignTableViewController: UITableViewDataSource {
 extension CampaignTableViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        print("\(className) > \(#function) > index: \(indexPath.row)")
+
         let cell = tableView.dequeueReusableCell(for: indexPath) as CampaignTableViewCell
-        guard let productInfo = ProductRepository.shared.datas?[indexPath.row] else { return cell }
+        let productInfo = ProductRepository.shared.cachedData[indexPath.row]
         
         let isSelected = LikeRepository.shared.hasLike(productId: productInfo.ProductId)
         var viewModel = CampaignCell(info: productInfo, isSelected: isSelected)
@@ -185,7 +166,6 @@ extension CampaignTableViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        
         if UIScreen.main.bounds.width == 320.0 {
             return 260.0
         } else if UIScreen.main.bounds.width == 375.0 {
@@ -196,22 +176,23 @@ extension CampaignTableViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == ProductRepository.shared.datas?.count {
-            
+        print("\(className) > \(#function)")
+        if indexPath.row == ProductRepository.shared.cachedData.count {
             print("\(className) > \(#function) > refreshList")
-            refreshList(false)
+//            loadProductData(options: nil, keyword: nil)
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("\(className) > \(#function) > index : \(indexPath.row)")
         
-        guard let detailVC: CampaignViewController = CampaignViewController.storyboardInstance(from: "SubItems") else {
+        guard let detailVC = CampaignViewController.storyboardInstance(from: "SubItems") as? CampaignViewController else {
             fatalError("\(className) > \(#function) > initialize CampaignViewcontroller Error")
         }
         
-        let selectedCampaign = ProductRepository.shared.datas?[indexPath.row]
-        detailVC.productId = selectedCampaign?.ProductId
+        let selectedCampaign = ProductRepository.shared.cachedData[indexPath.row]
+        detailVC.viewModel = CampaignViewModel(id: selectedCampaign.ProductId,
+                                               isLikeEnabled: true,
+                                               dataSource: ProductRepository.shared)
         
         navigationController?.pushViewController(detailVC, animated: true)
     }
@@ -445,8 +426,6 @@ extension CampaignTableViewController: FilterMenuCellDelegate {
         
         dropDownTitleView.toggleMenu()
         
-        // query
-        
         var filterOptions = FilterOptions()
         filterOptions.sortMode = sortMode
         
@@ -500,10 +479,7 @@ extension CampaignTableViewController: FilterMenuCellDelegate {
         dropDownTitleView.title = titleText
         navigationItem.titleView = dropDownTitleView
         
-        ProductRepository.shared.filterOptions = filterOptions
-        ProductRepository.shared.searchKeyword = nil
-        
-        refreshList(true)
+        loadProductData(options: filterOptions, keyword: nil)
         
     }
 }
@@ -559,9 +535,7 @@ extension CampaignTableViewController: UISearchBarDelegate {
             return
         }
         
-        print("\(className) > \(#function) > text : \(searchText)")
         searchBar.resignFirstResponder()
-        
         
         navigationItem.titleView = nil
         dropDownTitleView.title = "\"\(searchText)\"(으)로 검색"
@@ -571,9 +545,7 @@ extension CampaignTableViewController: UISearchBarDelegate {
         navigationItem.rightBarButtonItem = getSearchBarItem()
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
-        ProductRepository.shared.filterOptions = nil
-        ProductRepository.shared.searchKeyword = searchText
-        refreshList(true)
+        loadProductData(options: nil, keyword: searchText)
         
     }
     
@@ -611,7 +583,7 @@ extension CampaignTableViewController {
         
         print("\(className) > \(#function) > productId : \(productId)")
         
-        if let index = ProductRepository.shared.datas?.index(where: { $0.ProductId == productId }) {
+        if let index = ProductRepository.shared.cachedData.index(where: { $0.ProductId == productId }) {
             
             DispatchQueue.main.async {
                 self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .none)
@@ -629,7 +601,7 @@ extension CampaignTableViewController {
         
         print("\(className) > \(#function) > productId : \(productId)")
         
-        if let index = ProductRepository.shared.datas?.index(where: { $0.ProductId == productId }) {
+        if let index = ProductRepository.shared.cachedData.index(where: { $0.ProductId == productId }) {
             
             DispatchQueue.main.async {
                 self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .none)

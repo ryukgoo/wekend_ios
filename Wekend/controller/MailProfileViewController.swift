@@ -59,9 +59,6 @@ class MailProfileViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if #available(iOS 11.0, *) {
-            scrollView.contentInsetAdjustmentBehavior = .never
-        }
         navigationController?.isNavigationBarHidden = true
     }
     
@@ -78,8 +75,10 @@ class MailProfileViewController: UIViewController {
         }
         
         guard let productId = viewModel?.product.value?.ProductId else { return }
-        detailVC.productId = productId
-        detailVC.isButtonHidden = true
+        guard let user = viewModel?.user.value else { return }
+        detailVC.viewModel = CampaignViewModel(id: productId,
+                                               isLikeEnabled: true,
+                                               dataSource: ProductRepository.shared)
         
         navigationController?.pushViewController(detailVC, animated: true)
     }
@@ -97,7 +96,7 @@ class MailProfileViewController: UIViewController {
             
             guard let friend = friend else { return }
             guard let nickname = friend.nickname else { return }
-            self?.nickname.text = "\(nickname), \((friend.birth as! Int).toAge.description)"
+            self?.nickname.text = "\(nickname), \((friend.birth as! Int).toAge.description)세"
             
             if let company = friend.company {
                 self?.company.isHidden = false
@@ -268,11 +267,12 @@ extension MailProfileViewController: UIScrollViewDelegate {
 // MARK: - PagerViewDelegate
 extension MailProfileViewController: PagerViewDelegate {
     func loadPageViewItem(imageView: UIImageView, page: Int) {
-        print("\(className) > \(#function) > page : \(page)")
-        guard let friend = viewModel?.friend.value else { return }
+        guard let photos = viewModel?.friend.value?.photosArr else {
+            imageView.image = #imageLiteral(resourceName: "default_profile")
+            return
+        }
         
-        let imageName = friend.userid + "/" + Configuration.S3.PROFILE_IMAGE_NAME(page)
-        let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + imageName
+        let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + photos[page]
         imageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "default_profile"), options: .cacheMemoryOnly) {
             (image, error, cachedType, url) in
         }

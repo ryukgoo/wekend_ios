@@ -13,7 +13,7 @@ class AmazonClientManager: NSObject {
     
     // MARK: Singlton
     
-    static let sharedInstance = AmazonClientManager()
+    static let shared = AmazonClientManager()
     
     // MARK: Properties
     

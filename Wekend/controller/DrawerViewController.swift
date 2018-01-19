@@ -194,7 +194,7 @@ extension DrawerViewController: UITableViewDataSource, UITableViewDelegate {
             let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
             let okAction = UIAlertAction(title: "확인", style: .default, handler: {
                 (action) in
-                AmazonClientManager.sharedInstance.devIdentityProvider?.logout()
+                AmazonClientManager.shared.devIdentityProvider?.logout()
             })
             
             alertController.addAction(cancelAction)

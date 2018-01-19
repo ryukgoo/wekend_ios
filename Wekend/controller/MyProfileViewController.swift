@@ -44,9 +44,6 @@ class MyProfileViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if #available(iOS 11.0, *) {
-            scrollView.contentInsetAdjustmentBehavior = .never
-        }
         navigationController?.isNavigationBarHidden = true
         
         viewModel?.loadUser()
@@ -68,7 +65,7 @@ class MyProfileViewController: UIViewController {
         viewModel.user.bindAndFire { [weak self] user in
             guard let user = user else { return }
             guard let nickname = user.nickname else { return }
-            self?.nickname.text = "\(nickname), \((user.birth as! Int).toAge.description)"
+            self?.nickname.text = "\(nickname), \((user.birth as! Int).toAge.description)세"
             
             if let company = user.company {
                 self?.company.isHidden = false
@@ -116,7 +113,6 @@ class MyProfileViewController: UIViewController {
 extension MyProfileViewController: PagerViewDelegate, UIScrollViewDelegate {
     
     func loadPageViewItem(imageView: UIImageView, page: Int) {
-        print("\(className) > \(#function)")
         
         guard let photos = viewModel?.user.value?.photosArr else {
             imageView.image = #imageLiteral(resourceName: "default_profile")
@@ -127,7 +123,6 @@ extension MyProfileViewController: PagerViewDelegate, UIScrollViewDelegate {
         
         imageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "default_profile"), options: .cacheMemoryOnly) {
             (image, error, cacheType, imageURL) in
-            print("\(self.className) > \(#function) > url: \(String(describing: imageURL))")
         }
     }
     

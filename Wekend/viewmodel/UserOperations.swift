@@ -26,10 +26,12 @@ struct LoadUserOperation {
     
     func execute(completion: @escaping (Result<UserInfo, FailureReason>) -> Void) {
         dataSource.getUserInfo(id: userId) { result in
-            if case let Result.success(object: value) = result {
-                completion(.success(object: value))
-            } else if case Result.failure(_) = result {
-                completion(.failure(.notAvailable))
+            DispatchQueue.main.async {
+                if case let Result.success(object: value) = result {
+                    completion(.success(object: value))
+                } else if case Result.failure(_) = result {
+                    completion(.failure(.notAvailable))
+                }
             }
         }
     }

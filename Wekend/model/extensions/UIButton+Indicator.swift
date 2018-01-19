@@ -36,8 +36,6 @@ extension UIButton {
                 indicator.stopAnimating()
                 indicator.removeFromSuperview()
             }
-            
         }
     }
-    
 }

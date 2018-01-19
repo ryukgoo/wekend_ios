@@ -22,7 +22,7 @@
 		B828E2232004E29100B37E91 /* UIViewController+Keyborad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B828E2222004E29100B37E91 /* UIViewController+Keyborad.swift */; };
 		B82AC1311DFE7F3700C9EFC2 /* CampaignViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82AC1301DFE7F3700C9EFC2 /* CampaignViewController.swift */; };
 		B82AE10D1DEBE0FB00325F34 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82AE10C1DEBE0FB00325F34 /* Utilities.swift */; };
-		B82D89231FD7AD9B0027A7EC /* MailProfileSourceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82D89221FD7AD9B0027A7EC /* MailProfileSourceViewController.swift */; };
+		B82C78F3201083E100879EE9 /* LikeOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82C78F2201083E100879EE9 /* LikeOperations.swift */; };
 		B82DCE2A1E1D00FB0040A683 /* MailProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82DCE291E1D00FB0040A683 /* MailProfileViewController.swift */; };
 		B82E4E6D1DE58AC500E4488B /* ProductInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82E4E6C1DE58AC500E4488B /* ProductInfo.swift */; };
 		B82E4E6F1DE59B4200E4488B /* AmazonClientManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82E4E6E1DE59B4200E4488B /* AmazonClientManager.swift */; };
@@ -39,7 +39,6 @@
 		B834AE7C1EB6E99600CE80F9 /* WEKENDNotificationAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = B834AE791EB6E99600CE80F9 /* WEKENDNotificationAPIClient.m */; };
 		B837CEE01EB1C32D00598EF4 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B837CEDF1EB1C32D00598EF4 /* StringExtension.swift */; };
 		B837CEE21EB1C3B100598EF4 /* ArrayExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B837CEE11EB1C3B100598EF4 /* ArrayExtension.swift */; };
-		B837CEE41EB1C3E500598EF4 /* UIApplication+StatusBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B837CEE31EB1C3E500598EF4 /* UIApplication+StatusBar.swift */; };
 		B837CEEA1EB1C46600598EF4 /* UIImageView+Mask.swift in Sources */ = {isa = PBXBuildFile; fileRef = B837CEE91EB1C46600598EF4 /* UIImageView+Mask.swift */; };
 		B837CEEC1EB1C4EB00598EF4 /* UISegmentedControl+Custom.swift in Sources */ = {isa = PBXBuildFile; fileRef = B837CEEB1EB1C4EB00598EF4 /* UISegmentedControl+Custom.swift */; };
 		B837CEEE1EB1C54400598EF4 /* UIImage+Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = B837CEED1EB1C54400598EF4 /* UIImage+Color.swift */; };
@@ -122,12 +121,17 @@
 		B8C6FB111F4470BA0049E4F2 /* StoreHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C6FB101F4470BA0049E4F2 /* StoreHeaderView.swift */; };
 		B8D6FF881FDFC9E100899C44 /* IntExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D6FF871FDFC9E100899C44 /* IntExtension.swift */; };
 		B8D6FF8A1FE0034600899C44 /* MailOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D6FF891FE0034600899C44 /* MailOperations.swift */; };
+		B8DB27732011D7FE0064B3C4 /* CampaignListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8DB27722011D7FE0064B3C4 /* CampaignListViewModel.swift */; };
 		B8E1E1C41F9625F600355CD7 /* SubItems.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B8E1E1C31F9625F600355CD7 /* SubItems.storyboard */; };
 		B8EA29121E8B992200DEB0B1 /* VerticallyCenteredTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8EA29111E8B992200DEB0B1 /* VerticallyCenteredTextView.swift */; };
 		B8EF62861F5555FF007B0583 /* AgreementPrivacy.txt in Resources */ = {isa = PBXBuildFile; fileRef = B8EF62841F5555FF007B0583 /* AgreementPrivacy.txt */; };
 		B8EF62871F5555FF007B0583 /* AgreementTermsOfUse.txt in Resources */ = {isa = PBXBuildFile; fileRef = B8EF62851F5555FF007B0583 /* AgreementTermsOfUse.txt */; };
 		B8EF62891F558584007B0583 /* SelectableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8EF62881F558584007B0583 /* SelectableButton.swift */; };
 		B8F370851DFFCDD9006E010D /* PagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F370841DFFCDD9006E010D /* PagerView.swift */; };
+		B8F92148200F332900607AD2 /* AuthenticateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F92147200F332900607AD2 /* AuthenticateProtocol.swift */; };
+		B8F9214A200F337C00607AD2 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F92149200F337C00607AD2 /* LoginViewModel.swift */; };
+		B8F9214C200F53E700607AD2 /* CampaignViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F9214B200F53E700607AD2 /* CampaignViewModel.swift */; };
+		B8F9214E200F547200607AD2 /* LikeProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F9214D200F547200607AD2 /* LikeProtocol.swift */; };
 		B8FB46981E5B08390084D7D2 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB46971E5B08390084D7D2 /* MainViewController.swift */; };
 		B8FB469A1E5B08460084D7D2 /* CampaignTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB46991E5B08460084D7D2 /* CampaignTableViewController.swift */; };
 		B8FB469E1E5B08730084D7D2 /* SelectPhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB469D1E5B08730084D7D2 /* SelectPhotoViewController.swift */; };
@@ -170,7 +174,7 @@
 		B828E2222004E29100B37E91 /* UIViewController+Keyborad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Keyborad.swift"; sourceTree = "<group>"; };
 		B82AC1301DFE7F3700C9EFC2 /* CampaignViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CampaignViewController.swift; sourceTree = "<group>"; };
 		B82AE10C1DEBE0FB00325F34 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
-		B82D89221FD7AD9B0027A7EC /* MailProfileSourceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailProfileSourceViewController.swift; sourceTree = "<group>"; };
+		B82C78F2201083E100879EE9 /* LikeOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikeOperations.swift; sourceTree = "<group>"; };
 		B82DCE291E1D00FB0040A683 /* MailProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MailProfileViewController.swift; sourceTree = "<group>"; };
 		B82E4E6C1DE58AC500E4488B /* ProductInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductInfo.swift; sourceTree = "<group>"; };
 		B82E4E6E1DE59B4200E4488B /* AmazonClientManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AmazonClientManager.swift; sourceTree = "<group>"; };
@@ -190,7 +194,6 @@
 		B834AE791EB6E99600CE80F9 /* WEKENDNotificationAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WEKENDNotificationAPIClient.m; sourceTree = "<group>"; };
 		B837CEDF1EB1C32D00598EF4 /* StringExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		B837CEE11EB1C3B100598EF4 /* ArrayExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayExtension.swift; sourceTree = "<group>"; };
-		B837CEE31EB1C3E500598EF4 /* UIApplication+StatusBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+StatusBar.swift"; sourceTree = "<group>"; };
 		B837CEE91EB1C46600598EF4 /* UIImageView+Mask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+Mask.swift"; sourceTree = "<group>"; };
 		B837CEEB1EB1C4EB00598EF4 /* UISegmentedControl+Custom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UISegmentedControl+Custom.swift"; sourceTree = "<group>"; };
 		B837CEED1EB1C54400598EF4 /* UIImage+Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Color.swift"; sourceTree = "<group>"; };
@@ -288,12 +291,17 @@
 		B8C6FB101F4470BA0049E4F2 /* StoreHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreHeaderView.swift; sourceTree = "<group>"; };
 		B8D6FF871FDFC9E100899C44 /* IntExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntExtension.swift; sourceTree = "<group>"; };
 		B8D6FF891FE0034600899C44 /* MailOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailOperations.swift; sourceTree = "<group>"; };
+		B8DB27722011D7FE0064B3C4 /* CampaignListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignListViewModel.swift; sourceTree = "<group>"; };
 		B8E1E1C31F9625F600355CD7 /* SubItems.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SubItems.storyboard; sourceTree = "<group>"; };
 		B8EA29111E8B992200DEB0B1 /* VerticallyCenteredTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerticallyCenteredTextView.swift; sourceTree = "<group>"; };
 		B8EF62841F5555FF007B0583 /* AgreementPrivacy.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AgreementPrivacy.txt; sourceTree = "<group>"; };
 		B8EF62851F5555FF007B0583 /* AgreementTermsOfUse.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AgreementTermsOfUse.txt; sourceTree = "<group>"; };
 		B8EF62881F558584007B0583 /* SelectableButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectableButton.swift; sourceTree = "<group>"; };
 		B8F370841DFFCDD9006E010D /* PagerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagerView.swift; sourceTree = "<group>"; };
+		B8F92147200F332900607AD2 /* AuthenticateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticateProtocol.swift; sourceTree = "<group>"; };
+		B8F92149200F337C00607AD2 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		B8F9214B200F53E700607AD2 /* CampaignViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignViewModel.swift; sourceTree = "<group>"; };
+		B8F9214D200F547200607AD2 /* LikeProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikeProtocol.swift; sourceTree = "<group>"; };
 		B8FB46971E5B08390084D7D2 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		B8FB46991E5B08460084D7D2 /* CampaignTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CampaignTableViewController.swift; sourceTree = "<group>"; };
 		B8FB469D1E5B08730084D7D2 /* SelectPhotoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectPhotoViewController.swift; sourceTree = "<group>"; };
@@ -353,15 +361,21 @@
 			isa = PBXGroup;
 			children = (
 				B81581B32008A94A00E2B38A /* ViewModelProtocol.swift */,
+				B8F92147200F332900607AD2 /* AuthenticateProtocol.swift */,
 				B8FB532920075C00003F6770 /* UserProtocol.swift */,
+				B8F9214D200F547200607AD2 /* LikeProtocol.swift */,
 				B82427EA20075DB300E6044D /* ProductProtocol.swift */,
+				B8F92149200F337C00607AD2 /* LoginViewModel.swift */,
+				B89734C52003A09100994DCA /* UserProfileViewModel.swift */,
+				B8DB27722011D7FE0064B3C4 /* CampaignListViewModel.swift */,
+				B8F9214B200F53E700607AD2 /* CampaignViewModel.swift */,
 				B82427EE20075EB500E6044D /* MailProtocol.swift */,
 				B88AB2151EF12763005EDC48 /* SettingViewModel.swift */,
 				B80E7F9E1FD9018200C742D2 /* MailProfileViewModel.swift */,
-				B89734C52003A09100994DCA /* UserProfileViewModel.swift */,
 				B832FF391FD693BF0009BB95 /* Dynamic.swift */,
-				B8D6FF891FE0034600899C44 /* MailOperations.swift */,
 				B83916812005D24E00E0318A /* UserOperations.swift */,
+				B82C78F2201083E100879EE9 /* LikeOperations.swift */,
+				B8D6FF891FE0034600899C44 /* MailOperations.swift */,
 				B824F8AE200DBC4800E60F0D /* ProductOperations.swift */,
 				B824F8B0200E015000E60F0D /* CampaignCellBindable.swift */,
 			);
@@ -464,7 +478,6 @@
 				B837CEDF1EB1C32D00598EF4 /* StringExtension.swift */,
 				B837CEE11EB1C3B100598EF4 /* ArrayExtension.swift */,
 				B837CEF31EB1C5A100598EF4 /* Date+Formatting.swift */,
-				B837CEE31EB1C3E500598EF4 /* UIApplication+StatusBar.swift */,
 				B88DD0C61F303C140000DB90 /* UIApplication+TopViewController.swift */,
 				B89EFAE01F6A715B000ACF72 /* UIViewController+Alert.swift */,
 				B837CEF91EB1D7E400598EF4 /* UIViewController+Loading.swift */,
@@ -579,7 +592,6 @@
 				B830D3021E09289000EAEFE2 /* StoreCollectionViewCell.swift */,
 				B8C6FB101F4470BA0049E4F2 /* StoreHeaderView.swift */,
 				B82DCE291E1D00FB0040A683 /* MailProfileViewController.swift */,
-				B82D89221FD7AD9B0027A7EC /* MailProfileSourceViewController.swift */,
 				B8FB469F1E5B08AD0084D7D2 /* DrawerViewController.swift */,
 				B88257031E2CB0BB008D8DBE /* DrawerMenuTableViewCell.swift */,
 				B84E3B591E2DFD08003B9AF7 /* NoticeTableViewController.swift */,
@@ -912,10 +924,10 @@
 				B837CEF61EB1C5E700598EF4 /* UITableViewCell+Reuseable.swift in Sources */,
 				B842DB2B2003972B000432E7 /* EditProfileViewController.swift in Sources */,
 				B84CFB8A1E2F4D6800FCAB16 /* MyProfileViewController.swift in Sources */,
-				B837CEE41EB1C3E500598EF4 /* UIApplication+StatusBar.swift in Sources */,
 				B830D3031E09289000EAEFE2 /* StoreCollectionViewCell.swift in Sources */,
 				B86DFF601EE5876200E93246 /* LikeRepository.swift in Sources */,
 				B8D6FF881FDFC9E100899C44 /* IntExtension.swift in Sources */,
+				B8F9214E200F547200607AD2 /* LikeProtocol.swift in Sources */,
 				B89EFADC1F6A6E02000ACF72 /* GuideViewController.swift in Sources */,
 				B848F7281E41D0FD0034E803 /* InputUserInfoViewController.swift in Sources */,
 				B895CF101ED6CE1800891559 /* UIImage+Resize.swift in Sources */,
@@ -929,6 +941,7 @@
 				B837CEF21EB1C57B00598EF4 /* CALayer+Border.swift in Sources */,
 				B88295C91E49CF6F009AACCA /* WEKENDLoginResponseModel.m in Sources */,
 				B8C6FB111F4470BA0049E4F2 /* StoreHeaderView.swift in Sources */,
+				B82C78F3201083E100879EE9 /* LikeOperations.swift in Sources */,
 				B88B68AF1EDECF99003FD8FB /* IAPHelper.swift in Sources */,
 				B88295C71E49CF6F009AACCA /* WEKENDGetTokenResponseModel.m in Sources */,
 				B847E9851E3600DC007392F4 /* NonCursorTextField.swift in Sources */,
@@ -968,14 +981,15 @@
 				B832FF3A1FD693BF0009BB95 /* Dynamic.swift in Sources */,
 				B83D80C41E07EC8B00B3E507 /* MailTableViewCell.swift in Sources */,
 				B848F7261E41CC470034E803 /* SignupViewController.swift in Sources */,
+				B8F92148200F332900607AD2 /* AuthenticateProtocol.swift in Sources */,
 				B86DFF5E1EE5871800E93246 /* UserInfoRepository.swift in Sources */,
 				B88AB2161EF12763005EDC48 /* SettingViewModel.swift in Sources */,
-				B82D89231FD7AD9B0027A7EC /* MailProfileSourceViewController.swift in Sources */,
 				B8C6C3851DE41E7000FBDF6C /* AppDelegate.swift in Sources */,
 				B830D8741EADDEE70005E87E /* EnumCollection.swift in Sources */,
 				B89734C62003A09100994DCA /* UserProfileViewModel.swift in Sources */,
 				B8AE5BC11F97A31A00796751 /* DeepLinkManager.swift in Sources */,
 				B837CEF01EB1C55F00598EF4 /* UIColor+RBG_Hex.swift in Sources */,
+				B8F9214A200F337C00607AD2 /* LoginViewModel.swift in Sources */,
 				B870C82B1F29CFC0004802F4 /* ObjC.m in Sources */,
 				B834AE7B1EB6E99600CE80F9 /* WEKENDCreateEndpointARNResponseModel.m in Sources */,
 				B847E9871E361249007392F4 /* FilterMenuCell.swift in Sources */,
@@ -985,6 +999,7 @@
 				B890EC301F00EFC800D62307 /* UINavigationBar+GradientBackground.swift in Sources */,
 				B84E3B5C1E2E0B9E003B9AF7 /* NoticeTableViewCell.swift in Sources */,
 				B848F7241E41A1330034E803 /* LoginViewController.swift in Sources */,
+				B8DB27732011D7FE0064B3C4 /* CampaignListViewModel.swift in Sources */,
 				B837CEFA1EB1D7E400598EF4 /* UIViewController+Loading.swift in Sources */,
 				B830D2FD1E09209400EAEFE2 /* LikeCollectionViewController.swift in Sources */,
 				B82E4E6D1DE58AC500E4488B /* ProductInfo.swift in Sources */,
@@ -1017,6 +1032,7 @@
 				B834AE7A1EB6E99600CE80F9 /* WEKENDCreateEndpointARNRequestModel.m in Sources */,
 				B895CF121ED6CF8700891559 /* UIView+Animation.swift in Sources */,
 				B8FB469E1E5B08730084D7D2 /* SelectPhotoViewController.swift in Sources */,
+				B8F9214C200F53E700607AD2 /* CampaignViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

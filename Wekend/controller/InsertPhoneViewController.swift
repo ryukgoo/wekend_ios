@@ -126,14 +126,14 @@ class InsertPhoneViewController: UIViewController {
         
         startLoading(message: "가입중입니다")
         
-        AmazonClientManager.sharedInstance.devIdentityProvider?.register(username: username, password: password, nickname: nickname, gender: gender, birth: birth, phone: phone)
+        AmazonClientManager.shared.devIdentityProvider?.register(username: username, password: password, nickname: nickname, gender: gender, birth: birth, phone: phone)
             .continueWith(executor: AWSExecutor.mainThread()) { task in
             
             guard let userId = task.result as String? else {
                 fatalError("\(self.className) > \(#function) > userId is nil")
             }
             
-            AmazonClientManager.sharedInstance.devIdentityProvider?.loginUser(username: username, password: password)
+            AmazonClientManager.shared.devIdentityProvider?.loginUser(username: username, password: password)
                 .continueWith(executor: AWSExecutor.mainThread()) { loginTask in
                 
                 guard let loginEnable = loginTask.result as NSString? else {
@@ -143,7 +143,7 @@ class InsertPhoneViewController: UIViewController {
                 // OnSuccess
                 if loginEnable == "true" {
                     
-                    AmazonClientManager.sharedInstance.devIdentityProvider?.token()
+                    AmazonClientManager.shared.devIdentityProvider?.token()
                         .continueOnSuccessWith(executor: AWSExecutor.mainThread()) { tokenTask in
                         
                         guard let _ = tokenTask.result else {

@@ -20,17 +20,36 @@ protocol ProductDataSource {
     func destroy()
     
     func getProductInfo(id: Int, completion: @escaping (Result<ProductInfo, FailureReason>) -> Void)
-    func getProductInfos(completion: @escaping (Result<Array<ProductInfo>, FailureReason>) -> Void)
+    func getProductInfos(options: FilterOptions?, keyword: String?, completion: @escaping (Result<Array<ProductInfo>, FailureReason>) -> Void)
     func getReadTimes(completion: @escaping (Result<Array<ProductReadState>, FailureReason>) -> Void)
 }
 
 class ProductRepository : NSObject, ProductDataSource {
     
+    static let shared = ProductRepository()
+    
     var cachedData: [ProductInfo]
     var options: FilterOptions?
     var searchKey: String?
-    
     var readStates: [ProductReadState]
+    
+    private let mapper : AWSDynamoDBObjectMapper
+    
+    override init() {
+        self.mapper = AWSDynamoDBObjectMapper.default()
+        self.cachedData = []
+        self.readStates = []
+        self.options = FilterOptions()
+        
+        super.init()
+    }
+    
+    func destroy() {
+        cachedData = []
+        readStates = []
+        searchKey = nil
+        options = FilterOptions()
+    }
     
     func getProductInfo(id: Int, completion: @escaping (Result<ProductInfo, FailureReason>) -> Void) {
         mapper.load(ProductInfo.self, hashKey: id, rangeKey: nil)
@@ -44,10 +63,13 @@ class ProductRepository : NSObject, ProductDataSource {
         }
     }
     
-    func getProductInfos(completion: @escaping (Result<Array<ProductInfo>, FailureReason>) -> Void) {
+    func getProductInfos(options: FilterOptions?, keyword: String?, completion: @escaping (Result<Array<ProductInfo>, FailureReason>) -> Void) {
         let queryExpression = AWSDynamoDBQueryExpression()
         
-        if let keyword = self.searchKeyword {
+        self.options = options ?? FilterOptions()
+        self.searchKey = keyword
+        
+        if let keyword = keyword {
             queryExpression.indexName = ProductInfo.Schema.INDEX_STATUS_UPDATEDTIME
             queryExpression.keyConditionExpression = "\(ProductInfo.Attribute.PRODUCT_STATUS) = :productStatus"
             let filterExpression = "contains(" + ProductInfo.Attribute.TITLE_KOR + ", " + ":keyword" + ")"
@@ -59,10 +81,10 @@ class ProductRepository : NSObject, ProductDataSource {
             queryExpression.expressionAttributeValues = expressionAttributeValues
             queryExpression.scanIndexForward = false
         } else {
-            queryExpression.indexName = getIndexName()
+            queryExpression.indexName = getIndexName(with: options)
             queryExpression.keyConditionExpression = "\(ProductInfo.Attribute.PRODUCT_STATUS) = :productStatus"
-            if let filterExpression = getFilterExpression() { queryExpression.filterExpression = filterExpression }
-            queryExpression.expressionAttributeValues = getExpressionAttributeValues()
+            if let filterExpression = getFilterExpression(with: options) { queryExpression.filterExpression = filterExpression }
+            queryExpression.expressionAttributeValues = getExpressionAttributeValues(with: options)
             queryExpression.scanIndexForward = false
         }
         
@@ -71,7 +93,7 @@ class ProductRepository : NSObject, ProductDataSource {
             self.cachedData = []
             
             if let result = task.result as AWSDynamoDBPaginatedOutput?,
-               let items = result.items as? [ProductInfo] {
+                let items = result.items as? [ProductInfo] {
                 for item in items { self.cachedData.append(item) }
                 completion(.success(object: self.cachedData))
             } else {
@@ -99,157 +121,10 @@ class ProductRepository : NSObject, ProductDataSource {
         
     }
     
-    static let shared = ProductRepository()
-    
-    override init() {
-        self.mapper = AWSDynamoDBObjectMapper.default()
-        self.cachedData = []
-        self.readStates = []
-        self.options = FilterOptions()
+    private func getIndexName(with options: FilterOptions?) -> String {
         
-        
-        self.datas = []
-        self.likeStates = []
-        self.filterOptions = FilterOptions()
-        super.init()
-    }
-    
-    private let mapper : AWSDynamoDBObjectMapper
-    
-    var datas: Array<ProductInfo>?
-    var filterOptions: FilterOptions?
-    var searchKeyword: String?
-    
-    var likeStates: Array<ProductReadState>?
-    
-    func destroy() {
-        
-        cachedData = []
-        readStates = []
-        searchKey = nil
-        options = FilterOptions()
-        
-        
-        likeStates = []
-        datas = []
-        filterOptions = FilterOptions()
-        searchKeyword = nil
-        likeStates = []
-    }
-    
-    func loadData(startFromBeginning: Bool) -> AWSTask<AnyObject> {
-        
-        let loadTask = AWSTaskCompletionSource<AnyObject>()
-        
-        guard let userInfo = UserInfoRepository.shared.userInfo else {
-            fatalError("\(className) > \(#function) > userInfo not loaded")
-        }
-        
-        LikeRepository.shared.getDatas(userId: userInfo.userid).continueWith(executor: AWSExecutor.mainThread()) { likeTask in
-            
-            guard let _ = likeTask.result as! Array<LikeItem>? else {
-                fatalError("\(self.className) > \(#function) > Failed Like > getDatas")
-            }
-            
-            self.queryData(startFromBeginning: startFromBeginning).continueWith(executor: AWSExecutor.mainThread()) { task in
-                guard let _ = task.result else {
-                    print("\(self.className) > \(#function) > loadData > No Data")
-                    return nil
-                }
-                
-                loadTask.set(result: self.datas as AnyObject?)
-                
-                return nil
-            }
-            
-            return nil
-        }
-        
-        return loadTask.task
-    }
-    
-    func queryData(startFromBeginning: Bool) -> AWSTask<AnyObject> {
-        
-        let queryTask = AWSTaskCompletionSource<AnyObject>()
-        
-        let queryExpression = AWSDynamoDBQueryExpression()
-        
-        if let keyword = self.searchKeyword {
-            queryExpression.indexName = ProductInfo.Schema.INDEX_STATUS_UPDATEDTIME
-            queryExpression.keyConditionExpression = "\(ProductInfo.Attribute.PRODUCT_STATUS) = :productStatus"
-            let filterExpression = "contains(" + ProductInfo.Attribute.TITLE_KOR + ", " + ":keyword" + ")"
-                + " or " + "contains(" + ProductInfo.Attribute.ADDRESS + ", " + ":keyword" + ")"
-                + " or " + "contains(" + ProductInfo.Attribute.DESCRIPTION + ", " + ":keyword" + ")"
-            queryExpression.filterExpression = filterExpression
-            var expressionAttributeValues: [String : Any] = [":productStatus" : ProductInfo.RawValue.STATUS_ENABLED]
-            expressionAttributeValues[":keyword"] = keyword
-            queryExpression.expressionAttributeValues = expressionAttributeValues
-            queryExpression.scanIndexForward = false
-        } else {
-            queryExpression.indexName = getIndexName()
-            queryExpression.keyConditionExpression = "\(ProductInfo.Attribute.PRODUCT_STATUS) = :productStatus"
-            if let filterExpression = getFilterExpression() { queryExpression.filterExpression = filterExpression }
-            queryExpression.expressionAttributeValues = getExpressionAttributeValues()
-            queryExpression.scanIndexForward = false
-        }
-        
-        mapper.query(ProductInfo.self, expression: queryExpression).continueWith(executor: AWSExecutor.mainThread()) { task in
-            
-            self.datas?.removeAll(keepingCapacity: true)
-            
-            if task.result != nil {
-                let paginatedOutput = task.result! as AWSDynamoDBPaginatedOutput
-                for item in paginatedOutput.items as! [ProductInfo] {
-                    self.datas?.append(item)
-                }
-            }
-            
-            if task.error != nil {
-                print("\(self.className) > \(#function) > query Error : \(String(describing: task.error))")
-            }
-            
-            queryTask.set(result: self.datas as AnyObject?)
-            
-            return nil
-        }
-        
-        return queryTask.task
-    }
-    
-    func getReadTimes() -> AWSTask<AnyObject> {
-        
-        print("\(className) > \(#function)")
-        
-        return mapper.scan(ProductReadState.self, expression: AWSDynamoDBScanExpression())
-            .continueWith(executor: AWSExecutor.mainThread()) { task in
-            
-            if task.error != nil {
-                print("\(self.className) > \(#function) > Error")
-                return nil
-            }
-            
-            guard let result = task.result else {
-                print("\(self.className) > \(#function) > No result")
-                return nil
-            }
-            
-            self.likeStates = []
-            
-            let paginatedOutput = result as AWSDynamoDBPaginatedOutput
-            
-            for item in paginatedOutput.items as! [ProductReadState] {
-                
-                self.likeStates?.append(item)
-            }
-            
-            return nil
-        }
-    }
-    
-    private func getIndexName() -> String {
-        
-        guard let filterOptions = self.filterOptions else {
-            return ProductInfo.Schema.INDEX_STATUS_LIKECOUNT
+        guard let filterOptions = options else {
+            return ProductInfo.Schema.INDEX_STATUS_UPDATEDTIME
         }
         
         if filterOptions.sortMode == .like {
@@ -259,13 +134,11 @@ class ProductRepository : NSObject, ProductDataSource {
         }
     }
     
-    private func getFilterExpression() -> String? {
+    private func getFilterExpression(with options: FilterOptions?) -> String? {
         
         var filterExpression: String = ""
         
-        guard let filterOptions = self.filterOptions else {
-            return nil
-        }
+        guard let filterOptions = options else { return nil }
         
         if filterOptions.category != .none && filterOptions.category != .category {
             filterExpression += "\(ProductInfo.Attribute.MAIN_CATEGORY) = :mainCategory"
@@ -288,10 +161,10 @@ class ProductRepository : NSObject, ProductDataSource {
         return filterExpression
     }
     
-    private func getExpressionAttributeValues() -> [String : Any]? {
+    private func getExpressionAttributeValues(with options: FilterOptions?) -> [String : Any]? {
         var expressionAttributeValues: [String : Any] = [":productStatus" : ProductInfo.RawValue.STATUS_ENABLED]
         
-        guard let filterOptions = self.filterOptions else {
+        guard let filterOptions = options else {
             return expressionAttributeValues
         }
         

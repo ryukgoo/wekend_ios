@@ -39,13 +39,4 @@ extension UIView {
             })
         }
     }
-    
-    func addGradient(){
-        
-        let gradient:CAGradientLayer = CAGradientLayer()
-        gradient.frame.size = self.frame.size
-        gradient.colors = [UIColor.white.cgColor,UIColor.white.withAlphaComponent(0).cgColor]
-        self.layer.addSublayer(gradient)
-        
-    }
 }

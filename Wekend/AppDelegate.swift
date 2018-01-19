@@ -33,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // FBSDKApplicationDelegate initialize --> For What?????
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
-        return AmazonClientManager.sharedInstance.didFinishLaunching(application: application, didFinishLaunchingWithOptions: launchOptions)
+        return AmazonClientManager.shared.didFinishLaunching(application: application, didFinishLaunchingWithOptions: launchOptions)
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
@@ -108,7 +108,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             DeepLinker.checkDeepLink()
             NotificationParser.shared.displayNotification()
         } else {
-            AmazonClientManager.sharedInstance.loadUserInfo { isAutoLogin in
+            AmazonClientManager.shared.loadUserInfo { isAutoLogin in
                 if isAutoLogin {
                     DispatchQueue.main.async {
                         ApplicationNavigator.shared.showMainViewController() { DeepLinker.checkDeepLink() }

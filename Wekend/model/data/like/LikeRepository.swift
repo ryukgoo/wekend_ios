@@ -118,12 +118,9 @@ class LikeRepository : NSObject {
                     return nil
                 }
                 
-                if let index = ProductRepository.shared.datas?.index(where: { $0.ProductId == productInfo.ProductId }) {
-                    guard let newProductInfo = ProductRepository.shared.datas?[index] else {
-                        print("\(self.className) > \(#function) > get ProductInfo from ProductInfoManager Error")
-                        return nil
-                    }
+                if let index = ProductRepository.shared.cachedData.index(where: { $0.ProductId == productInfo.ProductId }) {
                     
+                    let newProductInfo = ProductRepository.shared.cachedData[index]
                     newProductInfo.isLike = false
                     newProductInfo.realLikeCount = likeCount
                     
@@ -220,12 +217,8 @@ class LikeRepository : NSObject {
                     return nil
                 }
                 
-                if let index = ProductRepository.shared.datas?.index(where: { $0.ProductId == item.ProductId }) {
-                    guard let newProductInfo = ProductRepository.shared.datas?[index] else {
-                        print("\(self.className) > \(#function) > get productInfo from ProductInfoManager Error")
-                        return nil
-                    }
-                    
+                if let index = ProductRepository.shared.cachedData.index(where: { $0.ProductId == item.ProductId }) {
+                    let newProductInfo = ProductRepository.shared.cachedData[index]
                     newProductInfo.isLike = false
                     newProductInfo.realLikeCount = likeCount
                     
@@ -250,11 +243,6 @@ class LikeRepository : NSObject {
         
         let getDataTask = AWSTaskCompletionSource<AnyObject>()
         
-//        if (datas?.count)! > 0 {
-//            getDataTask.set(result: self.datas as AnyObject?)
-//            return getDataTask.task
-//        }
-        
         let queryExpression = AWSDynamoDBQueryExpression()
         queryExpression.indexName = LikeItem.Schema.INDEX_USERID_UPDATEDTIME
         queryExpression.keyConditionExpression = "\(LikeItem.Attribute.USER_ID) = :userId"
@@ -276,58 +264,44 @@ class LikeRepository : NSObject {
             
             print("\(self.className) > \(#function) > complete And getReadTimes start")
             
-            ProductRepository.shared.getReadTimes()
-                .continueWith(executor: AWSExecutor.mainThread()) { readTask in
-                
-                print("\(self.className) > \(#function) > getReadTimes in continue")
+            ProductRepository.shared.getReadTimes { readTimeResult in
                 
                 self.datas = []
                 
-                if readTask.error != nil {
+                if case let Result.success(object: data) = readTimeResult {
+                    
+                    for item in paginatedOutput.items as! [LikeItem] {
+                        for readItem in data {
+                            if item.ProductId == readItem.ProductId {
+                                
+                                item.isRead = self.compareLikeTimeAndReadTime(like: item, read: readItem)
+                                
+                                if item.Gender == UserInfo.RawValue.GENDER_MALE {
+                                    item.productLikedTime = readItem.FemaleLikeTime ?? ""
+                                } else {
+                                    item.productLikedTime = readItem.MaleLikeTime ?? ""
+                                }
+                                
+                                if let updatedTime = item.UpdatedTime {
+                                    if (updatedTime > item.productLikedTime) {
+                                        item.productLikedTime = updatedTime
+                                    }
+                                }
+                                break
+                            }
+                        }
+                        self.datas?.append(item)
+                    }
+                    
+                    self.datas?.sort(by: { $0.productLikedTime > $1.productLikedTime })
+                    getDataTask.set(result: self.datas as AnyObject?)
+                } else {
                     for item in paginatedOutput.items as! [LikeItem] {
                         self.datas?.append(item)
                     }
                     
                     getDataTask.set(result: self.datas as AnyObject?)
                 }
-                
-                guard let productReadTimes = ProductRepository.shared.likeStates else {
-                    print("\(self.className) > \(#function) > likeStates is nil")
-                    return nil
-                }
-                
-                for item in paginatedOutput.items as! [LikeItem] {
-                    for readItem in productReadTimes {
-                        if item.ProductId == readItem.ProductId {
-                            
-                            item.isRead = self.compareLikeTimeAndReadTime(like: item, read: readItem)
-                            print("\(self.className) > \(#function) > compareLikeTimeAndReadTime > ProductId : \(item.ProductId), isRead : \(item.isRead)")
-                            
-                            if item.Gender == UserInfo.RawValue.GENDER_MALE {
-                                item.productLikedTime = readItem.FemaleLikeTime ?? ""
-                            } else {
-                                item.productLikedTime = readItem.MaleLikeTime ?? ""
-                            }
-                            
-                            if let updatedTime = item.UpdatedTime {
-                                if (updatedTime > item.productLikedTime) {
-                                    item.productLikedTime = updatedTime
-                                }
-                            }
-                            
-                            break
-                        }
-                    }
-                    
-                    self.datas?.append(item)
-                    
-                }
-                
-                self.datas?.sort(by: { $0.productLikedTime > $1.productLikedTime })
-                
-                getDataTask.set(result: self.datas as AnyObject?)
-                
-                return nil
             }
             
             return nil
@@ -498,11 +472,9 @@ class LikeRepository : NSObject {
     }
     
     func hasLike(productId : Int) -> Bool {
-        
         guard let datas = self.datas else { return false }
         
         for item in datas {
-            
             if item.ProductId == productId {
                 return true
             }

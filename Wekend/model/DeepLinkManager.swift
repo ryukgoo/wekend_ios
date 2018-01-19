@@ -96,7 +96,9 @@ class DeepLinkNavigator {
             fatalError()
         }
         
-        detailVC.productId = id
+        detailVC.viewModel = CampaignViewModel(id: id,
+                                               isLikeEnabled: false,
+                                               dataSource: ProductRepository.shared)
         
         if let presentedVC = UIApplication.topViewController()?.presentedViewController as? UIAlertController {
             presentedVC.dismiss(animated: false, completion: {
@@ -127,11 +129,14 @@ class ApplicationNavigator {
         let loginStoryBoard = Constants.StoryboardName.Login
         let loginboard = UIStoryboard(name: loginStoryBoard.rawValue, bundle: nil)
         
-        guard let loginVC = loginboard.instantiateViewController(withIdentifier: loginStoryBoard.identifier) as? UINavigationController,
+        guard let navigationController = loginboard.instantiateViewController(withIdentifier: loginStoryBoard.identifier) as? UINavigationController,
+            let loginViewController = navigationController.viewControllers.first as? LoginViewController,
             let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
                 fatalError("AmazonClientManager > didFinishLaunching > get VC and AppDelegate Error")
         }
-        appDelegate.window!.rootViewController = loginVC
+        
+        loginViewController.viewModel = LoginViewModel(dataSource: UserInfoRepository.shared)
+        appDelegate.window!.rootViewController = navigationController
         appDelegate.window!.makeKeyAndVisible()
     }
     

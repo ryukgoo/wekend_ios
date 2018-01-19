@@ -30,9 +30,9 @@ class EditProfileViewController: UIViewController {
     @IBOutlet weak var confirmCodeButton: WhiteRoundedButton!
     
     var editCells: [EditCell]!
-    var viewModel: UserProfileViewModel?
     var activeTextView: UIView?
     var activeEditCell: EditCell?
+    var viewModel: UserProfileViewModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()

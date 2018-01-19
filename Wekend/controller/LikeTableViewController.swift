@@ -278,10 +278,11 @@ extension LikeTableViewController: UITableViewDelegate {
             fatalError("\(self.className) > \(#function) > initialize CampaignViewcontroller Error")
         }
         
-        guard let selectedLikeItem = LikeRepository.shared.datas?[indexPath.row] else {
-            return
-        }
-        detailVC.productId = selectedLikeItem.ProductId
+        guard let selectedLikeItem = LikeRepository.shared.datas?[indexPath.row] else { return }
+        
+        detailVC.viewModel = CampaignViewModel(id: selectedLikeItem.ProductId,
+                                               isLikeEnabled: true,
+                                               dataSource: ProductRepository.shared)
         
         navigationController?.pushViewController(detailVC, animated: true)
         LikeRepository.shared.updateReadTime(likeItem: selectedLikeItem)

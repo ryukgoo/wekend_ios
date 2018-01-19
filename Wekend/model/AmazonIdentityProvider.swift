@@ -239,6 +239,7 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
 //                    fatalError("AmazonIdentityProvider > loginUser response Error")
                     // TODO : Alert Login failed
                     print("\(self.className) > \(#function) > LoginUser Error")
+                    loginTask.set(error: AuthenticateError.unknown)
                     return nil
                 }
                 
@@ -293,19 +294,8 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
         ReceiveMailRepository.shared.destroy()
         SendMailRepository.shared.destroy()
         
-        AmazonClientManager.sharedInstance.clearCredentials()
-        
-        let loginStoryBoard = Constants.StoryboardName.Login
-        let loginboard = UIStoryboard(name: loginStoryBoard.rawValue, bundle: nil)
-        
-        guard let loginVC = loginboard.instantiateViewController(withIdentifier: loginStoryBoard.identifier) as? UINavigationController,
-            let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-                print("\(className) > \(#function) > get VC and AppDelegate Error")
-                return
-        }
-        
-        appDelegate.window!.rootViewController = loginVC
-        appDelegate.window!.makeKeyAndVisible()
+        AmazonClientManager.shared.clearCredentials()
+        ApplicationNavigator.shared.showLoginViewController()
     }
     
 }

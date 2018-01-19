@@ -11,52 +11,37 @@ import AWSCore
 
 class LoginViewController: UIViewController {
 
-    deinit {
-        print("\(className) > \(#function)")
-    }
-    
-    // MARK: AlertController with IndicatorView
-    
-    var activeTextField: UITextField?
-    
     // MARK: IBOutlet
-    
     @IBOutlet weak var usernameInputText: UITextField!
     @IBOutlet weak var passwordInputText: UITextField!
     @IBOutlet weak var loginButton: RoundedButton!
     @IBOutlet weak var signupButton: RoundedButton!
     @IBOutlet weak var signupConditionLabel: UILabel!
     
+    var activeTextField: UITextField?
+    var viewModel: LoginViewModel?
+    
+    deinit {
+        print("\(className) > \(#function)")
+        removeKeyboardObserver(self)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("\(className) > \(#function)")
         
         initTextFields()
         
-        // buttons
         loginButton.isEnabled = false
         signupButton.isEnabled = true
+        
+        bindViewModel()
+        addKeyboardObserver(self)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.tintColor = UIColor.white
-        navigationController?.navigationBar.isTranslucent = true
         
-        addKeyboardObserver(self)
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        removeKeyboardObserver(self)
-    }
-    
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        usernameInputText.layer.addBorder(edge: .bottom, color: .white, thickness: 1.0)
-        passwordInputText.layer.addBorder(edge: .bottom, color: .white, thickness: 1.0)
+        navigationController?.isNavigationBarHidden = true
     }
 
     override func didReceiveMemoryWarning() {
@@ -78,65 +63,20 @@ class LoginViewController: UIViewController {
                 return
         }
         
-        if !username.isValidEmailAddress() {
-            print("\(className) > \(#function) > username is not valid")
+        guard let viewModel = viewModel else { return }
+        
+        if !viewModel.validateUsername(username) {
             alert(message: "지원하지 않는 이메일 형식입니다", title: "E-mail 오류")
+            return
         }
         
-        if !password.isValidPassword() {
-            print("\(className) > \(#function) > password is not valid")
+        if !viewModel.validatePassword(password) {
             alert(message: "패스워드는 영문과 숫자 조합 6자리 이상이어야 합니다", title: "Password 오류")
+            return
         }
         
         startLoading(message: "로그인중입니다")
-        
-        AmazonClientManager.sharedInstance.devIdentityProvider?.loginUser(username: username, password: password)
-            .continueWith(executor: AWSExecutor.mainThread()) { task in
-            
-            if let error = task.error as? AuthenticateError {
-                print("\(self.className) > \(#function) > error : \(error.localizedDescription)")
-                DispatchQueue.main.async {
-                    self.endLoading()
-                    self.alert(message: "등록되지 않은 계정이거나\n비밀번호가 일치하지 않습니다.", title: "로그인실패", completion: nil)
-                }
-                return nil
-            }
-            
-            guard let enabled = task.result else {
-                DispatchQueue.main.async {
-                    self.endLoading()
-                    self.alert(message: "등록되지 않은 계정이거나\n비밀번호가 일치하지 않습니다.", title: "로그인실패", completion: nil)
-                }
-                print("\(self.className) > \(#function) > enabled Error")
-                return nil
-            }
-            
-            print("\(self.className) > \(#function) > enabled : \(enabled)")
-            
-            if enabled.isEqual(to: "true") {
-                print("\(self.className) > \(#function) > go MainViewController")
-                
-                guard let userId = UserDefaults.Account.string(forKey: .userId) else {
-                    fatalError("\(self.className) > \(#function) > get UserId from UserDefaults Error")
-                }
-                
-                UserInfoRepository.shared.getUserInfo(id: userId) { result in
-                    if case Result.success(object: _) = result {
-                        UserInfoRepository.shared.registerEndpoint()
-                    } else if case Result.failure(_) = result {
-                        DispatchQueue.main.async {
-                            self.endLoading()
-                            guard let mainVC = MainViewController.storyboardInstance(from: "Main") as? MainViewController else { return }
-                            self.present(mainVC, animated: true, completion: nil)
-                        }
-                    }
-                }
-                
-                
-            }
-            return nil
-        }
-        
+        viewModel.login(username: username, password: password)
     }
 
     // MARK: - Navigation
@@ -149,58 +89,57 @@ class LoginViewController: UIViewController {
         if segue.identifier == SignupViewController.className {
             print("\(className) > \(#function) > prepare > identifier : \(String(describing: segue.identifier))")
         }
-        
     }
-    
+}
+
+extension LoginViewController {
+    fileprivate func bindViewModel() {
+        self.viewModel?.onShowAlert = { [weak self] alert in
+            let alertController = UIAlertController(title: alert.title,
+                                                    message: alert.message,
+                                                    preferredStyle: .alert)
+            for action in alert.actions {
+                alertController.addAction(UIAlertAction(title: action.buttonTitle,
+                                                        style: action.style,
+                                                        handler: { _ in action.handler?() }))
+            }
+            if let viewController = self?.presentedViewController as? UIAlertController {
+                viewController.dismiss(animated: false, completion: nil)
+            }
+            self?.present(alertController, animated: true, completion: nil)
+        }
+        
+        self.viewModel?.onLoggin = { [weak self] _ in
+            self?.endLoading()
+            guard let mainVC = MainViewController.storyboardInstance(from: "Main") as? MainViewController else { return }
+            self?.present(mainVC, animated: true, completion: nil)
+        }
+    }
 }
 
 // MARK: -UITextFieldDelegate
-
 extension LoginViewController: UITextFieldDelegate {
     
     func initTextFields() {
 
+        usernameInputText.layer.addBorder(edge: .bottom, color: .white, thickness: 1.0)
         usernameInputText.keyboardType = .emailAddress
-        passwordInputText.isSecureTextEntry = true
-        
         usernameInputText.delegate = self
-        passwordInputText.delegate = self
-        
+        usernameInputText.inputAccessoryView = getKeyboardToolbar()
         usernameInputText.addTarget(self, action: #selector(self.usernameDidChange(_:)), for: .editingChanged)
+        
+        passwordInputText.layer.addBorder(edge: .bottom, color: .white, thickness: 1.0)
+        passwordInputText.isSecureTextEntry = true
+        passwordInputText.delegate = self
+        passwordInputText.inputAccessoryView = getKeyboardToolbar()
         passwordInputText.addTarget(self, action: #selector(self.passwordDidChange(_:)), for: .editingChanged)
         
         signupConditionLabel.text = "회원가입을 하면 위켄드의 서비스 약관, 결제서비스 약관, 개인정보 보호정책, 환불 정책, 보호 프로그램 이용약관에 동의하는 것으로 간주됩니다."
-        
-        let toolbar = getToolbar()
-        
-        usernameInputText.inputAccessoryView = toolbar
-        passwordInputText.inputAccessoryView = toolbar
     }
     
-    func getToolbar() -> UIToolbar {
-        
-        let toolbar: UIToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 30))
-        
-        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        
-        let doneButton: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self,
-                                                          action: #selector(self.doneKeyboard(_:)))
-        
-        var buttonArray = [UIBarButtonItem]()
-        buttonArray.append(flexSpace)
-        buttonArray.append(doneButton)
-        
-        toolbar.setItems(buttonArray, animated: false)
-        toolbar.sizeToFit()
-        
-        return toolbar
+    override func getFocusView() -> UIView? {
+        return activeTextField
     }
-    
-    override func doneKeyboard(_ sender: Any) {
-        self.view.endEditing(true)
-    }
-    
-    // MARK: UITextFieldDelegate
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         activeTextField = textField
@@ -221,7 +160,6 @@ extension LoginViewController: UITextFieldDelegate {
     
     func usernameDidChange(_ textField: UITextField) {
         self.loginButton.isEnabled = textField.text!.isValidEmailAddress()
-        
     }
     
     func passwordDidChange(_ textField: UITextField) { }
@@ -251,13 +189,5 @@ extension LoginViewController: AgreementDelegate {
     
     func onAgreementTapped() {
         self.performSegue(withIdentifier: SignupViewController.className, sender: self)
-    }
-}
-
-// MARK: - Notification Observers
-extension LoginViewController {
-    
-    override func getFocusView() -> UIView? {
-        return activeTextField
     }
 }
