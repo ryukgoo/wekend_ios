@@ -16,7 +16,7 @@ extension UIViewController {
         
         var loadingMessage = ""
         if message != nil {
-            loadingMessage = message!;
+            loadingMessage = message!
         } else {
             loadingMessage = Constants.Title.Message.LOADING
         }
@@ -34,7 +34,6 @@ extension UIViewController {
     }
     
     func endLoading() {
-        
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
         
         if let viewController = presentedViewController as? UIAlertController {

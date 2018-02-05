@@ -8,13 +8,13 @@
 
 import Foundation
 
-protocol CampaignCellViewModel {
+protocol CampaignCellBindable {
     var productInfo: ProductInfo? { get }
     var isSelected: Bool { get }
     var listener: ((ProductInfo) -> Void)? { get }
 }
 
-struct CampaignCell: CampaignCellViewModel {
+struct CampaignCellViewModel: CampaignCellBindable {
     
     var productInfo: ProductInfo?
     var isSelected: Bool

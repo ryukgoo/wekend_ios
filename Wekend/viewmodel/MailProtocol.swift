@@ -18,3 +18,12 @@ protocol MailViewModel {
     func accept()
     func reject()
 }
+
+protocol MailListLoadable {
+    var datas: Dynamic<Array<Mail>?> { get }
+    func loadMailList()
+}
+
+protocol MailDeletable {
+    func delete(mail: Mail, index: Int, completion: @escaping (Bool) -> Void)
+}

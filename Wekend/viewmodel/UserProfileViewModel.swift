@@ -39,7 +39,7 @@ struct UserProfileViewModel: UserProfileViewModelProtocol, Alertable {
         self.user.value = userInfo
     }
     
-    func updateUser(company: String?, school: String?, introduce: String?) {
+    func updateUser(company: String?, school: String?, area: String?, introduce: String?) {
         
         guard let userInfo = user.value else { return }
         
@@ -53,6 +53,12 @@ struct UserProfileViewModel: UserProfileViewModelProtocol, Alertable {
             userInfo.school = nil
         } else {
             userInfo.school = school
+        }
+        
+        if let area = area, area.isEmpty {
+            userInfo.area = nil
+        } else {
+            userInfo.area = area
         }
         
         if let introduce = introduce, introduce.isEmpty {
@@ -161,8 +167,8 @@ struct UserProfileViewModel: UserProfileViewModelProtocol, Alertable {
             guard let userInfo = user.value else { return }
             userInfo.phone = phone
             let operation = UpdateUserOperation(userInfo: userInfo, dataSource: userDataSource)
-            operation.execute { isSuccess in
-                if isSuccess {
+            operation.execute { success in
+                if success {
                     let alert = ButtonAlert(title: nil, message: "휴대폰 정보가 수정되었습니다", actions: [AlertAction.done])
                     self.onShowAlert?(alert)
                 } else {

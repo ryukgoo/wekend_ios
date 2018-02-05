@@ -53,8 +53,8 @@ struct ProposeOperation {
         
         userDataSource.consumePoint(point: 500) { result in
             if case Result.success(object: _) = result {
-                self.mailDataSource.updateMail(mail: self.mail) { isSuccess in
-                    if isSuccess {
+                self.mailDataSource.updateMail(mail: self.mail) { success in
+                    if success {
                         completion(.success(object: nil))
                     } else {
                         completion(.failure(.notAvailable))
@@ -105,9 +105,9 @@ struct AcceptOperation {
         acceptedMail.UpdatedTime = mail.UpdatedTime
         acceptedMail.ResponseTime = timestamp
         
-        dataSource.updateMail(mail: acceptedMail) { isSuccess in
+        dataSource.updateMail(mail: acceptedMail) { success in
             DispatchQueue.main.async {
-                if isSuccess {
+                if success {
                     completion(.success(object: acceptedMail))
                 } else {
                     completion(.failure(.notAvailable))
@@ -153,9 +153,9 @@ struct RejectOperation {
         rejectedMail.UpdatedTime = mail.UpdatedTime
         rejectedMail.ResponseTime = timestamp
         
-        dataSource.updateMail(mail: rejectedMail) { isSuccess in
+        dataSource.updateMail(mail: rejectedMail) { success in
             DispatchQueue.main.async {
-                if isSuccess {
+                if success {
                     completion(.success(object: rejectedMail))
                 } else {
                     completion(.failure(.notAvailable))
@@ -172,8 +172,8 @@ struct UpdateMailOperation {
     }
     
     func execute(completion: @escaping (Result<Any?, FailureReason>) -> Void) {
-        ReceiveMailRepository.shared.updateMail(mail: mail) { isSuccess in
-            if isSuccess {
+        ReceiveMailRepository.shared.updateMail(mail: mail) { success in
+            if success {
                 completion(.success(object: nil))
             } else {
                 completion(.failure(.notAvailable))

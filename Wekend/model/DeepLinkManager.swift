@@ -162,16 +162,11 @@ class NotificationParser {
     
     func displayNotification() {
         
-        guard let userId = UserInfoRepository.shared.userInfo?.userid else {
-            print("\(#function) > userId is nil")
-            return
-        }
-        
         let likeCount = UserDefaults.NotificationCount.integer(forKey: .like)
         let receiveCount = UserDefaults.NotificationCount.integer(forKey: .receiveMail)
         let sendCount = UserDefaults.NotificationCount.integer(forKey: .sendMail)
         
-        UserInfoRepository.shared.getUserInfo(id: userId) { result in
+        UserInfoRepository.shared.getOwnUserInfo() { result in
             if case let Result.success(object: value) = result {
                 NotificationCenter.default.post(name: Notification.Name(rawValue: AppDelegate.WillEnterForeground),
                                                 object: nil,

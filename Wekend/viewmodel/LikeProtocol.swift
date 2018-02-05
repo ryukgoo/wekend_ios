@@ -9,15 +9,10 @@
 import Foundation
 
 protocol Likable {
-    func likeProduct()
+    func likeProduct(user: UserInfo, product: ProductInfo)
 }
 
 protocol LikeLoadable {
     var like: Dynamic<LikeItem?> { get }
     func loadLike(userId: String, productId: Int)
-}
-
-protocol LikeCountable {
-    var onGetFriendCount: ((Int) -> Void)? { get set }
-    func getFriendCount(productId: Int, gender: String)
 }

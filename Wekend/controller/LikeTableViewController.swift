@@ -49,7 +49,7 @@ class LikeTableViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         
-        refreshControlView.attributedTitle = NSAttributedString(string: "Pull to Refresh")
+        refreshControlView.attributedTitle = NSAttributedString(string: "업데이트중...")
         refreshControlView.addTarget(self, action: #selector(self.refresh(_:)), for: .valueChanged)
         
         if #available(iOS 10.0, *) {

@@ -16,11 +16,9 @@ class NoticeDetailViewController: UIViewController {
     
     // MARK: IBOutlet
     
-    @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var beforeButton: UIButton!
     @IBOutlet weak var detailTitleLabel: KRWordWrapLabel!
     @IBOutlet weak var descriptionLabel: KRWordWrapLabel!
-    @IBOutlet weak var containerViewHeight: NSLayoutConstraint!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,24 +41,11 @@ class NoticeDetailViewController: UIViewController {
         
         detailTitleLabel.text = notice.title
         descriptionLabel.text = notice.content
-        
-        detailTitleLabel.sizeToFit()
-        descriptionLabel.sizeToFit()
-        
-        var scrollableHeight = beforeButton.frame.height
-        scrollableHeight += 28
-        scrollableHeight += detailTitleLabel.frame.height
-        scrollableHeight += 17
-        scrollableHeight += descriptionLabel.frame.height
-        scrollableHeight += 20
-        
-        containerViewHeight.constant = scrollableHeight
     }
     
     // MARK: IBAction
     
     @IBAction func onBeforeButtonTapped(_ sender: Any) {
-        
         guard let _ = self.navigationController?.popViewController(animated: true) else {
             fatalError("\(className) > \(#function) > popViewController Error")
         }

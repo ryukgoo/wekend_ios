@@ -10,7 +10,7 @@ import UIKit
 import AWSS3
 import SDWebImage
 
-class MyProfileViewController: UIViewController {
+class SettingProfileViewController: UIViewController {
     
     // MARK: IBOutlet
     
@@ -20,6 +20,7 @@ class MyProfileViewController: UIViewController {
     @IBOutlet weak var nickname: UILabel!
     @IBOutlet weak var company: UILabel!
     @IBOutlet weak var school: UILabel!
+    @IBOutlet weak var area: UILabel!
     @IBOutlet weak var phone: UILabel!
     @IBOutlet weak var introduce: UILabel!
     @IBOutlet weak var introductUnderline: UIView!
@@ -81,6 +82,13 @@ class MyProfileViewController: UIViewController {
                 self?.school.isHidden = true
             }
             
+            if let area = user.area {
+                self?.area.isHidden = false
+                self?.area.text = area
+            } else {
+                self?.area.isHidden = true
+            }
+            
             self?.phone.text = user.phone?.toPhoneFormat()
             if let introduce = user.introduce {
                 self?.introduce.isHidden = false
@@ -110,7 +118,7 @@ class MyProfileViewController: UIViewController {
 }
 
 // MARK: - PagerViewDelegate, UIScrollViewDelegate
-extension MyProfileViewController: PagerViewDelegate, UIScrollViewDelegate {
+extension SettingProfileViewController: PagerViewDelegate, UIScrollViewDelegate {
     
     func loadPageViewItem(imageView: UIImageView, page: Int) {
         

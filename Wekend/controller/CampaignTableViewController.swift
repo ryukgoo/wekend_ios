@@ -73,6 +73,10 @@ class CampaignTableViewController: UIViewController {
             self?.tableView.beginUpdates()
             self?.tableView.setContentOffset(.zero, animated: false)
             self?.tableView.endUpdates()
+            
+            self?.navigationItem.titleView = nil
+            self?.dropDownTitleView.title = viewModel.getTitleText()
+            self?.navigationItem.titleView = self?.dropDownTitleView
         }
     }
     
@@ -90,6 +94,10 @@ class CampaignTableViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         dropDownMenu.container = self.view
+    }
+    
+    @IBAction func reloadButtonTapped(_ sender: Any) {
+        loadProductData(options: nil, keyword: nil)
     }
     
     // MARK: ScrollView Delegate
@@ -114,7 +122,7 @@ extension CampaignTableViewController {
     }
     
     func initRefreshControl() {
-        refreshControl.attributedTitle = NSAttributedString(string: "Pull to Refresh")
+        refreshControl.attributedTitle = NSAttributedString(string: "업데이트중...")
         refreshControl.addTarget(self, action: #selector(self.refresh(_:)), for: .valueChanged)
         
         if #available(iOS 10.0, *) {
@@ -125,7 +133,7 @@ extension CampaignTableViewController {
     }
     
     func refresh(_ sender: Any) {
-        loadProductData(options: nil, keyword: nil)
+        loadProductData(options: viewModel?.options.value, keyword: viewModel?.keyword.value)
     }
     
     func loadProductData(options: FilterOptions?, keyword: String?) {
@@ -158,7 +166,7 @@ extension CampaignTableViewController: UITableViewDelegate {
         let productInfo = ProductRepository.shared.cachedData[indexPath.row]
         
         let isSelected = LikeRepository.shared.hasLike(productId: productInfo.ProductId)
-        var viewModel = CampaignCell(info: productInfo, isSelected: isSelected)
+        var viewModel = CampaignCellViewModel(info: productInfo, isSelected: isSelected)
         viewModel.listener = { info in self.heartButtonTapped(info) }
         cell.viewModel = viewModel
         
@@ -238,8 +246,13 @@ extension CampaignTableViewController: DropDownMenuDelegate {
         let dropDownMenu = DropDownMenu(frame: view.bounds)
         dropDownMenu.delegate = self
         
-        dropDownMenu.menuView.estimatedRowHeight = 45.0
-        dropDownMenu.menuView.rowHeight = 45.0
+        if UIScreen.main.bounds.width == 320.0 {
+            dropDownMenu.menuView.estimatedRowHeight = 46.0
+            dropDownMenu.menuView.rowHeight = 46.0
+        } else {
+            dropDownMenu.menuView.estimatedRowHeight = 54.0
+            dropDownMenu.menuView.rowHeight = 54.0
+        }
         
         let sortCell = getSortCell()
         let categoryCell = getCategoryCell()
@@ -304,11 +317,29 @@ extension CampaignTableViewController: DropDownMenuDelegate {
     
     func getButtonCell() -> DropDownMenuCell {
         let buttonCell = DropDownMenuCell()
-        let doneButton = UIButton(frame: buttonCell.frame)
+        let frame = CGRect(x: buttonCell.frame.origin.x, y: buttonCell.frame.origin.y + 2, width: buttonCell.frame.width, height: buttonCell.frame.height - 4)
+        
+        let stackView = UIStackView(frame: frame)
+        stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+        stackView.spacing = 10.0
+        
+        let allButton = WhiteRoundedButton()
+        allButton.backgroundColor = UIColor(netHex:0xf2797c)
+        allButton.setTitle(Constants.Title.View.MAIN, for: .normal)
+        allButton.setTitleColor(UIColor(netHex: 0xf2797c), for: .normal)
+        allButton.addTarget(self, action: #selector(self.showAll(_:)), for: .touchUpInside)
+        
+        let doneButton = WhiteRoundedButton()
+        doneButton.backgroundColor = UIColor(netHex:0xf2797c)
         doneButton.setTitle(Constants.Title.Button.DONE, for: .normal)
         doneButton.setTitleColor(UIColor(netHex: 0xf2797c), for: .normal)
         doneButton.addTarget(self, action: #selector(self.doneFilter(_:)), for: .touchUpInside)
-        buttonCell.customView = doneButton
+        
+        stackView.addArrangedSubview(allButton)
+        stackView.addArrangedSubview(doneButton)
+        
+        buttonCell.customView = stackView
         
         return buttonCell
     }
@@ -453,34 +484,33 @@ extension CampaignTableViewController: FilterMenuCellDelegate {
             break
         }
         
-        var titleText = "전체보기"
-        
-        if filterOptions.category.rawValue == Category.category.rawValue {
-            if filterOptions.region.rawValue != ProductRegion.none.rawValue {
-                titleText = filterOptions.region.toString
-            }
-        } else {
-            titleText = filterOptions.category.toString
-            
-            if (filterOptions.food != nil) && (filterOptions.food?.rawValue != Food.category.rawValue) {
-                titleText = titleText + "+" + (filterOptions.food?.toString ?? "")
-            } else if (filterOptions.concert != nil) && (filterOptions.concert?.rawValue != Concert.category.rawValue) {
-                titleText = titleText + "+" + (filterOptions.concert?.toString ?? "")
-            } else if (filterOptions.leisure != nil) && (filterOptions.leisure?.rawValue != Leisure.category.rawValue) {
-                titleText = titleText + "+" + (filterOptions.leisure?.toString ?? "")
-            }
-            
-            if filterOptions.region.rawValue != ProductRegion.none.rawValue {
-                titleText = titleText + "+" + filterOptions.region.toString
-            }
-        }
-        
-        navigationItem.titleView = nil
-        dropDownTitleView.title = titleText
-        navigationItem.titleView = dropDownTitleView
-        
         loadProductData(options: filterOptions, keyword: nil)
         
+    }
+    
+    func showAll(_ sender: Any) {
+        if let menuCell = self.selectedMenuCell {
+            menuCell.dismiss()
+        }
+        
+        guard let mainCategoryCell = dropDownMenu.menuCells[1] as? FilterMenuCell,
+            let subCategoryCell = dropDownMenu.menuCells[2] as? FilterMenuCell,
+            let regionCell = dropDownMenu.menuCells[3] as? FilterMenuCell else {
+                print("\(className) > \(#function) > menuCell not created")
+                return
+        }
+        
+        mainCategoryCell.data = Category.allStrings
+        subCategoryCell.data = [Food.category.toString]
+        regionCell.data = [ProductRegion.none.toString]
+        mainCategoryCell.selectedRow = 0
+        subCategoryCell.selectedRow = 0
+        regionCell.selectedRow = 0
+        subCategoryCell.setEnabled(false)
+        regionCell.setEnabled(false)
+        
+        dropDownTitleView.toggleMenu()
+        loadProductData(options: FilterOptions(), keyword: nil)
     }
 }
 
@@ -537,16 +567,10 @@ extension CampaignTableViewController: UISearchBarDelegate {
         
         searchBar.resignFirstResponder()
         
-        navigationItem.titleView = nil
-        dropDownTitleView.title = "\"\(searchText)\"(으)로 검색"
-        navigationItem.titleView = dropDownTitleView
-        
-        navigationItem.titleView = dropDownTitleView
         navigationItem.rightBarButtonItem = getSearchBarItem()
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
         loadProductData(options: nil, keyword: searchText)
-        
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {

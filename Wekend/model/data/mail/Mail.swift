@@ -20,10 +20,24 @@ protocol Mail {
     var ProposeStatus: String? { get }
     var Message: String? { get }
     var IsRead: Any? { get }
+    
+    var mailType: MailType { get }
+    var highlightColor: UIColor { get }
 }
 
-enum MailType {
-    case send, receive
+enum MailType: Int {
+    case receive, send, all
+    
+    func emptyMessage() -> String {
+        switch self {
+        case .receive:
+            return "받은 메일이 없습니다"
+        case .send:
+            return "보낸 메일이 없습니다"
+        default:
+            return ""
+        }
+    }
 }
 
 enum ProposeStatus: String {
@@ -81,6 +95,8 @@ class SendMail: AWSDynamoDBObjectModel, AWSDynamoDBModeling, Mail {
     // MARK: Properties
     
     var mailType: MailType = .send
+    var highlightColor: UIColor = UIColor(netHex: 0x28b1ca)
+    
     var UserId: String = ""
     var UpdatedTime: String = ""
     var ResponseTime: String = ""
@@ -115,7 +131,7 @@ class SendMail: AWSDynamoDBObjectModel, AWSDynamoDBModeling, Mail {
     }
     
     static func ignoreAttributes() -> [String] {
-        return ["mailType", "FriendId", "FriendNickname"]
+        return ["mailType", "FriendId", "FriendNickname", "highlightColor"]
     }
 }
 
@@ -143,6 +159,8 @@ class ReceiveMail: AWSDynamoDBObjectModel, AWSDynamoDBModeling, Mail {
     // MARK: Properties
     
     var mailType: MailType = .receive
+    var highlightColor: UIColor = UIColor(netHex: 0xe2154a)
+    
     var UserId: String = ""
     var UpdatedTime: String = ""
     var ResponseTime: String = ""
@@ -177,7 +195,7 @@ class ReceiveMail: AWSDynamoDBObjectModel, AWSDynamoDBModeling, Mail {
     }
     
     static func ignoreAttributes() -> [String] {
-        return ["mailType", "FriendId", "FriendNickname"]
+        return ["mailType", "FriendId", "FriendNickname", "highlightColor"]
     }
 }
 

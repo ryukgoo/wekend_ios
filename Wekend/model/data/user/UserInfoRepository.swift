@@ -17,6 +17,7 @@ protocol UserInfoDataSource {
     
     func destroy()
     
+    func getOwnUserInfo(completion: @escaping (Result<UserInfo, FailureReason>) -> Void)
     func getUserInfo(id: String, completion: @escaping (Result<UserInfo, FailureReason>) -> Void)
     func validateUsername(name: String, completion: @escaping (Bool) -> Void)
     func validateNickname(name: String, completion: @escaping (Bool) -> Void)
@@ -34,6 +35,8 @@ struct UserNotification {
 }
 
 class UserInfoRepository: NSObject, UserInfoDataSource {
+    
+    
     
     static let shared = UserInfoRepository()
     private let mapper: AWSDynamoDBObjectMapper
@@ -57,12 +60,31 @@ class UserInfoRepository: NSObject, UserInfoDataSource {
         userDictionary = [String: UserInfo]()
     }
     
-    func getUserInfo(id: String, completion: @escaping (Result<UserInfo, FailureReason>) -> Void) {
-        
-        if let user = userDictionary[id] {
-            completion(.success(object: user))
+    func getOwnUserInfo(completion: @escaping (Result<UserInfo, FailureReason>) -> Void) {
+        guard let userId = userId else {
+            completion(.failure(.notAvailable))
             return
         }
+        
+        getUserInfo(id: userId) { result in
+            if case let Result.success(object: value) = result {
+                UserDefaults.NotificationCount.set(value.NewLikeCount, forKey: .like)
+                UserDefaults.NotificationCount.set(value.NewSendCount, forKey: .sendMail)
+                UserDefaults.NotificationCount.set(value.NewReceiveCount, forKey: .receiveMail)
+                
+                completion(.success(object: value))
+            } else {
+                completion(.failure(.notAvailable))
+            }
+        }
+    }
+    
+    func getUserInfo(id: String, completion: @escaping (Result<UserInfo, FailureReason>) -> Void) {
+        
+//        if let user = userDictionary[id] {
+//            completion(.success(object: user))
+//            return
+//        }
         
         mapper.load(UserInfo.self, hashKey: id, rangeKey: nil)
             .continueWith(executor: AWSExecutor.mainThread()) { task in
@@ -194,6 +216,8 @@ class UserInfoRepository: NSObject, UserInfoDataSource {
     }
     
     func registerEndpoint() {
+        print("\(className) > \(#function)")
+        
         guard let deviceToken = UserDefaults.RemoteNotification.string(forKey: .deviceToken) else { return }
         guard let id = userId, let userInfo = userInfo else { return }
         
@@ -206,6 +230,9 @@ class UserInfoRepository: NSObject, UserInfoDataSource {
         apiClient.endpointarnPost(requestModel).continueWith(executor: AWSExecutor.mainThread()) { task in
             guard let response = task.result as? WEKENDCreateEndpointARNResponseModel else { return nil }
             userInfo.EndpointARN = response.endpointARN
+            
+            print("\(self.className) > \(#function) > endPoint: \(String(describing: response.endpointARN))")
+            
             self.userDictionary[id] = userInfo
             return nil
         }

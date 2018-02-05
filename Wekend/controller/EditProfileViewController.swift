@@ -22,6 +22,7 @@ class EditProfileViewController: UIViewController {
     @IBOutlet weak var age: UITextField!
     @IBOutlet weak var company: UITextField!
     @IBOutlet weak var school: UITextField!
+    @IBOutlet weak var area: UITextField!
     @IBOutlet weak var introduce: UITextView!
     @IBOutlet weak var phone: UITextField!
     @IBOutlet weak var code: UITextField!
@@ -38,6 +39,7 @@ class EditProfileViewController: UIViewController {
         super.viewDidLoad()
      
         introduce.isScrollEnabled = false
+        requestCodeButton.isEnabled = false
         initTextFields()
         initEditImages()
         bindViewModel()
@@ -89,6 +91,7 @@ extension EditProfileViewController {
             self?.age.text = (user.birth as! Int).toAge.description
             self?.company.text = user.company
             self?.school.text = user.school
+            self?.area.text = user.area
             self?.introduce.text = user.introduce
             self?.phone.text = user.phone
         }
@@ -206,7 +209,7 @@ extension EditProfileViewController {
     }
     
     @IBAction func onDoneButtonTapped(_ sender: Any) {
-        viewModel?.updateUser(company: company.text, school: school.text, introduce: introduce.text)
+        viewModel?.updateUser(company: company.text, school: school.text, area: area.text, introduce: introduce.text)
     }
 }
 

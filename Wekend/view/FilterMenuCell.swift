@@ -113,6 +113,10 @@ class FilterMenuCell: DropDownMenuCell {
         self.textField?.isEnabled = isEnabled
     }
 
+    func reload() {
+        self.pickerView?.reloadComponent(0)
+    }
+    
     func done(_ sender: Any) {
         print("\(className) > \(#function)")
         self.accessoryType = .none

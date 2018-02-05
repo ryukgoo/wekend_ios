@@ -29,6 +29,7 @@ class UserInfo: AWSDynamoDBObjectModel, AWSDynamoDBModeling {
         static let BIRTH = "birth"
         static let COMPANY = "company"
         static let SCHOOL = "school"
+        static let AREA = "area"
         static let INTRODUCE = "introduce"
         static let PHONE = "phone"
         static let PHOTOS = "photos"
@@ -57,6 +58,7 @@ class UserInfo: AWSDynamoDBObjectModel, AWSDynamoDBModeling {
     var birth: Any?
     var company: String?
     var school: String?
+    var area: String?
     var introduce: String?
     var phone: String?
     var balloon: Any?

@@ -26,7 +26,7 @@ protocol ProductListLoadable {
 }
 
 protocol MapLoadable {
-    var position: Dynamic<(Double, Double)?> { get }
+    var mapPosition: Dynamic<(Double, Double)?> { get }
     
     var onMapLoaded: ((Double, Double) -> Void)? { get set }
     func loadMap(address: String)

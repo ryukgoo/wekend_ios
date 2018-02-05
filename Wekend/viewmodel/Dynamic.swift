@@ -22,6 +22,10 @@ class Dynamic<T> {
         listener?(value)
     }
     
+    func unbind() {
+        self.listener = nil
+    }
+    
     var value: T {
         didSet {
             listener?(value)

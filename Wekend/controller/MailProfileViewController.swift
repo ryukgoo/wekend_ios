@@ -22,6 +22,7 @@ class MailProfileViewController: UIViewController {
     @IBOutlet weak var messageStackView: UIStackView!
     @IBOutlet weak var messageUnderline: UIView!
     @IBOutlet weak var nickname: UILabel!
+    @IBOutlet weak var area: UILabel!
     @IBOutlet weak var company: UILabel!
     @IBOutlet weak var school: UILabel!
     @IBOutlet weak var phone: UILabel!
@@ -70,14 +71,13 @@ class MailProfileViewController: UIViewController {
     func onDescTapped(_ tapGestureRecognizer: UITapGestureRecognizer) {
         print("\(className) > \(#function)")
         
-        guard let detailVC: CampaignViewController = CampaignViewController.storyboardInstance(from: "SubItems") else {
+        guard let detailVC = CampaignViewController.storyboardInstance(from: "SubItems") as? CampaignViewController else {
             fatalError("\(className) > \(#function) > initialize CampaignViewcontroller Error")
         }
         
         guard let productId = viewModel?.product.value?.ProductId else { return }
-        guard let user = viewModel?.user.value else { return }
         detailVC.viewModel = CampaignViewModel(id: productId,
-                                               isLikeEnabled: true,
+                                               isLikeEnabled: false,
                                                dataSource: ProductRepository.shared)
         
         navigationController?.pushViewController(detailVC, animated: true)
@@ -97,6 +97,13 @@ class MailProfileViewController: UIViewController {
             guard let friend = friend else { return }
             guard let nickname = friend.nickname else { return }
             self?.nickname.text = "\(nickname), \((friend.birth as! Int).toAge.description)세"
+            
+            if let area = friend.area {
+                self?.area.isHidden = false
+                self?.area.text = area
+            } else {
+                self?.area.isHidden = true
+            }
             
             if let company = friend.company {
                 self?.company.isHidden = false
@@ -139,11 +146,16 @@ class MailProfileViewController: UIViewController {
                 guard let proposeStatus = mail.ProposeStatus else { return }
                 guard let status = ProposeStatus(rawValue: proposeStatus) else { return }
                 
-                self?.messageStackView.isHidden = false
-                self?.messageUnderline.isHidden = false
-                self?.message.text = mail.Message
-                self?.proposeButton.setTitle(status.message(), for: .normal)
+                if let message = mail.Message {
+                    self?.messageStackView.isHidden = false
+                    self?.messageUnderline.isHidden = false
+                    self?.message.text = message
+                } else {
+                    self?.messageStackView.isHidden = true
+                    self?.messageUnderline.isHidden = true
+                }
                 
+                self?.proposeButton.setTitle(status.message(), for: .normal)
                 self?.buttonStackView.isHidden = true
                 
                 switch status {

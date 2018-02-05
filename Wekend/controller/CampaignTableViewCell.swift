@@ -10,7 +10,7 @@ import UIKit
 
 class CampaignTableViewCell: UITableViewCell {
     
-    var viewModel: CampaignCellViewModel? {
+    var viewModel: CampaignCellBindable? {
         didSet {
             bindViewModel()
         }

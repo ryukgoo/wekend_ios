@@ -19,7 +19,7 @@ protocol FriendLoadable {
 }
 
 protocol UserInfoEditable {
-    func updateUser(company: String?, school: String?, introduce: String?)
+    func updateUser(company: String?, school: String?, area: String?, introduce: String?)
     var onUpdateUser: (() -> Void)? { get set }
 }
 

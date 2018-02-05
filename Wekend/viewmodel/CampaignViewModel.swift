@@ -9,7 +9,7 @@
 import Foundation
 import FBSDKShareKit
 
-typealias CampaignViewModelProtocol = ProductLoadable & MapLoadable & LikeLoadable & LikeCountable & UserLoadable
+typealias CampaignViewModelProtocol = ProductLoadable & MapLoadable & LikeLoadable & UserLoadable
 
 struct CampaignViewModel: CampaignViewModelProtocol {
     
@@ -18,13 +18,13 @@ struct CampaignViewModel: CampaignViewModelProtocol {
     let dataSource: ProductDataSource
     
     var onMapLoaded: ((Double, Double) -> Void)?
-    var onGetFriendCount: ((Int) -> Void)?
     
-    var position: Dynamic<(Double, Double)?>
+    var mapPosition: Dynamic<(Double, Double)?>
     
     var user: Dynamic<UserInfo?>
     var product: Dynamic<ProductInfo?>
     var like: Dynamic<LikeItem?>
+    var friendCount: Dynamic<Int?>
     
     init(id: Int, isLikeEnabled: Bool, dataSource: ProductDataSource) {
         self.productId = id
@@ -34,8 +34,9 @@ struct CampaignViewModel: CampaignViewModelProtocol {
         self.user = Dynamic(nil)
         self.product = Dynamic(nil)
         self.like = Dynamic(nil)
+        self.friendCount = Dynamic(nil)
         
-        self.position = Dynamic(nil)
+        self.mapPosition = Dynamic(nil)
     }
     
     func load() {
@@ -69,7 +70,7 @@ struct CampaignViewModel: CampaignViewModelProtocol {
         let operation = LoadMapOperaion(address: address)
         operation.execute { result in
             if case let Result.success(object: (latitude, longitude)) = result {
-                self.position.value = (latitude, longitude)
+                self.mapPosition.value = (latitude, longitude)
                 self.onMapLoaded?(latitude, longitude)
             } else {
                 self.onMapLoaded?(-1, -1)
@@ -81,23 +82,23 @@ struct CampaignViewModel: CampaignViewModelProtocol {
         let operation = LoadLikeOperation(userId: userId, productId: productId)
         operation.execute { result in
             if case let Result.success(object: value) = result {
-                self.like.value = value
-                if let gender = self.user.value?.gender { self.getFriendCount(productId: productId, gender: gender) }
+                if let gender = self.user.value?.gender {
+                    let countOperation = LikeCountOperation(productId: productId, gender: gender)
+                    countOperation.execute { count in
+                        self.friendCount.value = count
+                        self.like.value = value
+                    }
+                }
             } else {
                 self.like.value = nil
             }
         }
     }
-    
-    func getFriendCount(productId: Int, gender: String) {
-        let operation = LikeCountOperation(productId: productId, gender: gender)
-        operation.execute { count in self.onGetFriendCount?(count) }
-    }
 }
 
 extension CampaignViewModel: Likable {
-    func likeProduct() {
-        
+    func likeProduct(user: UserInfo, product: ProductInfo) {
+        LikeRepository.shared.addLike(userInfo: user, productInfo: product)
     }
 }
 

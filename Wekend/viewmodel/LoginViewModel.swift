@@ -43,8 +43,7 @@ struct LoginViewModel: UserLoggable, Alertable {
             }
             
             if enabled.isEqual(to: "true") {
-                guard let userId = self.userDataSource.userId else { return nil }
-                self.userDataSource.getUserInfo(id: userId) { result in
+                self.userDataSource.getOwnUserInfo() { result in
                     if case Result.success(object: _) = result {
                         self.userDataSource.registerEndpoint()
                         self.onLoggin?()

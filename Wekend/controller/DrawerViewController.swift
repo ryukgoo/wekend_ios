@@ -101,7 +101,7 @@ class DrawerViewController: UIViewController {
     }
     
     func onProfileImageTapped(_ gestureRecognizer: UITapGestureRecognizer) {
-        performSegue(withIdentifier: MyProfileViewController.className, sender: nil)
+        performSegue(withIdentifier: SettingProfileViewController.className, sender: nil)
     }
 
     // MARK: - Navigation
@@ -110,9 +110,9 @@ class DrawerViewController: UIViewController {
             guard let navigation = segue.destination as? UINavigationController else { return }
             guard let topVC = navigation.topViewController as? NoticeTableViewController else { return }
             topVC.noticeType = sender as? String
-        } else if segue.identifier == MyProfileViewController.className {
+        } else if segue.identifier == SettingProfileViewController.className {
             guard let navigation = segue.destination as? UINavigationController else { return }
-            guard let topVC = navigation.topViewController as? MyProfileViewController else { return }
+            guard let topVC = navigation.topViewController as? SettingProfileViewController else { return }
             topVC.viewModel = UserProfileViewModel(userDataSource: UserInfoRepository.shared)
         }
     }
@@ -164,7 +164,7 @@ extension DrawerViewController: UITableViewDataSource, UITableViewDelegate {
             break
             
         case 2:
-            performSegue(withIdentifier: MyProfileViewController.className, sender: cell)
+            performSegue(withIdentifier: SettingProfileViewController.className, sender: cell)
             break
             
         case 3:

@@ -17,7 +17,6 @@ protocol MailDataSource {
     func getMail(friendId: String, productId: Int, completion: @escaping (Result<Mail, FailureReason>) -> ())
     func updateMail(mail: Mail, completion: @escaping (Bool) -> ())
     func deleteMail(mail: Mail, completion: @escaping (Bool) -> ())
-    func notifyChangedMail()
 }
 
 struct MailNotification {
@@ -131,16 +130,6 @@ class ReceiveMailRepository: NSObject, MailDataSource {
             return nil
         }
     }
-    
-    func notifyChangedMail() {
-        print("\(className) > \(#function)")
-        
-        let newCount = UserDefaults.NotificationCount.integer(forKey: .receiveMail)
-        
-        NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Receive.New),
-                                        object: nil,
-                                        userInfo: [MailNotification.Count : newCount])
-    }
 }
 
 class SendMailRepository: NSObject, MailDataSource {
@@ -234,13 +223,5 @@ class SendMailRepository: NSObject, MailDataSource {
             completion(task.error == nil)
             return nil
         }
-    }
-    
-    func notifyChangedMail() {
-        let newCount = UserDefaults.NotificationCount.integer(forKey: .sendMail)
-        
-        NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Send.New),
-                                        object: nil,
-                                        userInfo: [MailNotification.Count : newCount])
     }
 }

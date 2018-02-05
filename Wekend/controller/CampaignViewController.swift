@@ -96,9 +96,10 @@ class CampaignViewController: UIViewController {
     }
     
     func likeButtonTapped(_ sender: Any) {
-        guard let userInfo = viewModel?.user.value, let product = viewModel?.product.value else { return }
+        guard let user = viewModel?.user.value, let product = viewModel?.product.value else { return }
         likeButton.loadingIndicator(true)
-        LikeRepository.shared.addLike(userInfo: userInfo, productInfo: product)
+        
+        viewModel?.likeProduct(user: user, product: product)
     }
     
     func recommendButtonTapped(_ sender: Any) {
@@ -128,7 +129,7 @@ class CampaignViewController: UIViewController {
                 fatalError("\(className) > \(#function) > productInfo is nil")
             }
             
-            guard let latitude = self.viewModel?.position.value?.0, let longitude = self.viewModel?.position.value?.1 else {
+            guard let latitude = self.viewModel?.mapPosition.value?.0, let longitude = self.viewModel?.mapPosition.value?.1 else {
                 fatalError("\(className) > \(#function) > latitude or longitude is nil")
             }
             
@@ -164,7 +165,8 @@ extension CampaignViewController {
         viewModel.like.bind { [weak self] like in
             
             if like != nil {
-                self?.likeButton.setTitle("\(Constants.Title.Button.FRIEND_RECOMMEND)", for: .normal)
+                let titleText = "\(Constants.Title.Button.FRIEND_RECOMMEND) : \(viewModel.friendCount.value ?? 0)"
+                self?.likeButton.setTitle(titleText, for: .normal)
                 self?.likeButton.addTarget(self, action: #selector(self?.recommendButtonTapped(_:)), for: .touchUpInside)
             } else {
                 self?.likeButton.setTitle(Constants.Title.Button.LIKE, for: .normal)
@@ -185,10 +187,6 @@ extension CampaignViewController {
             marker.title = self?.viewModel?.product.value?.TitleKor ?? ""
             marker.map = self?.mapView
             self?.mapView.selectedMarker = marker
-        }
-        
-        self.viewModel?.onGetFriendCount = { [weak self] count in
-            self?.likeButton.setTitle("\(Constants.Title.Button.FRIEND_RECOMMEND) : \(count)", for: .normal)
         }
     }
 }
@@ -243,7 +241,7 @@ extension CampaignViewController: GMSMapViewDelegate {
     }
     
     func showMap() {
-        if let _ = viewModel?.position.value {
+        if let _ = viewModel?.mapPosition.value {
             performSegue(withIdentifier: MapViewController.className, sender: self)
         } else {
             print("\(className) > \(#function) > can not show map")
@@ -275,9 +273,8 @@ extension CampaignViewController {
     }
     
     func handleLikeAddNotification(_ notification: Notification) {
-        DispatchQueue.main.async {
-            self.likeButton.loadingIndicator(false)
-        }
+        guard let user = viewModel?.user.value, let product = viewModel?.product.value else { return }
+        viewModel?.loadLike(userId: user.userid, productId: product.ProductId)
     }
     
     func handleLikeDeleteNotification(_ notification: Notification) {
@@ -343,9 +340,14 @@ extension CampaignViewController: FBSDKSharingDelegate {
     
     // MARK: Share Kakao
     func shareKakaoTapped(_ tapGestureRecognizer: UITapGestureRecognizer) {
+        
+        if let presentedVC = self.presentedViewController {
+            presentedVC.dismiss(animated: true, completion: nil)
+        }
+        
         guard let productInfo = viewModel?.product.value else { return }
         self.view.startLoading()
-        viewModel?.shareToKakao(with: productInfo) { isSuccess in
+        viewModel?.shareToKakao(with: productInfo) { success in
             self.view.stopLoading()
         }
     }

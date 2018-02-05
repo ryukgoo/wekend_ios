@@ -88,32 +88,33 @@ struct MailProfileViewModel: MailProfileViewModelProtocol, Alertable {
     }
     
     func propose(message: String?) {
-        print(#function)
+        print("\(#function) > message: \(String(describing: message))")
         guard let user = userDataSource.userInfo else { return }
-        let mail = SendMail()
-        mail?.UserId = user.userid
-        mail?.ReceiverId = friendId
-        mail?.ProductId = productId
-        mail?.ProductTitle = product.value?.TitleKor
-        mail?.SenderNickname = user.nickname
-        mail?.ReceiverNickname = friend.value?.nickname
-        mail?.ProposeStatus = ProposeStatus.notMade.rawValue
-        mail?.Message = message
-        mail?.IsRead = 0
+        guard let mail = SendMail() else { return }
+        mail.UserId = user.userid
+        mail.ReceiverId = friendId
+        mail.ProductId = productId
+        mail.ProductTitle = product.value?.TitleKor
+        mail.SenderNickname = user.nickname
+        mail.ReceiverNickname = friend.value?.nickname
+        mail.ProposeStatus = ProposeStatus.notMade.rawValue
+        mail.Message = (message?.isEmpty)! ? nil : message
+        mail.IsRead = 0
         let timestamp = Date().iso8601
-        mail?.UpdatedTime = timestamp
-        mail?.ResponseTime = timestamp
+        mail.UpdatedTime = timestamp
+        mail.ResponseTime = timestamp
         
-        let operation = ProposeOperation(mail: mail!, mailDataSource: mailDataSource, userDataSource: userDataSource)
+        let operation = ProposeOperation(mail: mail, mailDataSource: mailDataSource, userDataSource: userDataSource)
         operation.execute { result in
             if case Result.success(object: _) = result {
                 print(#function)
                 self.mail.value = mail
-                guard let nickname = mail?.FriendNickname else { return }
+                guard let nickname = mail.FriendNickname else { return }
                 let alert = ButtonAlert(title: "함께가기 신청",
                                                 message: "\(nickname)에게 함께가기를 신청하였습니다",
                                                 actions: [AlertAction.done])
                 self.onShowAlert?(alert)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Send.Add), object: nil)
             } else if case let Result.failure(error) = result {
                 if error == .notAvailable {
                     let alert = ButtonAlert(title: "함께가기 신청 실패",
