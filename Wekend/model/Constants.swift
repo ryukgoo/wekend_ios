@@ -10,6 +10,8 @@ import Foundation
 
 struct Constants {
     
+    static let ConsumePoint = 1000
+    
     enum StoryboardName: String {
         
         case Main

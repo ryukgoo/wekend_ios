@@ -92,39 +92,6 @@ class SignupViewController: UIViewController {
                 }
             }
         }
-        /*
-        UserInfoRepository.shared.isUsernameAvailable(username: username).continueWith {
-            (task: AWSTask) -> Any! in
-            
-            if task.error != nil {
-                self.endLoading()
-                self.alert(message: "다시 시도해 주시기 바랍니다", title: "E-mail 중복확인실패")
-                return nil
-            }
-            
-            guard let result = task.result as? Bool else {
-                print("\(self.className) > \(#function) > check username duplicated Error > result is nil")
-                self.endLoading()
-                self.alert(message: "이미 등록된 E-mail입니다", title: "E-mail 중복오류")
-                return nil
-            }
-            
-            print("\(self.className) > \(#function) > result : \(String(describing: result))")
-            self.endLoading()
-            
-            if result {
-                DispatchQueue.main.async {
-                    self.performSegue(withIdentifier: InputUserInfoViewController.className, sender: self)
-                }
-            } else {
-                DispatchQueue.main.async {
-                    self.alert(message: "이미 등록된 E-mail입니다", title: "E-mail 중복오류")
-                }
-            }
-            
-            return nil
-        }
-        */
     }
 
     // MARK: - Navigation

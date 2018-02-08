@@ -48,6 +48,13 @@ class LoginViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        usernameInputText.layer.addBorder(edge: .bottom, color: .white, thickness: 1.0)
+        passwordInputText.layer.addBorder(edge: .bottom, color: .white, thickness: 1.0)
+    }
+    
     // MARK: IBAction
     
     @IBAction func loginButtonTapped(_ sender: Any) { login() }
@@ -122,13 +129,11 @@ extension LoginViewController: UITextFieldDelegate {
     
     func initTextFields() {
 
-        usernameInputText.layer.addBorder(edge: .bottom, color: .white, thickness: 1.0)
         usernameInputText.keyboardType = .emailAddress
         usernameInputText.delegate = self
         usernameInputText.inputAccessoryView = getKeyboardToolbar()
         usernameInputText.addTarget(self, action: #selector(self.usernameDidChange(_:)), for: .editingChanged)
         
-        passwordInputText.layer.addBorder(edge: .bottom, color: .white, thickness: 1.0)
         passwordInputText.isSecureTextEntry = true
         passwordInputText.delegate = self
         passwordInputText.inputAccessoryView = getKeyboardToolbar()

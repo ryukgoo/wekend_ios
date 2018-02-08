@@ -129,7 +129,7 @@ extension SettingProfileViewController: PagerViewDelegate, UIScrollViewDelegate 
         
         let imageUrl = Configuration.S3.PROFILE_IMAGE_URL + photos[page]
         
-        imageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "default_profile"), options: .cacheMemoryOnly) {
+        imageView.sd_setImage(with: URL(string: imageUrl), placeholderImage: #imageLiteral(resourceName: "default_profile"), options: [.cacheMemoryOnly, .retryFailed]) {
             (image, error, cacheType, imageURL) in
         }
     }

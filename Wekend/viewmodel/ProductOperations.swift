@@ -60,6 +60,8 @@ struct LoadProductListOperation {
 struct LoadMapOperaion {
     
     let address: String
+    var retryCount: Int = 0
+    
     init(address: String) {
         self.address = address
     }
@@ -85,6 +87,8 @@ struct LoadMapOperaion {
                     
                     let status = parsedData["status"] as! String
                     
+                    print("LoadMapOperation > \(#function) > status: \(status)")
+                    
                     if status == "OK" {
                         let allResults = parsedData["results"] as! Array<[String : Any]>
                         let lookupAddressResults = allResults[0]
@@ -97,6 +101,11 @@ struct LoadMapOperaion {
                         print("LoadMapOperaion > geocoderAddress > longitude : \(longitude)")
                         
                         DispatchQueue.main.async { completion(.success(object: (latitude, longitude))) }
+                    } else if status == "OVER_QUERY_LIMIT" {
+                        print("\(#function) > status: \(status)")
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                            self.execute(completion: completion)
+                        }
                     }
                 } catch {
                     DispatchQueue.main.async { completion(.failure(.notAvailable)) }

@@ -65,7 +65,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
      * For FaceBook AppLnk & KakaoLink
      * Not work
      */
-    
     func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
         print("\(className) > \(#function)")
         return false

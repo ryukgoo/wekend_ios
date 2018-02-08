@@ -106,9 +106,10 @@ struct MailProfileViewModel: MailProfileViewModelProtocol, Alertable {
         
         let operation = ProposeOperation(mail: mail, mailDataSource: mailDataSource, userDataSource: userDataSource)
         operation.execute { result in
-            if case Result.success(object: _) = result {
+            if case let Result.success(object: value) = result {
                 print(#function)
                 self.mail.value = mail
+                self.user.value = value
                 guard let nickname = mail.FriendNickname else { return }
                 let alert = ButtonAlert(title: "함께가기 신청",
                                                 message: "\(nickname)에게 함께가기를 신청하였습니다",
@@ -178,7 +179,7 @@ struct MailProfileViewModel: MailProfileViewModelProtocol, Alertable {
         guard let nickname = friend.value?.nickname else { return }
         let okAction = AlertAction(buttonTitle: "확인", style: .default, handler: { _ in self.onShowMessage?() })
         let alert = ButtonAlert(title: "함께가기 신청\n",
-                                        message: "\(nickname)님에게 함께가기를 신청하시겠습니까?\n(500포인트가 차감됩니다)",
+                                        message: "\(nickname)님에게 함께가기를 신청하시겠습니까?\n(\(Constants.ConsumePoint)포인트가 차감됩니다)",
                                         actions: [AlertAction.cancel, okAction])
         self.onShowAlert?(alert)
     }

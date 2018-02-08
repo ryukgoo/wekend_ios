@@ -70,12 +70,13 @@ struct UserProfileViewModel: UserProfileViewModelProtocol, Alertable {
         let operation = UpdateUserOperation(userInfo: userInfo, dataSource: userDataSource)
         operation.execute { isSuceess in
             if isSuceess {
-                let action = AlertAction(buttonTitle: "확인", style: .default, handler: { self.onUpdateUser?() })
-                let alert = ButtonAlert(title: nil, message: "사용자 정보가 수정되었습니다", actions: [action])
-                self.onShowAlert?(alert)
+                self.onUpdateUser?()
+//                let action = AlertAction(buttonTitle: "확인", style: .default, handler: { self.onUpdateUser?() })
+//                let alert = ButtonAlert(title: nil, message: "사용자 정보가 수정되었습니다", actions: [action])
+//                self.onShowAlert?(alert)
             } else {
-                let alert = ButtonAlert(title: nil, message: "사용자 정보수정에 실패하였습니다", actions: [AlertAction.done])
-                self.onShowAlert?(alert)
+//                let alert = ButtonAlert(title: nil, message: "사용자 정보수정에 실패하였습니다", actions: [AlertAction.done])
+//                self.onShowAlert?(alert)
             }
         }
     }
@@ -90,13 +91,12 @@ struct UserProfileViewModel: UserProfileViewModelProtocol, Alertable {
         }
         
         guard let resizedImage = selectedImage.resize(targetSize: CGSize(width: 800, height: 800)) else { return }
-        onUploadPrepare?(resizedImage)
-        
         guard let userInfo = user.value else { return }
         
         let operation = UploadImageOperation(userInfo: userInfo, image: resizedImage,
                                              index: index, dataSource: userDataSource)
         
+        onUploadPrepare?(resizedImage)
         operation.execute { result in
             if case Result.success(object: _) = result {
                 // TODO: uploaded image display sync issue
@@ -124,6 +124,7 @@ struct UserProfileViewModel: UserProfileViewModelProtocol, Alertable {
         let operation = DeleteImageOperation(userInfo: userInfo, index: index,
                                                    dataSource: userDataSource)
         
+        onDeletePrepare?()
         operation.execute { result in
             if case let Result.success(object: newUserInfo) = result {
                 self.user.value = newUserInfo

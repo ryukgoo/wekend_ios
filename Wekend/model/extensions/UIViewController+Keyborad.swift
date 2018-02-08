@@ -64,14 +64,11 @@ extension UIViewController: KeyboardObservable {
             
             let point = focusView.convert(focusView.frame.origin, to: self.view)
             
-            let textFieldBottomY = point.y + focusView.frame.size.height
+            let textFieldBottomY = min(point.y + focusView.frame.size.height, self.view.frame.height)
             let keyboardY = self.view.frame.height - keyboardSize.height
             let moveY = textFieldBottomY - keyboardY
             
-//            print("\(className) > \(#function) > textFieldBottomY : \(textFieldBottomY)")
-//            print("\(className) > \(#function) > keyboardY : \(keyboardY)")
             print("\(className) > \(#function) > moveY : \(moveY)")
-//            print("\(className) > \(#function) > y : \(self.view.frame.origin.y)")
             
             UIView.animate(withDuration: 0.1, animations: {
                 () -> Void in

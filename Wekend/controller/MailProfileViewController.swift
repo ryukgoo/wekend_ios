@@ -146,6 +146,8 @@ class MailProfileViewController: UIViewController {
                 guard let proposeStatus = mail.ProposeStatus else { return }
                 guard let status = ProposeStatus(rawValue: proposeStatus) else { return }
                 
+                self?.point.isHidden = true
+                
                 if let message = mail.Message {
                     self?.messageStackView.isHidden = false
                     self?.messageUnderline.isHidden = false
@@ -193,7 +195,7 @@ class MailProfileViewController: UIViewController {
             } else {
                 
                 print("\(String(describing: self?.className)) > \(#function) > mail is nil")
-                
+                self?.point.isHidden = false
                 self?.messageStackView.isHidden = true
                 self?.messageUnderline.isHidden = true
                 self?.phone.isHidden = true
@@ -233,25 +235,60 @@ extension MailProfileViewController {
     }
     
     func sendMessage() {
+        
         let alertController = UIAlertController(title: "상대방에게 한마디",
-                                                message: "상대방에게 전하고 싶은 메시지을 보내주세요",
+                                                message: "상대방에게 전하고 싶은 메시지을 보내주세요\n\n\n\n\n\n",
                                                 preferredStyle: .alert)
         
-        // for multiline textField -> addCustomView
-        alertController.addTextField { (textField) in
-            textField.placeholder = "200자 내로 적어주세요"
-        }
+        let margin: CGFloat = 8.0
+        let rect = CGRect(x: margin, y: margin + 60.0, width: 270.0 - margin * 2.0, height: 100.0)
+        let customView = UIView(frame: rect)
+        customView.layer.addBorder(edge: .bottom, color: .gray, thickness: 1.0)
+        customView.layer.addBorder(edge: .left, color: .gray, thickness: 1.0)
+        customView.layer.addBorder(edge: .right, color: .gray, thickness: 1.0)
+        customView.layer.addBorder(edge: .top, color: .gray, thickness: 1.0)
+        
+        customView.backgroundColor = .clear
+        
+        let textView = UITextView(frame: CGRect(x: 0.0, y: 0.0, width: rect.width, height: rect.height))
+        textView.backgroundColor = .clear
+        textView.font = UIFont(name: "Helvetica", size: 15)
+        
+        let toolbar: UIToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 30))
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let doneButton: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: alertController,
+                                                          action: #selector(self.doneKeyboard(_:)))
+        
+        var buttonArray = [UIBarButtonItem]()
+        buttonArray.append(flexSpace)
+        buttonArray.append(doneButton)
+        
+        toolbar.setItems(buttonArray, animated: false)
+        toolbar.sizeToFit()
+        
+        textView.inputAccessoryView = toolbar
+        customView.addSubview(textView)
+        
+        alertController.view.addSubview(customView)
         
         let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
         let okAction = UIAlertAction(title: "보내기", style: .default, handler: { (action) in
-            let textField = alertController.textFields![0] as UITextField
             guard let viewModel = self.viewModel else { return }
-            viewModel.propose(message: textField.text!)
+            viewModel.propose(message: textView.text)
         })
         alertController.addAction(cancelAction)
         alertController.addAction(okAction)
         
-        self.present(alertController, animated: true, completion: nil)
+        self.present(alertController, animated: true)
+        
+    }
+    
+    override func doneKeyboard(_ sender: Any) {
+        print("\(className) > \(#function) > sender: \(sender)")
+        guard let buttonItem = sender as? UIBarButtonItem else { return }
+        guard let target = buttonItem.target as? UIAlertController else { return }
+        
+        target.view.endEditing(true)
     }
     
     @IBAction func onAcceptButtonTapped(_ sender: Any) {

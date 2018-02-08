@@ -199,12 +199,12 @@ class UserInfoRepository: NSObject, UserInfoDataSource {
             return
         }
         
-        if oldPoint < 500 {
+        if oldPoint < Constants.ConsumePoint {
             completion(.failure(.notEnoughPoint))
             return
         }
         
-        userInfo.balloon = oldPoint - 500
+        userInfo.balloon = oldPoint - Constants.ConsumePoint
         
         updateUser(info: userInfo) { result in
             if case let Result.success(object: value) = result {

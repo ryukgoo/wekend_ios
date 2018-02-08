@@ -260,9 +260,9 @@ extension MainViewController {
     
     func showGuide() {
     
-        print("\(className) > \(#function) > isNoMoreGuide : \(UserDefaults.Account.bool(forKey: .isNoMoreGuide))")
+        print("\(className) > \(#function) > isNoMoreGuide : \(UserDefaults.Account.bool(forKey: .noMoreGuide))")
         
-        if (UserDefaults.Account.bool(forKey: .isNoMoreGuide)) { return }
+        if (UserDefaults.Account.bool(forKey: .noMoreGuide)) { return }
         
         if let presentingVC = self.presentedViewController as? UIAlertController {
             presentingVC.dismiss(animated: false, completion: { self.presentGuide() })

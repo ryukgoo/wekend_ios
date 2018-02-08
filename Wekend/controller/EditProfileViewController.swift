@@ -40,6 +40,11 @@ class EditProfileViewController: UIViewController {
      
         introduce.isScrollEnabled = false
         requestCodeButton.isEnabled = false
+        
+        self.navigationItem.hidesBackButton = true
+        let newBackButton = UIBarButtonItem(image: #imageLiteral(resourceName: "btn_icon_back_w"), style: .plain, target: self, action: #selector(self.onDoneButtonTapped(_:)))
+        self.navigationItem.leftBarButtonItem = newBackButton
+        
         initTextFields()
         initEditImages()
         bindViewModel()
@@ -208,7 +213,7 @@ extension EditProfileViewController {
         viewModel?.confirmVerificationCode(code: code, phone: phone)
     }
     
-    @IBAction func onDoneButtonTapped(_ sender: Any) {
+    func onDoneButtonTapped(_ sender: Any) {
         viewModel?.updateUser(company: company.text, school: school.text, area: area.text, introduce: introduce.text)
     }
 }
@@ -234,6 +239,12 @@ extension EditProfileViewController: UITextFieldDelegate, UITextViewDelegate {
         school.delegate = self
         school.inputAccessoryView = getKeyboardToolbar()
         
+        area.delegate = self
+        area.inputAccessoryView = getKeyboardToolbar()
+        
+        introduce.delegate = self
+        introduce.inputAccessoryView = getKeyboardToolbar()
+        
         phone.delegate = self
         phone.inputAccessoryView = getKeyboardToolbar()
         phone.addTarget(self, action: #selector(self.phoneDidChanged(_:)), for: .editingChanged)
@@ -243,9 +254,6 @@ extension EditProfileViewController: UITextFieldDelegate, UITextViewDelegate {
         code.layer.addBorder(edge: .bottom, color: UIColor(netHex: 0x909090), thickness: 1.0)
         code.addTarget(self, action: #selector(self.codeDidChanged(_:)), for: .editingChanged)
         
-        introduce.delegate = self
-        introduce.inputAccessoryView = getKeyboardToolbar()
-        
         confirmCodeButton.isEnabled = false
     }
     
@@ -253,8 +261,10 @@ extension EditProfileViewController: UITextFieldDelegate, UITextViewDelegate {
         return activeTextView
     }
     
-    func textFieldDidBeginEditing(_ textField: UITextField) {
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        print("\(className) > \(#function)")
         activeTextView = textField
+        return true
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -262,9 +272,14 @@ extension EditProfileViewController: UITextFieldDelegate, UITextViewDelegate {
         return true
     }
     
-    func textViewDidBeginEditing(_ textView: UITextView) {
+    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
         print("\(className) > \(#function)")
         activeTextView = textView
+        return true
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        print("\(className) > \(#function)")
     }
     
     func phoneDidChanged(_ textField: UITextField) {

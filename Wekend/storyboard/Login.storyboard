@@ -167,8 +167,8 @@
                                     <constraint firstItem="s3F-Kr-D2o" firstAttribute="centerX" secondItem="NS9-IB-2Ly" secondAttribute="centerX" id="xrK-dm-NtL"/>
                                 </constraints>
                             </view>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="rs0-x0-cbi">
-                                <rect key="frame" x="15" y="250" width="345" height="45"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="rs0-x0-cbi">
+                                <rect key="frame" x="15" y="250" width="345" height="47"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="이메일" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="14" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Lk-Qi-aIv">
                                         <rect key="frame" x="0.0" y="0.0" width="345" height="17"/>
@@ -176,16 +176,19 @@
                                         <color key="textColor" red="1" green="0.83529411764705885" blue="0.83921568627450982" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="example@entuition.com" adjustsFontForContentSizeCategory="YES" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="klS-pa-DUf">
-                                        <rect key="frame" x="0.0" y="29" width="345" height="16"/>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="bottom" placeholder="example@entuition.com" adjustsFontForContentSizeCategory="YES" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="klS-pa-DUf">
+                                        <rect key="frame" x="0.0" y="17" width="345" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="ZgT-SI-wcZ"/>
+                                        </constraints>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
                                 </subviews>
                             </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="Vz4-ZO-2Wr">
-                                <rect key="frame" x="15" y="327" width="345" height="45"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Vz4-ZO-2Wr">
+                                <rect key="frame" x="15" y="329" width="345" height="47"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="비밀번호" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="14" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yUZ-2F-YRp">
                                         <rect key="frame" x="0.0" y="0.0" width="345" height="17"/>
@@ -193,16 +196,19 @@
                                         <color key="textColor" red="1" green="0.83529411760000005" blue="0.83921568629999999" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="**********" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="f4N-ID-thc">
-                                        <rect key="frame" x="0.0" y="29" width="345" height="16"/>
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="bottom" placeholder="**********" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="f4N-ID-thc">
+                                        <rect key="frame" x="0.0" y="17" width="345" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="3FD-8k-Z4I"/>
+                                        </constraints>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
                                 </subviews>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="17" translatesAutoresizingMaskIntoConstraints="NO" id="cMQ-8d-J12">
-                                <rect key="frame" x="15" y="412" width="345" height="97"/>
+                                <rect key="frame" x="15" y="416" width="345" height="97"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9Jd-pD-aMe" customClass="RoundedButton" customModule="Wekend" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="345" height="40"/>
@@ -263,6 +269,7 @@
                         <viewLayoutGuide key="safeArea" id="P7t-qd-0VV"/>
                     </view>
                     <navigationItem key="navigationItem" id="8TX-ch-dFr"/>
+                    <size key="freeformSize" width="375" height="667"/>
                     <connections>
                         <outlet property="loginButton" destination="9Jd-pD-aMe" id="V7A-Nm-2MS"/>
                         <outlet property="passwordInputText" destination="f4N-ID-thc" id="PX9-gg-xaF"/>
@@ -302,7 +309,7 @@
                                     <constraint firstAttribute="trailing" secondItem="8ij-os-rDm" secondAttribute="trailing" constant="15" id="Vnm-iX-c8n"/>
                                 </constraints>
                             </view>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="PT0-df-CfI">
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="PT0-df-CfI">
                                 <rect key="frame" x="15" y="250" width="345" height="45"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="이메일" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="14" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qIn-Xp-GH4">
@@ -311,15 +318,18 @@
                                         <color key="textColor" red="1" green="0.83529411760000005" blue="0.83921568629999999" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="이메일주소를 입력해 주세요" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="dfw-CP-lze">
-                                        <rect key="frame" x="0.0" y="29" width="345" height="16"/>
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="bottom" placeholder="이메일주소를 입력해 주세요" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="dfw-CP-lze">
+                                        <rect key="frame" x="0.0" y="17" width="345" height="28"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="28" id="yFq-bQ-X9z"/>
+                                        </constraints>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
                                 </subviews>
                             </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="r63-H1-sCD">
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="r63-H1-sCD">
                                 <rect key="frame" x="15" y="327" width="345" height="45"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="비밀번호" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="14" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Nr0-Kh-F6z">
@@ -328,15 +338,18 @@
                                         <color key="textColor" red="1" green="0.83529411760000005" blue="0.83921568629999999" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="영문과 숫자의 조합 6자리이상 입력해주세요" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="MQq-T6-tcI">
-                                        <rect key="frame" x="0.0" y="29" width="345" height="16"/>
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="bottom" placeholder="영문과 숫자의 조합 6자리이상 입력해주세요" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="MQq-T6-tcI">
+                                        <rect key="frame" x="0.0" y="17" width="345" height="28"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="28" id="iJa-8F-GGy"/>
+                                        </constraints>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
                                 </subviews>
                             </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="Q3f-CP-Gms">
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Q3f-CP-Gms">
                                 <rect key="frame" x="15" y="404" width="345" height="45"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="비밀번호 확인" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="14" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TUV-4C-kVh">
@@ -345,8 +358,11 @@
                                         <color key="textColor" red="1" green="0.83529411760000005" blue="0.83921568629999999" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="영문과 숫자의 조합 6자리이상 입력해주세요" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="FUM-e3-IVv">
-                                        <rect key="frame" x="0.0" y="29" width="345" height="16"/>
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="bottom" placeholder="영문과 숫자의 조합 6자리이상 입력해주세요" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="FUM-e3-IVv">
+                                        <rect key="frame" x="0.0" y="17" width="345" height="28"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="28" id="HjQ-ID-w8f"/>
+                                        </constraints>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <textInputTraits key="textInputTraits"/>
@@ -642,22 +658,25 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="66" translatesAutoresizingMaskIntoConstraints="NO" id="Ddb-q5-hyf">
-                                <rect key="frame" x="0.0" y="182.5" width="0.0" height="302"/>
+                                <rect key="frame" x="15" y="182.5" width="345" height="302"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="33" translatesAutoresizingMaskIntoConstraints="NO" id="U1I-ca-ulI">
-                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="118"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="345" height="118"/>
                                         <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="VXB-bL-pCi">
-                                                <rect key="frame" x="0.0" y="0.0" width="0.0" height="45"/>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="VXB-bL-pCi">
+                                                <rect key="frame" x="0.0" y="0.0" width="345" height="45"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="휴대폰 번호를 입력해 주세요" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="Ksg-e7-5ns">
-                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="17"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="345" height="17"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                         <color key="textColor" red="1" green="0.83529411760000005" blue="0.83921568629999999" alpha="1" colorSpace="calibratedRGB"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="(-)를 제외한 숫자만 입력해주세요" textAlignment="natural" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="veI-Nt-Xmu">
-                                                        <rect key="frame" x="0.0" y="29" width="0.0" height="16"/>
+                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="bottom" placeholder="(-)를 제외한 숫자만 입력해주세요" textAlignment="natural" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="veI-Nt-Xmu">
+                                                        <rect key="frame" x="0.0" y="17" width="345" height="28"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="28" id="Ml0-ec-jYz"/>
+                                                        </constraints>
                                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                         <textInputTraits key="textInputTraits"/>
@@ -665,7 +684,7 @@
                                                 </subviews>
                                             </stackView>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Xf-fA-Qgd" customClass="RoundedButton" customModule="Wekend" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="151" width="0.0" height="0.0"/>
+                                                <rect key="frame" x="0.0" y="78" width="345" height="40"/>
                                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="8Xf-fA-Qgd" secondAttribute="height" multiplier="69:8" id="IGD-zv-8ly"/>
@@ -681,19 +700,22 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="33" translatesAutoresizingMaskIntoConstraints="NO" id="3iw-uP-1p2">
-                                        <rect key="frame" x="0.0" y="184" width="0.0" height="118"/>
+                                        <rect key="frame" x="0.0" y="184" width="345" height="118"/>
                                         <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="bRg-Z0-44r">
-                                                <rect key="frame" x="0.0" y="0.0" width="0.0" height="45"/>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="bRg-Z0-44r">
+                                                <rect key="frame" x="0.0" y="0.0" width="345" height="45"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="인증번호를 입력해 주세요" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="Wqv-RG-NRQ">
-                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="17"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="345" height="17"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                         <color key="textColor" red="1" green="0.83529411760000005" blue="0.83921568629999999" alpha="1" colorSpace="calibratedRGB"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="숫자 6자리를 입력해 주세요" textAlignment="natural" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="gRf-Mm-ENd">
-                                                        <rect key="frame" x="0.0" y="29" width="0.0" height="16"/>
+                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="bottom" placeholder="숫자 6자리를 입력해 주세요" textAlignment="natural" minimumFontSize="13" translatesAutoresizingMaskIntoConstraints="NO" id="gRf-Mm-ENd">
+                                                        <rect key="frame" x="0.0" y="17" width="345" height="28"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="28" id="Po2-Rl-yQK"/>
+                                                        </constraints>
                                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                         <textInputTraits key="textInputTraits"/>
@@ -701,7 +723,7 @@
                                                 </subviews>
                                             </stackView>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TPa-vD-22E" customClass="RoundedButton" customModule="Wekend" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="78" width="0.0" height="0.0"/>
+                                                <rect key="frame" x="0.0" y="78" width="345" height="40"/>
                                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="TPa-vD-22E" secondAttribute="height" multiplier="69:8" id="RUS-r7-anf"/>

@@ -49,13 +49,13 @@ struct ProposeOperation {
         self.userDataSource = userDataSource
     }
     
-    func execute(completion: @escaping (Result<Any?, FailureReason>) -> Void) {
+    func execute(completion: @escaping (Result<UserInfo, FailureReason>) -> Void) {
         
-        userDataSource.consumePoint(point: 500) { result in
-            if case Result.success(object: _) = result {
+        userDataSource.consumePoint(point: Constants.ConsumePoint) { result in
+            if case let Result.success(object: value) = result {
                 self.mailDataSource.updateMail(mail: self.mail) { success in
                     if success {
-                        completion(.success(object: nil))
+                        completion(.success(object: value))
                     } else {
                         completion(.failure(.notAvailable))
                     }

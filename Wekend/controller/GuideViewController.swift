@@ -11,6 +11,7 @@ import UIKit
 class GuideViewController: UIViewController {
     
     var isShowButtons = true
+    var helpArray: [UIImage] = []
     
     @IBOutlet weak var pagerView: PagerView!
     @IBOutlet weak var checkBox: UIButton!
@@ -21,6 +22,9 @@ class GuideViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("\(className) > \(#function)")
+        
+        helpArray = [#imageLiteral(resourceName: "Help_06"), #imageLiteral(resourceName: "Help_01"), #imageLiteral(resourceName: "Help_00"), #imageLiteral(resourceName: "Help_02"), #imageLiteral(resourceName: "Help_03"), #imageLiteral(resourceName: "Help_04"), #imageLiteral(resourceName: "Help_05")]
+        
         checkBox.isHidden = !isShowButtons
         noMoreShowText.isHidden = !isShowButtons
     }
@@ -47,11 +51,11 @@ class GuideViewController: UIViewController {
         print("\(className) > \(#function)")
         
         pagerView.delegate = self
-        pagerView.pageCount = 6
+        pagerView.pageCount = helpArray.count
     }
     
     @IBAction func onCheckBoxTapped(_ sender: Any) {
-        UserDefaults.Account.set(true, forKey: .isNoMoreGuide)
+        UserDefaults.Account.set(true, forKey: .noMoreGuide)
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -62,11 +66,15 @@ class GuideViewController: UIViewController {
 
 extension GuideViewController: PagerViewDelegate {
     func loadPageViewItem(imageView: UIImageView, page: Int) {
-        if let image = UIImage(named: "Help_0" + page.description) {
-            imageView.backgroundColor = UIColor.clear
-            imageView.contentMode = .scaleAspectFit
-            imageView.image = image
-        }
+//        if let image = UIImage(named: "Help_0" + page.description) {
+//            imageView.backgroundColor = UIColor.clear
+//            imageView.contentMode = .scaleAspectFit
+//            imageView.image = image
+//        }
+        
+        imageView.backgroundColor = UIColor.clear
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = helpArray[page]
     }
     
     func onPageTapped(page: Int) { }
