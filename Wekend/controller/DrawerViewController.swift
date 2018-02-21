@@ -230,12 +230,16 @@ extension DrawerViewController: MFMailComposeViewControllerDelegate {
             return
         }
         
+        guard let username = UserInfoRepository.shared.userInfo?.username else {
+            fatalError("\(className) > \(#function) > username Error")
+        }
+        
         let composeVC = MFMailComposeViewController()
         composeVC.mailComposeDelegate = self
         
         composeVC.setToRecipients(["entuitiondevelop@gmail.com"])
         composeVC.setSubject("고객센터 문의메일")
-        composeVC.setMessageBody("계정 이메일:\n문의내용:", isHTML: false)
+        composeVC.setMessageBody("계정 이메일: \(username)\n문의내용:", isHTML: false)
         
         present(composeVC, animated: true, completion: nil)
     }

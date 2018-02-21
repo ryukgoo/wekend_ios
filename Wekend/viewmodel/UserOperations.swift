@@ -107,6 +107,10 @@ struct UploadImageOperation {
                     photos.insert(key)
                     self.userInfo.photos = photos
                 }
+            } else {
+                var photos = Set<String>()
+                photos.insert(key)
+                self.userInfo.photos = photos
             }
             
             let imageURL = Configuration.S3.PROFILE_IMAGE_URL + objectKey
@@ -149,6 +153,11 @@ struct DeleteImageOperation {
                 print("\(#function) > Error: \(error)")
                 return nil
             }
+            
+            let deleteThumbRequest = AWSS3DeleteObjectRequest()
+            deleteThumbRequest?.bucket = Configuration.S3.PROFILE_THUMB_BUCKET
+            deleteThumbRequest?.key = objectKey
+            s3Client.deleteObject(deleteThumbRequest!).continueWith(executor: AWSExecutor.mainThread()) { task in return nil }
             
             guard var photos = self.userInfo.photos as? Set<String> else { return nil }
             if photos.contains(objectKey) {

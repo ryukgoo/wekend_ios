@@ -23,9 +23,8 @@ class CampaignViewController: UIViewController {
     @IBOutlet weak var subTitleLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var phoneTextButton: UIButton!
-    @IBOutlet weak var locationButton: UIButton!
+    @IBOutlet weak var locationLabel: UILabel!
     @IBOutlet weak var likeButton: UIButton!
-    @IBOutlet weak var mapView: GMSMapView!
     
     @IBOutlet weak var pagerViewOffsetY: NSLayoutConstraint!
     @IBOutlet weak var backViewOffsetY: NSLayoutConstraint!
@@ -40,8 +39,6 @@ class CampaignViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        initMapView()
         
         // Data
         bindViewModel()
@@ -88,7 +85,7 @@ class CampaignViewController: UIViewController {
     
     @IBAction func locationIconTapped(_ sender: Any) { showMap() }
     
-    @IBAction func addressTapped(_ sender: Any) { showMap() }
+    @IBAction func showMapTapped(_ sender: Any) { showMap() }
     
     func callPhone() {
         guard let phone = viewModel?.product.value?.Telephone else { return }
@@ -139,6 +136,14 @@ class CampaignViewController: UIViewController {
             
         }
     }
+    
+    func showMap() {
+        if let _ = viewModel?.mapPosition.value {
+            performSegue(withIdentifier: MapViewController.className, sender: self)
+        } else {
+            print("\(className) > \(#function) > can not show map")
+        }
+    }
 }
 
 extension CampaignViewController {
@@ -156,7 +161,7 @@ extension CampaignViewController {
             self?.phoneTextButton.setTitle(product.Telephone, for: .normal)
             
             let address = "\(product.Address ?? "") \(product.SubAddress ?? "")"
-            self?.locationButton.setTitle(address, for: .normal)
+            self?.locationLabel.text = address
             
             self?.pagerView.pageCount = product.ImageCount as? Int ?? 1
             self?.containerView.fadeIn()
@@ -173,20 +178,6 @@ extension CampaignViewController {
                 self?.likeButton.addTarget(self, action: #selector(self?.likeButtonTapped(_:)), for: .touchUpInside)
             }
             self?.likeButton.loadingIndicator(false)
-        }
-        
-        self.viewModel?.onMapLoaded = { [weak self] (latitude: Double, longitude: Double) in
-            
-            print("\(String(describing: self?.className)) > \(#function)")
-            
-            let camera = GMSCameraPosition.camera(withLatitude: latitude, longitude: longitude, zoom: 16.0)
-            self?.mapView.camera = camera
-            
-            let marker = GMSMarker()
-            marker.position = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-            marker.title = self?.viewModel?.product.value?.TitleKor ?? ""
-            marker.map = self?.mapView
-            self?.mapView.selectedMarker = marker
         }
     }
 }
@@ -226,27 +217,6 @@ extension CampaignViewController: PagerViewDelegate {
     }
     
     func onPageTapped(page: Int) { }
-}
-
-// MARK: -GMSMapViewDelegate
-extension CampaignViewController: GMSMapViewDelegate {
-    
-    func initMapView() {
-        mapView.settings.setAllGesturesEnabled(false)
-        mapView.delegate = self
-    }
-    
-    func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
-        showMap()
-    }
-    
-    func showMap() {
-        if let _ = viewModel?.mapPosition.value {
-            performSegue(withIdentifier: MapViewController.className, sender: self)
-        } else {
-            print("\(className) > \(#function) > can not show map")
-        }
-    }
 }
 
 // MARK: -Notification Observers

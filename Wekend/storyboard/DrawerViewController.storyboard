@@ -912,6 +912,7 @@
                         <outlet property="mainEditCell" destination="Gdd-5N-dwb" id="m2X-UR-MRp"/>
                         <outlet property="nickname" destination="fRD-RY-vA0" id="syj-zy-BDG"/>
                         <outlet property="phone" destination="Th4-9j-I80" id="1Ij-0t-JWY"/>
+                        <outlet property="phoneEditView" destination="4Yj-aj-OC4" id="bqL-Xf-UWx"/>
                         <outlet property="requestCodeButton" destination="pJx-Bc-4cO" id="BqY-Zy-J32"/>
                         <outlet property="school" destination="uOY-uh-a8B" id="ruO-UJ-B4H"/>
                     </connections>

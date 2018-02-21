@@ -82,9 +82,9 @@
                                                 </subviews>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="11" translatesAutoresizingMaskIntoConstraints="NO" id="Vtd-dB-F8m">
-                                                <rect key="frame" x="20" y="440" width="340" height="83"/>
+                                                <rect key="frame" x="20" y="440" width="340" height="92"/>
                                                 <subviews>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" alignment="top" spacing="33" translatesAutoresizingMaskIntoConstraints="NO" id="6KK-3Y-a0f">
+                                                    <stackView opaque="NO" contentMode="scaleToFill" alignment="top" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="6KK-3Y-a0f">
                                                         <rect key="frame" x="0.0" y="0.0" width="340" height="24"/>
                                                         <subviews>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NbH-HJ-Ind">
@@ -101,7 +101,7 @@
                                                                 </connections>
                                                             </button>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dYQ-Aq-8Pg">
-                                                                <rect key="frame" x="57" y="0.0" width="283" height="24"/>
+                                                                <rect key="frame" x="44" y="0.0" width="296" height="24"/>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                 <state key="normal" title="000-0000-0000">
                                                                     <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -122,41 +122,48 @@
                                                             <constraint firstAttribute="height" constant="1" id="j3c-n4-G8t"/>
                                                         </constraints>
                                                     </view>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" alignment="top" spacing="33" translatesAutoresizingMaskIntoConstraints="NO" id="mH2-TN-CxL">
-                                                        <rect key="frame" x="0.0" y="47" width="340" height="24"/>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="mH2-TN-CxL">
+                                                        <rect key="frame" x="0.0" y="47" width="340" height="33"/>
                                                         <subviews>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b43-4J-D9o">
-                                                                <rect key="frame" x="0.0" y="0.0" width="24" height="24"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="24" height="33"/>
                                                                 <constraints>
-                                                                    <constraint firstAttribute="height" constant="24" id="YBf-pI-2DX"/>
-                                                                    <constraint firstAttribute="width" constant="24" id="j7y-tQ-men"/>
-                                                                    <constraint firstAttribute="width" secondItem="b43-4J-D9o" secondAttribute="height" multiplier="1:1" id="rzl-Hb-vOS"/>
+                                                                    <constraint firstAttribute="width" constant="24" id="H5Y-ZP-xqJ"/>
                                                                 </constraints>
                                                                 <state key="normal" image="img_icon_location"/>
                                                                 <connections>
                                                                     <action selector="locationIconTapped:" destination="0ZQ-Aa-DBY" eventType="touchUpInside" id="ofE-SB-Nxk"/>
                                                                 </connections>
                                                             </button>
-                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="YjD-Qo-Jr7">
-                                                                <rect key="frame" x="57" y="0.0" width="283" height="24"/>
-                                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                                <state key="normal" title="서울시 종로구 평창동">
-                                                                    <color key="titleColor" red="0.12549019610000001" green="0.12549019610000001" blue="0.12549019610000001" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="서울시 종로구 평창동" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yEL-u2-uy8">
+                                                                <rect key="frame" x="44" y="0.0" width="224" height="33"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="33" id="sDt-XH-aeu"/>
+                                                                </constraints>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iRA-Nt-5SY">
+                                                                <rect key="frame" x="288" y="0.0" width="52" height="33"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="52" id="Fyk-Zt-sSF"/>
+                                                                </constraints>
+                                                                <state key="normal" title="지도보기">
+                                                                    <color key="titleColor" red="0.94901960780000005" green="0.47450980390000003" blue="0.48627450979999998" alpha="1" colorSpace="calibratedRGB"/>
                                                                 </state>
                                                                 <connections>
-                                                                    <action selector="addressTapped:" destination="0ZQ-Aa-DBY" eventType="touchUpInside" id="65y-CK-s6D"/>
+                                                                    <action selector="showMapTapped:" destination="0ZQ-Aa-DBY" eventType="touchUpInside" id="xau-hx-CXd"/>
                                                                 </connections>
                                                             </button>
                                                         </subviews>
                                                         <constraints>
-                                                            <constraint firstItem="YjD-Qo-Jr7" firstAttribute="centerY" secondItem="mH2-TN-CxL" secondAttribute="centerY" id="T5T-rs-Vc6"/>
                                                             <constraint firstItem="b43-4J-D9o" firstAttribute="centerY" secondItem="mH2-TN-CxL" secondAttribute="centerY" id="TWn-Jc-jSn"/>
-                                                            <constraint firstItem="YjD-Qo-Jr7" firstAttribute="centerY" secondItem="mH2-TN-CxL" secondAttribute="centerY" id="f2L-zZ-fux"/>
-                                                            <constraint firstItem="b43-4J-D9o" firstAttribute="height" secondItem="YjD-Qo-Jr7" secondAttribute="height" id="wr1-54-eqj"/>
+                                                            <constraint firstItem="iRA-Nt-5SY" firstAttribute="centerY" secondItem="mH2-TN-CxL" secondAttribute="centerY" id="sg0-P4-gx2"/>
                                                         </constraints>
                                                     </stackView>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DWO-12-24d">
-                                                        <rect key="frame" x="0.0" y="82" width="340" height="1"/>
+                                                        <rect key="frame" x="0.0" y="91" width="340" height="1"/>
                                                         <color key="backgroundColor" red="0.85490196080000003" green="0.85490196080000003" blue="0.85490196080000003" alpha="1" colorSpace="calibratedRGB"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="1" id="I30-JU-J0F"/>
@@ -170,21 +177,12 @@
                                                     <constraint firstItem="lCg-oy-wo7" firstAttribute="leading" secondItem="Vtd-dB-F8m" secondAttribute="leading" id="yEe-ly-OnQ"/>
                                                 </constraints>
                                             </stackView>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ec3-qB-coj" customClass="GMSMapView">
-                                                <rect key="frame" x="15" y="543" width="345" height="200"/>
-                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="200" id="1Au-hG-CEa"/>
-                                                </constraints>
-                                            </view>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstItem="aob-XO-yUS" firstAttribute="leading" secondItem="Oxh-NR-gMG" secondAttribute="leading" id="0f4-WO-YX5"/>
                                             <constraint firstAttribute="trailing" secondItem="aob-XO-yUS" secondAttribute="trailing" id="3Ty-CG-lg2"/>
                                             <constraint firstItem="516-7i-LMW" firstAttribute="leading" secondItem="Oxh-NR-gMG" secondAttribute="leading" constant="15" id="7ce-kI-1hC"/>
-                                            <constraint firstAttribute="trailing" secondItem="Ec3-qB-coj" secondAttribute="trailing" constant="15" id="7r4-O5-qq7"/>
-                                            <constraint firstItem="Ec3-qB-coj" firstAttribute="leading" secondItem="Oxh-NR-gMG" secondAttribute="leading" constant="15" id="BYs-c5-tOI"/>
                                             <constraint firstItem="516-7i-LMW" firstAttribute="top" secondItem="ccX-7b-W63" secondAttribute="bottom" constant="20" id="LFs-al-Nrb"/>
                                             <constraint firstItem="aob-XO-yUS" firstAttribute="centerX" secondItem="Oxh-NR-gMG" secondAttribute="centerX" id="LXw-fi-s3N"/>
                                             <constraint firstItem="aob-XO-yUS" firstAttribute="top" secondItem="ccX-7b-W63" secondAttribute="bottom" id="OVz-kH-KUa"/>
@@ -194,8 +192,7 @@
                                             <constraint firstAttribute="trailing" secondItem="ccX-7b-W63" secondAttribute="trailing" id="VXW-Bx-cXF"/>
                                             <constraint firstItem="ccX-7b-W63" firstAttribute="leading" secondItem="Oxh-NR-gMG" secondAttribute="leading" id="Xc9-ID-joI"/>
                                             <constraint firstItem="Vtd-dB-F8m" firstAttribute="leading" secondItem="Oxh-NR-gMG" secondAttribute="leading" constant="20" id="sDM-OK-nVU"/>
-                                            <constraint firstItem="Ec3-qB-coj" firstAttribute="top" secondItem="Vtd-dB-F8m" secondAttribute="bottom" constant="20" id="tHa-yX-EG9"/>
-                                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Ec3-qB-coj" secondAttribute="bottom" constant="80" id="viQ-xJ-OUv"/>
+                                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Vtd-dB-F8m" secondAttribute="bottom" constant="70" id="xQf-Ww-he1"/>
                                             <constraint firstItem="ccX-7b-W63" firstAttribute="centerX" secondItem="Oxh-NR-gMG" secondAttribute="centerX" id="xcP-27-cf1"/>
                                             <constraint firstAttribute="trailing" secondItem="Vtd-dB-F8m" secondAttribute="trailing" constant="15" id="zJa-ti-ODa"/>
                                             <constraint firstAttribute="trailing" secondItem="516-7i-LMW" secondAttribute="trailing" constant="15" id="zwD-aq-NqW"/>
@@ -292,8 +289,7 @@
                         <outlet property="containerView" destination="Oxh-NR-gMG" id="CtN-ZW-9MT"/>
                         <outlet property="descriptionLabel" destination="2BG-EN-xqk" id="tLy-Vo-iqj"/>
                         <outlet property="likeButton" destination="gfA-WT-0oH" id="xL4-d0-byO"/>
-                        <outlet property="locationButton" destination="YjD-Qo-Jr7" id="mwT-C1-oMb"/>
-                        <outlet property="mapView" destination="Ec3-qB-coj" id="1tZ-v4-ZUF"/>
+                        <outlet property="locationLabel" destination="yEL-u2-uy8" id="OKR-iP-8PX"/>
                         <outlet property="pagerView" destination="ccX-7b-W63" id="h1a-ku-pfA"/>
                         <outlet property="pagerViewOffsetY" destination="TzS-vD-3gF" id="MYB-Tm-u8T"/>
                         <outlet property="phoneTextButton" destination="dYQ-Aq-8Pg" id="9dg-XU-pJb"/>

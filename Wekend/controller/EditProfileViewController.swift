@@ -27,6 +27,7 @@ class EditProfileViewController: UIViewController {
     @IBOutlet weak var phone: UITextField!
     @IBOutlet weak var code: UITextField!
     
+    @IBOutlet weak var phoneEditView: UIStackView!
     @IBOutlet weak var requestCodeButton: WhiteRoundedButton!
     @IBOutlet weak var confirmCodeButton: WhiteRoundedButton!
     
@@ -38,12 +39,12 @@ class EditProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
      
+//        phoneEditView.isHidden = true
         introduce.isScrollEnabled = false
         requestCodeButton.isEnabled = false
         
-        self.navigationItem.hidesBackButton = true
-        let newBackButton = UIBarButtonItem(image: #imageLiteral(resourceName: "btn_icon_back_w"), style: .plain, target: self, action: #selector(self.onDoneButtonTapped(_:)))
-        self.navigationItem.leftBarButtonItem = newBackButton
+        let newBackButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(self.onDoneButtonTapped(_:)))
+        self.navigationItem.rightBarButtonItem = newBackButton
         
         initTextFields()
         initEditImages()
@@ -213,7 +214,7 @@ extension EditProfileViewController {
         viewModel?.confirmVerificationCode(code: code, phone: phone)
     }
     
-    func onDoneButtonTapped(_ sender: Any) {
+    @IBAction func onDoneButtonTapped(_ sender: Any) {
         viewModel?.updateUser(company: company.text, school: school.text, area: area.text, introduce: introduce.text)
     }
 }
@@ -245,6 +246,7 @@ extension EditProfileViewController: UITextFieldDelegate, UITextViewDelegate {
         introduce.delegate = self
         introduce.inputAccessoryView = getKeyboardToolbar()
         
+//        phone.tag = 2341543
         phone.delegate = self
         phone.inputAccessoryView = getKeyboardToolbar()
         phone.addTarget(self, action: #selector(self.phoneDidChanged(_:)), for: .editingChanged)
@@ -264,6 +266,11 @@ extension EditProfileViewController: UITextFieldDelegate, UITextViewDelegate {
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         print("\(className) > \(#function)")
         activeTextView = textField
+        
+//        if textField.tag == 2341543 {
+//            phoneEditView.isHidden = false
+//        }
+        
         return true
     }
     
