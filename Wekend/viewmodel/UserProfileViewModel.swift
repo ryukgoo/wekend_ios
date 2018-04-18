@@ -8,26 +8,33 @@
 
 import Foundation
 
-typealias UserProfileViewModelProtocol = UserLoadable & UserInfoEditable & ImageEditable & PhoneEditable
+typealias UserProfileViewModelProtocol = UserLoadable & UserInfoEditable & ImageEditable & PhoneVerifiable
 
-struct UserProfileViewModel: UserProfileViewModelProtocol, Alertable {
+struct UserProfileViewModel: UserProfileViewModelProtocol {
     
     let userDataSource: UserInfoDataSource
     
     var user: Dynamic<UserInfo?>
     
-    var onUploadPrepare: ((UIImage) -> Void)?
-    var onUploadComplete: (() -> Void)?
-    var onUploadFailed: (() -> Void)?
+    var onUploadPrepare: ImageCompletionHandler?
+    var onUploadComplete: NonCompletionHandler?
+    var onUploadFailed: NonCompletionHandler?
     
-    var onDeletePrepare: (() -> Void)?
-    var onDeleteComplete: (() -> Void)?
-    var onDeleteFailed: (() -> Void)?
+    var onDeletePrepare: NonCompletionHandler?
+    var onDeleteComplete: NonCompletionHandler?
+    var onDeleteFailed: NonCompletionHandler?
     
-    var onUpdateUser: (() -> Void)?
+    var onUpdateUser: NonCompletionHandler?
+    var onUpdateUserFailed: NonCompletionHandler?
     
-    var onShowAlert: ((ButtonAlert) -> Void)?
-    var onShowMessage: (() -> Void)?
+    var onRequestCodeStart: NonCompletionHandler?
+    var onRequestComplete: NonCompletionHandler?
+    var onRequestCodeFailed: NonCompletionHandler?
+    var notAvailablePhone: NonCompletionHandler?
+    
+    var onConfirmCodeComplete: NonCompletionHandler?
+    var onConfirmCodeFailed: NonCompletionHandler?
+    var notAvailableCode: NonCompletionHandler?
     
     init(userDataSource: UserInfoDataSource) {
         self.userDataSource = userDataSource
@@ -71,12 +78,8 @@ struct UserProfileViewModel: UserProfileViewModelProtocol, Alertable {
         operation.execute { isSuceess in
             if isSuceess {
                 self.onUpdateUser?()
-//                let action = AlertAction(buttonTitle: "확인", style: .default, handler: { self.onUpdateUser?() })
-//                let alert = ButtonAlert(title: nil, message: "사용자 정보가 수정되었습니다", actions: [action])
-//                self.onShowAlert?(alert)
             } else {
-//                let alert = ButtonAlert(title: nil, message: "사용자 정보수정에 실패하였습니다", actions: [AlertAction.done])
-//                self.onShowAlert?(alert)
+                self.onUpdateUserFailed?()
             }
         }
     }
@@ -99,87 +102,74 @@ struct UserProfileViewModel: UserProfileViewModelProtocol, Alertable {
         onUploadPrepare?(resizedImage)
         operation.execute { result in
             if case Result.success(object: _) = result {
-                // TODO: uploaded image display sync issue
                 self.onUploadComplete?()
-                let alert = ButtonAlert(title: nil,
-                                                message: "프로필 이미지가 변경되었습니다",
-                                                actions: [AlertAction.done])
-                self.onShowAlert?(alert)
             } else if case let Result.failure(error) = result {
                 print("\(#function) > error: \(String(describing: error))")
                 self.onUploadFailed?()
-                let alert = ButtonAlert(title: nil,
-                                        message: "이미지 변경에 실패하였습니다\n다시 시도해 주십시오",
-                                        actions: [AlertAction.done])
-                self.onShowAlert?(alert)
             }
         }
     }
     
     func deleteImage(index: Int) {
-        print("\(#function) > index: \(index)")
         
+        print("\(#function) > index: \(index)")
         guard let userInfo = user.value else { return }
         
-        let operation = DeleteImageOperation(userInfo: userInfo, index: index,
-                                                   dataSource: userDataSource)
+        let operation = DeleteImageOperation(userInfo: userInfo, index: index, dataSource: userDataSource)
         
         onDeletePrepare?()
         operation.execute { result in
             if case let Result.success(object: newUserInfo) = result {
                 self.user.value = newUserInfo
                 self.onDeleteComplete?()
-                let alert = ButtonAlert(title: nil,
-                                                message: "프로필 이미지가 삭제되었습니다",
-                                                actions: [AlertAction.done])
-                self.onShowAlert?(alert)
             } else if case let Result.failure(error) = result {
                 print("\(#function) > error: \(String(describing: error))")
                 self.onDeleteFailed?()
-                let alert = ButtonAlert(title: nil,
-                                        message: "이미지 삭제에 실패하였습니다\n다시 시도해 주십시오",
-                                        actions: [AlertAction.done])
-                self.onShowAlert?(alert)
             }
         }
     }
     
-    func requestVerificationCode(phone: String) {
+    func requestVerificationCode(phone: String?) {
+        
+        guard let phone = phone else {
+            notAvailablePhone?()
+            return
+        }
+        
+        onRequestCodeStart?()
+        
         let operation = RequestCodeOperation(phone: phone, dataSource: userDataSource)
         operation.execute { result in
             if case let Result.success(object: code) = result {
                 print("\(#function) > code: \(code)")
-                let alert = ButtonAlert(title: nil,
-                                        message: "인증번호가 발송되었습니다\n잠시만 기다려 주세요",
-                                        actions: [AlertAction.done])
-                self.onShowAlert?(alert)
+                self.onRequestComplete?()
             } else if case let Result.failure(error) = result {
                 print("\(#function) > error: \(String(describing: error))")
-                let alert = ButtonAlert(title: nil,
-                                        message: "인증번호 발송에 실패하였습니다\n다시 시도해 주십시오",
-                                        actions: [AlertAction.done])
-                self.onShowAlert?(alert)
+                self.onRequestCodeFailed?()
             }
         }
     }
     
-    func confirmVerificationCode(code: String, phone: String) {
+    func confirmVerificationCode(code: String?, phone: String?) {
+        
+        guard let code = code else {
+            notAvailableCode?()
+            return
+        }
+        
         if userDataSource.confirmVerificationCode(code: code) {
             guard let userInfo = user.value else { return }
             userInfo.phone = phone
             let operation = UpdateUserOperation(userInfo: userInfo, dataSource: userDataSource)
             operation.execute { success in
                 if success {
-                    let alert = ButtonAlert(title: nil, message: "휴대폰 정보가 수정되었습니다", actions: [AlertAction.done])
-                    self.onShowAlert?(alert)
+                    self.onConfirmCodeComplete?()
                 } else {
-                    let alert = ButtonAlert(title: nil, message: "휴대폰 정보 수정에 실패하였습니다", actions: [AlertAction.done])
-                    self.onShowAlert?(alert)
+                    self.onUpdateUserFailed?()
                 }
             }
         } else {
-            let alert = ButtonAlert(title: nil, message: "인증번호가 일치하지 않습니다", actions: [AlertAction.done])
-            self.onShowAlert?(alert)
+            self.onConfirmCodeFailed?()
         }
     }
 }

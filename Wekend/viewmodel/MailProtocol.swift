@@ -15,8 +15,18 @@ protocol MailLoadable {
 
 protocol MailViewModel {
     func propose(message: String?)
+    
+    var onProposePrepare: StringComletionHandler? { get set }
+    var onProposeComplete: StringComletionHandler? { get set }
+    var onProposeFailed: NonCompletionHandler? { get set }
+    
     func accept()
+    var onAcceptComplete: StringComletionHandler? { get set }
+    var onAcceptFailed: NonCompletionHandler? { get set }
+    
     func reject()
+    var onRejectComplete: StringComletionHandler? { get set }
+    var onRejectFailed: NonCompletionHandler? { get set }
 }
 
 protocol MailListLoadable {

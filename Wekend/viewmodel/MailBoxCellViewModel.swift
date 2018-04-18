@@ -8,17 +8,19 @@
 
 import Foundation
 
+typealias MailCompletionHandler = (Mail) -> Void
+
 protocol MailBoxCellBindable {
     var user: UserInfo? { get }
     var mail: Mail? { get }
-    var listener: ((Mail) -> Void)? { get }
+    var listener: MailCompletionHandler? { get }
 }
 
 struct MailBoxCellViewModel: MailBoxCellBindable {
     
     var user: UserInfo?
     var mail: Mail?
-    var listener: ((Mail) -> Void)?
+    var listener: MailCompletionHandler?
     
     init(user: UserInfo, mail: Mail) {
         self.user = user

@@ -41,6 +41,12 @@ class MainViewController: UITabBarController {
         
         addNotificationObservers()
         UserInfoRepository.shared.registerEndpoint()
+        
+        print("isSubscribed : \(StoreProducts.store.isSubscribed)")
+        // ?????????
+//        if !StoreProducts.store.isSubscribed && StoreProducts.store.hasReceitpt {
+//            StoreProducts.store.restorePurchases()
+//        }
     }
 
     override func didReceiveMemoryWarning() {

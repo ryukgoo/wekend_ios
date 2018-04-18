@@ -8,11 +8,6 @@
 
 import Foundation
 
-protocol Alertable {
-    var onShowAlert: ((ButtonAlert) -> Void)? { get set }
-    var onShowMessage: (() -> Void)? { get set }
-}
-
 struct AlertAction {
     let buttonTitle: String
     let style: UIAlertActionStyle

@@ -131,6 +131,8 @@ class MailProfileViewController: UIViewController {
             
             if let photos = friend.photos as? Set<String> {
                 self?.pagerView.pageCount = max(photos.count, 1)
+            } else {
+                self?.pagerView.pageCount = 1
             }
         }
         
@@ -207,19 +209,58 @@ class MailProfileViewController: UIViewController {
             }
         }
         
-        self.viewModel?.onShowAlert = { [weak self] alert in
-            let alertController = UIAlertController(title: alert.title,
-                                                    message: alert.message,
-                                                    preferredStyle: .alert)
-            for action in alert.actions {
-                alertController.addAction(UIAlertAction(title: action.buttonTitle,
-                                                        style: action.style,
-                                                        handler: { _ in action.handler?() }))
+        self.viewModel?.onProposePrepare = { [weak self] nickname in
+            
+            print("StoreProducts.store.isSubscribed: \(StoreProducts.store.isSubscribed)")
+            
+            if StoreProducts.store.isSubscribed {
+                self?.sendMessage()
+            } else {
+                let okAction = AlertAction(buttonTitle: "확인", style: .default, handler: { _ in self?.sendMessage() })
+                let alert = ButtonAlert(title: "함께가기 신청\n",
+                                        message: "\(nickname)님에게 함께가기를 신청하시겠습니까?\n(\(Constants.ConsumePoint)포인트가 차감됩니다)",
+                    actions: [AlertAction.cancel, okAction])
+                self?.showButtonAlert(alert)
             }
-            self?.present(alertController, animated: true, completion: nil)
         }
         
-        self.viewModel?.onShowMessage = { [weak self] _ in self?.sendMessage() }
+        self.viewModel?.onProposeComplete = { [weak self] nickname in
+            let alert = ButtonAlert(title: "함께가기 신청",
+                                    message: "\(nickname)에게 함께가기를 신청하였습니다",
+                                    actions: [AlertAction.done])
+            self?.showButtonAlert(alert)
+        }
+        
+        self.viewModel?.onProposeFailed = { [weak self] _ in
+            let alert = ButtonAlert(title: "함께가기 신청 실패",
+                                    message: "다시 시도해 주십시오",
+                                    actions: [AlertAction.done])
+            self?.showButtonAlert(alert)
+        }
+        
+        self.viewModel?.onAcceptComplete = { [weak self] nickname in
+            let alert = ButtonAlert(title: "함께가기 성공",
+                                    message: "\(nickname)님과 함께가기를 수락하였습니다",
+                actions: [AlertAction.done])
+            self?.showButtonAlert(alert)
+        }
+        
+        self.viewModel?.onAcceptFailed = { [weak self] _ in
+            let alert = ButtonAlert(title: "신청 오류", message: "다시 시도해 주세요", actions: [AlertAction.done])
+            self?.showButtonAlert(alert)
+        }
+        
+        self.viewModel?.onRejectComplete = { [weak self] nickname in
+            let alert = ButtonAlert(title: "함께가기 거절",
+                                    message: "\(nickname)님과 함께가기를 거절하였습니다",
+                actions: [AlertAction.done])
+            self?.showButtonAlert(alert)
+        }
+        
+        self.viewModel?.onRejectFailed = { [weak self] _ in
+            let alert = ButtonAlert(title: "거절 오류", message: "다시 시도해 주세요", actions: [AlertAction.done])
+            self?.showButtonAlert(alert)
+        }
     }
 }
 

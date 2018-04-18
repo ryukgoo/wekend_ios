@@ -40,6 +40,11 @@ class InputUserInfoViewController: UIViewController {
         femaleButton.isSelected = false
         nextButton.isEnabled = false
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.isNavigationBarHidden = false
+    }
 
     override func viewWillLayoutSubviews() {
         nicknameInputText.layer.addBorder(edge: .bottom, color: .white, thickness: 1.0)
@@ -74,38 +79,6 @@ class InputUserInfoViewController: UIViewController {
                 }
             }
         }
-        
-        /*
-        UserInfoRepository.shared.isNicknameAvailable(nickname: inputNickname)
-            .continueWith(executor: AWSExecutor.mainThread()) { task in
-            
-            if task.error != nil {
-                DispatchQueue.main.async {
-                    self.alert(message: "다시 시도해 주세요", title: "중복체크실패")
-                }
-            }
-            
-            guard let result = task.result as? Bool else {
-                print("\(self.className) > \(#function) > check Duplication Error")
-                
-                DispatchQueue.main.async {
-                    self.alert(message: "사용중인 닉네임입니다.", title: "닉네임 중복확인")
-                }
-                
-                return nil
-            }
-            
-            if result {
-                print("\(self.className) > \(#function) > check Duplication OKOK!!!!")
-                DispatchQueue.main.async {
-                    self.nextButton.isEnabled = true
-                    self.alert(message: "사용가능한 닉네임입니다.", title: "닉네임 중복확인")
-                }
-            }
-            
-            return nil
-        }
-        */
     }
     
     @IBAction func nextButtonTapped(_ sender: Any) {
@@ -133,7 +106,7 @@ class InputUserInfoViewController: UIViewController {
         if segue.identifier == InsertPhoneViewController.className {
             print("\(className) > \(#function) > withIdentifier : \(String(describing: segue.identifier))")
             
-            guard let destination = segue.destination as? InsertPhoneViewController else {
+            guard let inputPhoneVC = segue.destination as? InsertPhoneViewController else {
                 fatalError("\(className) > \(#function) > destination Error")
             }
             
@@ -145,11 +118,16 @@ class InputUserInfoViewController: UIViewController {
                 fatalError("\(className) > \(#function) > password is nil")
             }
             
-            destination.username = username
-            destination.password = password
-            destination.gender = self.maleButton.isSelected ? "male" : "female"
-            destination.birth = yearArray[self.birthPickerView.selectedRow(inComponent: 0)]
-            destination.nickname = self.nicknameInputText.text
+            inputPhoneVC.username = username
+            inputPhoneVC.password = password
+            inputPhoneVC.gender = self.maleButton.isSelected ? "male" : "female"
+            inputPhoneVC.birth = yearArray[self.birthPickerView.selectedRow(inComponent: 0)]
+            inputPhoneVC.nickname = self.nicknameInputText.text
+            
+            let dataSource = UserInfoRepository.shared
+            inputPhoneVC.viewModel = InsertPhoneViewModel(userDataSource: dataSource)
+            inputPhoneVC.registerModel = RegisterUserModel()
+            inputPhoneVC.loginModel = LoginViewModel(dataSource: dataSource)
         }
     }
 

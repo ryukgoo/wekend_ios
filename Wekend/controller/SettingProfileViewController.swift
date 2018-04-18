@@ -37,6 +37,8 @@ class SettingProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let screenWidth = UIScreen.main.bounds.width
+        pagerView.pageFrame = CGRect(x: 0.0, y: 0.0, width: screenWidth, height: screenWidth)
         pagerView.delegate = self
         scrollView.delegate = self
         
@@ -107,6 +109,8 @@ class SettingProfileViewController: UIViewController {
             
             if let photos = user.photos as? Set<String> {
                 self?.pagerView.pageCount = max(photos.count, 1)
+            } else {
+                self?.pagerView.pageCount = 1
             }
         }
     }
@@ -122,7 +126,7 @@ extension SettingProfileViewController: PagerViewDelegate, UIScrollViewDelegate 
     
     func loadPageViewItem(imageView: UIImageView, page: Int) {
         
-        guard let photos = viewModel?.user.value?.photosArr else {
+        guard let photos = viewModel?.user.value?.photosArr, photos.count > 0 else {
             imageView.image = #imageLiteral(resourceName: "default_profile")
             return
         }

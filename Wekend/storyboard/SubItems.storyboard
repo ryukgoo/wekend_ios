@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -298,12 +298,8 @@
                         <outlet property="subTitleLabel" destination="zFE-9U-zNu" id="peZ-fc-Jc6"/>
                         <outlet property="titleEngLabel" destination="NL4-48-GaA" id="c4I-Lt-pUJ"/>
                         <outlet property="titleLabel" destination="xtG-KF-45z" id="r3M-zw-GNA"/>
-                        <segue destination="8Ws-0L-ynI" kind="show" identifier="LikeCollectionViewController" id="cmc-ol-Qef">
-                            <nil key="action"/>
-                        </segue>
-                        <segue destination="2jo-fI-C0B" kind="show" identifier="MapViewController" id="nWD-tg-bPd">
-                            <nil key="action"/>
-                        </segue>
+                        <segue destination="8Ws-0L-ynI" kind="show" identifier="LikeCollectionViewController" id="cmc-ol-Qef"/>
+                        <segue destination="2jo-fI-C0B" kind="show" identifier="MapViewController" id="nWD-tg-bPd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Tz6-q7-i3x" userLabel="First Responder" sceneMemberID="firstResponder"/>

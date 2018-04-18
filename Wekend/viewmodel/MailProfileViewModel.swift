@@ -10,7 +10,7 @@ import Foundation
 
 typealias MailProfileViewModelProtocol = UserLoadable & MailLoadable & ProductLoadable & FriendLoadable & MailViewModel
 
-struct MailProfileViewModel: MailProfileViewModelProtocol, Alertable {
+struct MailProfileViewModel: MailProfileViewModelProtocol {
     
     let productId: Int
     let friendId: String
@@ -23,8 +23,15 @@ struct MailProfileViewModel: MailProfileViewModelProtocol, Alertable {
     var product: Dynamic<ProductInfo?>
     var friend: Dynamic<UserInfo?>
     
-    var onShowAlert: ((ButtonAlert) -> Void)?
-    var onShowMessage: (() -> Void)?
+    var onProposePrepare: StringComletionHandler?
+    var onProposeComplete: StringComletionHandler?
+    var onProposeFailed: NonCompletionHandler?
+    
+    var onAcceptComplete: StringComletionHandler?
+    var onAcceptFailed: NonCompletionHandler?
+    
+    var onRejectComplete: StringComletionHandler?
+    var onRejectFailed: NonCompletionHandler?
     
     init(productId: Int, friendId: String,
          mailDataSource: MailDataSource,
@@ -111,17 +118,13 @@ struct MailProfileViewModel: MailProfileViewModelProtocol, Alertable {
                 self.mail.value = mail
                 self.user.value = value
                 guard let nickname = mail.FriendNickname else { return }
-                let alert = ButtonAlert(title: "함께가기 신청",
-                                                message: "\(nickname)에게 함께가기를 신청하였습니다",
-                                                actions: [AlertAction.done])
-                self.onShowAlert?(alert)
+                
+                self.onProposeComplete?(nickname)
+                
                 NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Send.Add), object: nil)
             } else if case let Result.failure(error) = result {
                 if error == .notAvailable {
-                    let alert = ButtonAlert(title: "함께가기 신청 실패",
-                                            message: "다시 시도해 주십시오",
-                                            actions: [AlertAction.done])
-                    self.onShowAlert?(alert)
+                    self.onProposeFailed?()
                 }
             }
         }
@@ -139,14 +142,10 @@ struct MailProfileViewModel: MailProfileViewModelProtocol, Alertable {
             if case let Result.success(object: value) = result {
                 self.mail.value = value
                 guard let nickname = self.friend.value?.nickname else { return }
-                let alert = ButtonAlert(title: "함께가기 성공",
-                                        message: "\(nickname)님과 함께가기를 수락하였습니다",
-                    actions: [AlertAction.done])
-                self.onShowAlert?(alert)
+                self.onAcceptComplete?(nickname)
                 NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Receive.Add), object: nil)
             } else {
-                let alert = ButtonAlert(title: "오류", message: "다시 시도해 주세요", actions: [AlertAction.done])
-                self.onShowAlert?(alert)
+                self.onAcceptFailed?()
             }
         }
     }
@@ -163,24 +162,16 @@ struct MailProfileViewModel: MailProfileViewModelProtocol, Alertable {
             if case let Result.success(object: value) = result {
                 self.mail.value = value
                 guard let nickname = self.friend.value?.nickname else { return }
-                let alert = ButtonAlert(title: "함께가기 거절",
-                                        message: "\(nickname)님과 함께가기를 거절하였습니다",
-                    actions: [AlertAction.done])
-                self.onShowAlert?(alert)
+                self.onRejectComplete?(nickname)
                 NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Receive.Add), object: nil)
             } else {
-                let alert = ButtonAlert(title: "오류", message: "다시 시도해 주세요", actions: [AlertAction.done])
-                self.onShowAlert?(alert)
+                self.onRejectFailed?()
             }
         }
     }
     
     func proposeButtonTapped() {
         guard let nickname = friend.value?.nickname else { return }
-        let okAction = AlertAction(buttonTitle: "확인", style: .default, handler: { _ in self.onShowMessage?() })
-        let alert = ButtonAlert(title: "함께가기 신청\n",
-                                        message: "\(nickname)님에게 함께가기를 신청하시겠습니까?\n(\(Constants.ConsumePoint)포인트가 차감됩니다)",
-                                        actions: [AlertAction.cancel, okAction])
-        self.onShowAlert?(alert)
+        self.onProposePrepare?(nickname)
     }
 }

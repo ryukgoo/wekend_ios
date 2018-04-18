@@ -16,6 +16,7 @@ class UserInfo: AWSDynamoDBObjectModel, AWSDynamoDBModeling {
         static let TABLE_NAME = "picnic_users"
         static let INDEX_USERNAME = "username-index"
         static let INDEX_NICKNAME = "nickname-index"
+        static let INDEX_PHONE_TIME = "phone-registered_time-index"
     }
     
     struct Attribute {
@@ -38,6 +39,9 @@ class UserInfo: AWSDynamoDBObjectModel, AWSDynamoDBModeling {
         static let NEW_LIKE_COUNT = "NewLikeCount"
         static let NEW_SEND_COUNT = "NewSendCount"
         static let NEW_RECEIVE_COUNT = "NewReceiveCount"
+        
+        static let PURCHASE_TIME = "PurchaseTime"
+        static let EXPIRES_TIME = "ExpiresTime"
     }
     
     struct RawValue {
@@ -67,6 +71,9 @@ class UserInfo: AWSDynamoDBObjectModel, AWSDynamoDBModeling {
     var NewSendCount: Int = 0
     var NewReceiveCount: Int = 0
     
+    var PurchaseTime: String?
+    var ExpiresTime: String?
+    
     var photos: Any? {
         didSet {
             guard let photos = photos as? Set<String> else { return }
@@ -85,56 +92,5 @@ class UserInfo: AWSDynamoDBObjectModel, AWSDynamoDBModeling {
     
     static func ignoreAttributes() -> [String] {
         return ["photosArr"]
-    }
-}
-
-enum BillingPoint: Int, EnumCollection {
-    
-    case price1 = 1000
-    case price2 = 3500
-    case price3 = 6000
-    case price4 = 12500
-    case price5 = 38500
-    
-    init(id: String) {
-        switch id {
-            case "com.entuition.wekend.purchase.point.1":
-                self = .price1
-            break
-            case "com.entuition.wekend.purchase.point.2":
-                self = .price2
-            break
-            case "com.entuition.wekend.purchase.point.3":
-                self = .price3
-            break
-            case "com.entuition.wekend.purchase.point.4":
-                self = .price4
-            break
-            case "com.entuition.wekend.purchase.point.5":
-                self = .price5
-            break
-        default:
-            self = .price1
-            break
-        }
-    }
-    
-    var toString: String {
-        switch self {
-        case .price1:
-            return "com.entuition.wekend.purchase.point.1"
-        case .price2:
-            return "com.entuition.wekend.purchase.point.2"
-        case .price3:
-            return "com.entuition.wekend.purchase.point.3"
-        case .price4:
-            return "com.entuition.wekend.purchase.point.4"
-        case .price5:
-            return "com.entuition.wekend.purchase.point.5"
-        }
-    }
-    
-    var id: String {
-        return self.toString
     }
 }

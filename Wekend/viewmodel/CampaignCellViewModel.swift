@@ -8,17 +8,19 @@
 
 import Foundation
 
+typealias ProductCompletionHandler = (ProductInfo) -> Void
+
 protocol CampaignCellBindable {
     var productInfo: ProductInfo? { get }
     var isSelected: Bool { get }
-    var listener: ((ProductInfo) -> Void)? { get }
+    var listener: ProductCompletionHandler? { get }
 }
 
 struct CampaignCellViewModel: CampaignCellBindable {
     
     var productInfo: ProductInfo?
     var isSelected: Bool
-    var listener: ((ProductInfo) -> Void)?
+    var listener: ProductCompletionHandler?
     
     init(info: ProductInfo, isSelected: Bool) {
         self.productInfo = info

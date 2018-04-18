@@ -110,14 +110,29 @@ extension EditProfileViewController {
         
         self.viewModel?.onUploadComplete = { [weak self] _ in
             self?.endLoading()
+            
+            let alert = ButtonAlert(title: nil,
+                                    message: "프로필 이미지가 변경되었습니다",
+                                    actions: [AlertAction.done])
+            self?.showButtonAlert(alert)
         }
         
         self.viewModel?.onUploadFailed = { [weak self] _ in
             self?.endLoading()
+            
+            let alert = ButtonAlert(title: nil,
+                                    message: "이미지 변경에 실패하였습니다\n다시 시도해 주십시오",
+                                    actions: [AlertAction.done])
+            self?.showButtonAlert(alert)
         }
         
         self.viewModel?.onUpdateUser = { [weak self] _ in
             self?.navigationController?.popViewController(animated: true)
+        }
+        
+        self.viewModel?.onUpdateUserFailed = { [weak self] _ in
+            let alert = ButtonAlert(title: nil, message: "사용자 정보수정에 실패하였습니다", actions: [AlertAction.done])
+            self?.showButtonAlert(alert)
         }
         
         self.viewModel?.onDeletePrepare = { [weak self] _ in
@@ -128,29 +143,62 @@ extension EditProfileViewController {
             self?.activeEditCell?.imageView.image = #imageLiteral(resourceName: "default_profile")
             self?.activeEditCell = nil
             self?.endLoading()
+            
+            let alert = ButtonAlert(title: nil,
+                                    message: "프로필 이미지가 삭제되었습니다",
+                                    actions: [AlertAction.done])
+            self?.showButtonAlert(alert)
         }
         
         self.viewModel?.onDeleteFailed = { [weak self] _ in
             self?.endLoading()
+            
+            let alert = ButtonAlert(title: nil,
+                                    message: "이미지 삭제에 실패하였습니다\n다시 시도해 주십시오",
+                                    actions: [AlertAction.done])
+            self?.showButtonAlert(alert)
         }
         
-        self.viewModel?.onShowAlert = { [weak self] alert in
-            
-            print("\(String(describing: self?.className)) > \(#function)")
-            
-            let alertController = UIAlertController(title: alert.title,
-                                                    message: alert.message,
-                                                    preferredStyle: .alert)
-            for action in alert.actions {
-                alertController.addAction(UIAlertAction(title: action.buttonTitle,
-                                                        style: action.style,
-                                                        handler: { _ in action.handler?() }))
-            }
-            if let viewController = self?.presentedViewController as? UIAlertController {
-                viewController.dismiss(animated: false, completion: nil)
-            }
-            self?.present(alertController, animated: true, completion: nil)
+        self.viewModel?.onRequestCodeStart = { [weak self] _ in
+            self?.startLoading(message: "인증번호 발송중입니다..")
         }
+        
+        self.viewModel?.onRequestComplete = { [weak self] _ in
+            self?.endLoading()
+            let alert = ButtonAlert(title: nil,
+                                    message: "인증번호가 발송되었습니다\n잠시만 기다려 주세요",
+                                    actions: [AlertAction.done])
+            self?.showButtonAlert(alert)
+        }
+        
+        self.viewModel?.onRequestCodeFailed = { [weak self] _ in
+            self?.endLoading()
+            let alert = ButtonAlert(title: nil,
+                                    message: "인증번호 발송에 실패하였습니다\n다시 시도해 주십시오",
+                                    actions: [AlertAction.done])
+            self?.showButtonAlert(alert)
+        }
+        
+        self.viewModel?.notAvailablePhone = { [weak self] _ in
+            let alert = ButtonAlert(title: "전화번호 입력오류", message: "전화번호를 정확히 입력해주세요", actions: [AlertAction.done])
+            self?.showButtonAlert(alert)
+        }
+        
+        self.viewModel?.notAvailableCode = { [weak self] _ in
+            let alert = ButtonAlert(title: "인증번호 입력오류", message: "인증번호를 입력해 주세요", actions: [AlertAction.done])
+            self?.showButtonAlert(alert)
+        }
+        
+        self.viewModel?.onConfirmCodeComplete = { [weak self] _ in
+            let alert = ButtonAlert(title: nil, message: "휴대폰 정보가 수정되었습니다", actions: [AlertAction.done])
+            self?.showButtonAlert(alert)
+        }
+        
+        self.viewModel?.onConfirmCodeFailed = { [weak self] _ in
+            let alert = ButtonAlert(title: nil, message: "인증번호가 일치하지 않습니다", actions: [AlertAction.done])
+            self?.showButtonAlert(alert)
+        }
+        
     }
     
     fileprivate func initEditImages() {
@@ -204,9 +252,7 @@ extension EditProfileViewController {
     }
     
     @IBAction func onRequestCodeButtonTapped(_ sender: Any) {
-        guard let phone = self.phone.text else { return }
-        startLoading(message: "인증번호 발송중입니다..")
-        viewModel?.requestVerificationCode(phone: phone)
+        viewModel?.requestVerificationCode(phone: phone.text)
     }
     
     @IBAction func onConfirmCodeButtonTapped(_ sender: Any) {

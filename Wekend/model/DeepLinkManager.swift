@@ -125,7 +125,7 @@ class ApplicationNavigator {
         appdelegate.window!.makeKeyAndVisible()
     }
     
-    func showLoginViewController() {
+    func showLoginViewController(with username: String?) {
         let loginStoryBoard = Constants.StoryboardName.Login
         let loginboard = UIStoryboard(name: loginStoryBoard.rawValue, bundle: nil)
         
@@ -136,6 +136,7 @@ class ApplicationNavigator {
         }
         
         loginViewController.viewModel = LoginViewModel(dataSource: UserInfoRepository.shared)
+        loginViewController.registedUsername = username
         appDelegate.window!.rootViewController = navigationController
         appDelegate.window!.makeKeyAndVisible()
     }

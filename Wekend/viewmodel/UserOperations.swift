@@ -60,6 +60,51 @@ struct UpdateUserOperation {
     }
 }
 
+struct SearchUserByUsernameOpration {
+    
+    let username: String
+    let dataSource: UserInfoDataSource
+    
+    init(username: String, dataSource: UserInfoDataSource) {
+        self.username = username
+        self.dataSource = dataSource
+    }
+    
+    func execute(completion: @escaping (UserInfo?) -> Void) {
+        dataSource.searchUser(username: username) { result in
+            DispatchQueue.main.async {
+                if case let Result.success(object: info) = result {
+                    completion(info)
+                } else {
+                    completion(nil)
+                }
+            }
+        }
+    }
+}
+
+struct SearchUserByPhoneOperation {
+    
+    let phone: String
+    let dataSource: UserInfoDataSource
+    
+    init(phone: String, dataSource: UserInfoDataSource) {
+        self.phone = phone
+        self.dataSource = dataSource
+    }
+    
+    func execute(completion: @escaping (UserInfo?) -> Void) {
+        dataSource.searchUser(phone: phone) { result in
+            if case let Result.success(object: info) = result {
+                completion(info)
+            } else {
+                completion(nil)
+            }
+        }
+    }
+}
+
+
 struct UploadImageOperation {
     
     let userInfo: UserInfo
@@ -162,7 +207,13 @@ struct DeleteImageOperation {
             guard var photos = self.userInfo.photos as? Set<String> else { return nil }
             if photos.contains(objectKey) {
                 photos.remove(objectKey)
-                self.userInfo.photos = photos
+                
+                print("\(#function) > photos : \(photos)")
+                if photos.count == 0 {
+                    self.userInfo.photos = nil
+                } else {
+                    self.userInfo.photos = photos
+                }
             }
             
             let imageURL = Configuration.S3.PROFILE_IMAGE_URL + objectKey
@@ -203,4 +254,30 @@ struct RequestCodeOperation {
             }
         }
     }
+}
+
+struct ResetPasswordOperation {
+    
+    let userId: String
+    let password: String
+    
+    init(userId: String, password: String) {
+        self.userId = userId
+        self.password = password
+    }
+    
+    func execute(completion: @escaping (Result<String, FailureReason>) -> Void) {
+        AmazonClientManager.shared.devIdentityProvider?.resetPassword(userId: userId, password: password).continueWith(executor: AWSExecutor.mainThread()) { task in
+            
+            guard let userId = task.result as String? else {
+                completion(.failure(.notAvailable))
+                return nil
+            }
+            
+            completion(.success(object: userId))
+            
+            return nil
+        }
+    }
+    
 }

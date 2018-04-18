@@ -90,4 +90,10 @@ extension UserDefaults {
             case deviceToken
         }
     }
+    
+    struct Subscription: ValueUserDefaultable {
+        enum ValueDefaultKey: String {
+            case expirationDate
+        }
+    }
 }

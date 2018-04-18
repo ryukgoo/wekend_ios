@@ -1,28 +1,21 @@
 //
-//  InsertPhoneViewController.swift
+//  ConfirmPhoneViewController.swift
 //  Wekend
 //
-//  Created by Kim Young-wook on 2017. 2. 2..
-//  Copyright © 2017년 Kim Young-wook. All rights reserved.
+//  Created by Young-Wook Kim on 2018. 3. 8..
+//  Copyright © 2018년 Kim Young-wook. All rights reserved.
 //
 
 import UIKit
-import AWSCore
 
-class InsertPhoneViewController: UIViewController {
-    
-    // MARK: Properties
-    var username: String?
-    var password: String?
-    var nickname: String?
-    var gender: String?
-    var birth: Int?
+class ConfirmPhoneViewController: UIViewController {
     
     var activeTextField: UITextField?
     
+    var registedUsername: String?
+    
     var viewModel: InsertPhoneViewModel?
-    var registerModel: RegisterUserModel?
-    var loginModel: LoginViewModel?
+    var confirmPhoneModel: UserSearchViewModel?
     
     // MARK: IBOutlet
     @IBOutlet weak var inputPhoneText: UITextField!
@@ -32,7 +25,7 @@ class InsertPhoneViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         initTextFields()
         
         requestCodeButton.isEnabled = false
@@ -56,9 +49,16 @@ class InsertPhoneViewController: UIViewController {
         inputPhoneText.layer.addBorder(edge: .bottom, color: .white, thickness: 1.0)
         inputCodeText.layer.addBorder(edge: .bottom, color: .white, thickness: 1.0)
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    // MARK: - Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == SelectPhotoViewController.className {
+            print("\(className) > \(#function) > identifier : \(String(describing: segue.identifier))")
+        }
     }
     
     fileprivate func bindViewModel() {
@@ -91,9 +91,12 @@ class InsertPhoneViewController: UIViewController {
         }
         
         viewModel?.onConfirmCodeComplete = { [weak self] _ in
-            self?.startLoading(message: "가입중입니다")
-            self?.registerUser()
-            // TODO : register
+            
+            if self?.registedUsername != nil {
+                self?.confirmPhoneModel?.searchUser(username: self?.registedUsername)
+            } else {
+                self?.confirmPhoneModel?.searchUser(phone: self?.inputPhoneText.text)
+            }
         }
         
         viewModel?.onConfirmCodeFailed = { [weak self] _ in
@@ -101,39 +104,21 @@ class InsertPhoneViewController: UIViewController {
             self?.showButtonAlert(alert)
         }
         
-        registerModel?.notAvailableInputs = { [weak self] _ in
-            let alert = ButtonAlert(title: "가입 오류", message: "입력하지 않은 정보가 있습니다", actions: [AlertAction.done])
+        confirmPhoneModel?.onSearchUsernameComplete = { [weak self] userInfo in
+            self?.gotoResetPasswordView(userId: userInfo.userid, username: userInfo.username)
+        }
+        
+        confirmPhoneModel?.onSearchUsernameFailed = { [weak self] _ in
+            let alert = ButtonAlert(title: "계정찾기 실패", message: "입력하신 정보를 찾을 수 없습니다", actions: [AlertAction.done])
             self?.showButtonAlert(alert)
         }
         
-        registerModel?.onRegisterPrepare = { [weak self] _ in
-            self?.startLoading(message: "가입중입니다")
+        confirmPhoneModel?.onSearchPhoneComplete = { [weak self] userInfo in
+            self?.confirmAccount(userInfo: userInfo)
         }
         
-        registerModel?.onRegisterComplete = { [weak self] username, password in
-            self?.loginUser(username: username, password: password)
-        }
-        
-        registerModel?.onRegisterFailed = { [weak self] _ in
-            self?.endLoading()
-            let alert = ButtonAlert(title: "가입 오류", message: "가입에 실패하였습니다\n다시 시도해 주세요", actions: [AlertAction.done])
-            self?.showButtonAlert(alert)
-        }
-        
-        loginModel?.onLoginComplete = { [weak self] _ in
-            self?.endLoading()
-            self?.performSegue(withIdentifier: SelectPhotoViewController.className, sender: self)
-        }
-        
-        loginModel?.onLoginFailed = { [weak self] _ in
-            self?.endLoading()
-            let alert = ButtonAlert(title: "Unknown Error", message: "다시 시도해 주세요", actions: [AlertAction.done])
-            self?.showButtonAlert(alert)
-        }
-        
-        loginModel?.onLoginError = { [weak self] _ in
-            self?.endLoading()
-            let alert = ButtonAlert(title: "Unknown Error", message: "다시 시도해 주세요", actions: [AlertAction.done])
+        confirmPhoneModel?.onSearchPhoneFailed = { [weak self] _ in
+            let alert = ButtonAlert(title: "계정찾기 실패", message: "입력하신 정보를 찾을 수 없습니다", actions: [AlertAction.done])
             self?.showButtonAlert(alert)
         }
     }
@@ -143,33 +128,56 @@ class InsertPhoneViewController: UIViewController {
         print("\(className) > \(#function)")
         
         inputPhoneText.resignFirstResponder()
-        
         viewModel?.requestVerificationCode(phone: inputPhoneText.text)
     }
     
     @IBAction func confirmCodeButtonTapped(_ sender: Any) {
         viewModel?.confirmVerificationCode(code: inputCodeText.text, phone: inputPhoneText.text)
     }
-    
-    func registerUser() {
+
+    func gotoResetPasswordView(userId: String, username: String?) {
+        guard let username = username else { return }
+        print("\(className) > \(#function) > username: \(username)")
         
-        registerModel?.register(username: username, password: password, nickname: nickname, gender: gender, birth: birth, phone: inputPhoneText.text)
-        
-    }
-    
-    func loginUser(username: String?, password: String?) {
-        loginModel?.login(username: username, password: password)
-    }
-    
-    // MARK: - Navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == SelectPhotoViewController.className {
-            print("\(className) > \(#function) > identifier : \(String(describing: segue.identifier))")
+        guard let resetVC = ResetPasswordViewController.storyboardInstance(from: "Login") as? ResetPasswordViewController else {
+            return
         }
+        
+        resetVC.viewModel = ResetPasswordViewModel()
+        resetVC.userId = userId
+        resetVC.username = username
+        navigationController?.pushViewController(resetVC, animated: true)
+    }
+    
+    func confirmAccount(userInfo: UserInfo) {
+        print("\(className) > \(#function)")
+        
+        guard let username = userInfo.username else { return }
+        
+        let loginAction = AlertAction(buttonTitle: "로그인 하기", style: .default, handler: { _ in
+            self.gotoLoginView(userInfo: userInfo)
+        })
+        let resetAction = AlertAction(buttonTitle: "비밀번호 찾기", style: .default, handler: { _ in self.resetPassword() })
+        
+        let alert = ButtonAlert(title: "아이디 찾기", message: "\n\n해당 정보로 가입된 아이디는\n\n\(username)\n\n입니다",
+            actions: [loginAction, resetAction])
+        
+        showButtonAlert(alert)
+    }
+    
+    func gotoLoginView(userInfo: UserInfo) {
+        print("\(className) > \(#function)")
+        
+        ApplicationNavigator.shared.showLoginViewController(with: userInfo.username)
+    }
+    
+    func resetPassword() {
+        print("\(className) > \(#function)")
+        
     }
 }
 
-extension InsertPhoneViewController: UITextFieldDelegate {
+extension ConfirmPhoneViewController: UITextFieldDelegate {
     
     func initTextFields() {
         inputPhoneText.keyboardType = .phonePad

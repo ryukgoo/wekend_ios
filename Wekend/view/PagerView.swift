@@ -21,6 +21,8 @@ class PagerView: UIView, UIScrollViewDelegate {
     var pageViews : [UIImageView?] = []
     weak var delegate : PagerViewDelegate?
     
+    var pageFrame: CGRect?
+    
     var pageCount = 0 {
         didSet {
             initViews()
@@ -60,7 +62,14 @@ class PagerView: UIView, UIScrollViewDelegate {
     
     func configureScrollView() {
         
-        scrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height))
+        print("\(className) > \(#function) > width : \(self.frame.width), height: \(self.frame.height)")
+        
+        if let pageFrame = pageFrame {
+            scrollView = UIScrollView(frame: CGRect(x: pageFrame.origin.x, y: pageFrame.origin.y, width: pageFrame.width, height: pageFrame.height))
+        } else {
+            scrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height))
+        }
+        
         scrollView.bounces = false
         scrollView.delegate = self
         self.addSubview(scrollView)

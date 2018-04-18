@@ -20,9 +20,16 @@
 #import "WEKENDGetTokenRequestModel.h"
 #import "WEKENDGetTokenResponseModel.h"
 #import "WEKENDLoginRequestModel.h"
+#import "WEKENDError.h"
 #import "WEKENDLoginResponseModel.h"
 #import "WEKENDRegisterResponseModel.h"
 #import "WEKENDRegisterRequestModel.h"
+#import "WEKENDResetPasswordRequest.h"
+#import "WEKENDResetPasswordResponse.h"
+#import "WEKENDVerificationResponse.h"
+#import "WEKENDVerificationRequest.h"
+#import "WEKENDVerifyPurchaseResponse.h"
+#import "WEKENDVerifyPurchaseRequest.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
@@ -199,6 +206,33 @@ NS_ASSUME_NONNULL_BEGIN
  return type: WEKENDRegisterResponseModel *
  */
 - (AWSTask *)registeruserPost:( WEKENDRegisterRequestModel *)body;
+
+/**
+ 
+ 
+ @param body 
+ 
+ return type: WEKENDResetPasswordResponse *
+ */
+- (AWSTask *)resetpasswordPost:( WEKENDResetPasswordRequest *)body;
+
+/**
+ 
+ 
+ @param body 
+ 
+ return type: WEKENDVerificationResponse *
+ */
+- (AWSTask *)verificationcodePost:( WEKENDVerificationRequest *)body;
+
+/**
+ 
+ 
+ @param body 
+ 
+ return type: WEKENDVerifyPurchaseResponse *
+ */
+- (AWSTask *)verifypurchasePost:( WEKENDVerifyPurchaseRequest *)body;
 
 @end
 

@@ -101,19 +101,23 @@ class DrawerViewController: UIViewController {
     }
     
     func onProfileImageTapped(_ gestureRecognizer: UITapGestureRecognizer) {
-        performSegue(withIdentifier: SettingProfileViewController.className, sender: nil)
+        presentProfileViewController()
     }
 
+    func presentProfileViewController() {
+        guard let profileViewController: SettingProfileViewController =
+            SettingProfileViewController.storyboardInstance(from: "DrawerViewController") else { return }
+        profileViewController.viewModel = UserProfileViewModel(userDataSource: UserInfoRepository.shared)
+        
+        present(UINavigationController(rootViewController: profileViewController), animated: true, completion: nil)
+    }
+    
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == NoticeTableViewController.className {
             guard let navigation = segue.destination as? UINavigationController else { return }
             guard let topVC = navigation.topViewController as? NoticeTableViewController else { return }
             topVC.noticeType = sender as? String
-        } else if segue.identifier == SettingProfileViewController.className {
-            guard let navigation = segue.destination as? UINavigationController else { return }
-            guard let topVC = navigation.topViewController as? SettingProfileViewController else { return }
-            topVC.viewModel = UserProfileViewModel(userDataSource: UserInfoRepository.shared)
         }
     }
 }
@@ -164,7 +168,7 @@ extension DrawerViewController: UITableViewDataSource, UITableViewDelegate {
             break
             
         case 2:
-            performSegue(withIdentifier: SettingProfileViewController.className, sender: cell)
+            presentProfileViewController()
             break
             
         case 3:

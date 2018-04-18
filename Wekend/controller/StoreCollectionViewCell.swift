@@ -11,6 +11,7 @@ import StoreKit
 
 class StoreCollectionViewCell: UICollectionViewCell {
     
+    // MARK: - IBOutlet
     @IBOutlet weak var bgImage: UIImageView!
     @IBOutlet weak var iconImage: UIImageView!
     @IBOutlet weak var priceLabel: UILabel!
@@ -18,30 +19,40 @@ class StoreCollectionViewCell: UICollectionViewCell {
     
     static let priceFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
-        
         formatter.formatterBehavior = .behavior10_4
         formatter.numberStyle = .currency
-        
         return formatter
     }()
     
-    var buyHandler: ((_ product: SKProduct) -> ())?
+    //    var buyHandler: ((_ product: SKProduct) -> ())?
     
     var product: SKProduct? {
         didSet {
             guard let product = product else { return }
             
-            /*if StoreProducts.store.isProductPurchased(product.productIdentifier) {
-                // purchase product
-            } else*/ if IAPHelper.canMakePayments() {
+            if IAPHelper.canMakePayments() {
                 StoreCollectionViewCell.priceFormatter.locale = product.priceLocale
                 priceLabel.text = StoreCollectionViewCell.priceFormatter.string(from: product.price)
+                
+                if let point = StoreProducts.productPoints[product.productIdentifier],
+                    let bonus = StoreProducts.productBonuses[product.productIdentifier] {
+                    if bonus == 0 {
+                        pointLabel.text = "\(point)P"
+                    } else {
+                        pointLabel.text = "\(point)P + \(bonus)P"
+                    }
+                } else {
+                    pointLabel.text = product.localizedTitle
+                }
+                
+                pointLabel.isHidden = false
             } else {
                 // Not Available
+                priceLabel.text = "Not Available"
+                self.isUserInteractionEnabled = false
+                pointLabel.isHidden = true
             }
-            
         }
-        
     }
     
     override func awakeFromNib() {
@@ -51,3 +62,4 @@ class StoreCollectionViewCell: UICollectionViewCell {
         bgImage.layer.shadowOpacity = 0.3
     }
 }
+

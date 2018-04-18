@@ -23,11 +23,15 @@ protocol UserInfoDataSource {
     func validateNickname(name: String, completion: @escaping (Bool) -> Void)
     func updateUser(info: UserInfo, completion: @escaping (Result<UserInfo, FailureReason>) -> Void)
     func deleteUser(info: UserInfo, completion: @escaping (Bool) -> Void)
+    func searchUser(username: String?, completion: @escaping (Result<UserInfo, FailureReason>) -> Void)
+    func searchUser(phone: String?, completion: @escaping (Result<UserInfo, FailureReason>) -> Void)
     func chargePoint(point: Int, completion: @escaping (Result<UserInfo, FailureReason>) -> Void)
     func consumePoint(point: Int, completion: @escaping (Result<UserInfo, PurchaseError>) -> Void)
     func registerEndpoint()
     func requestVerificationCode(phone: String, completion: @escaping (Result<String, FailureReason>) -> Void)
     func confirmVerificationCode(code: String) -> Bool
+    
+    func validateReceipt(purchaseId: String?, completion: @escaping (Result<String, FailureReason>) -> Void)
 }
 
 struct UserNotification {
@@ -35,8 +39,6 @@ struct UserNotification {
 }
 
 class UserInfoRepository: NSObject, UserInfoDataSource {
-    
-    
     
     static let shared = UserInfoRepository()
     private let mapper: AWSDynamoDBObjectMapper
@@ -150,7 +152,8 @@ class UserInfoRepository: NSObject, UserInfoDataSource {
     func updateUser(info: UserInfo, completion: @escaping (Result<UserInfo, FailureReason>) -> Void) {
         mapper.save(info).continueWith(executor: AWSExecutor.mainThread()) { task in
             
-            if let _ = task.error {
+            if let error = task.error {
+                print("\(#function) > error : \(error.localizedDescription)")
                 completion(.failure(.notAvailable))
                 return nil
             }
@@ -173,6 +176,69 @@ class UserInfoRepository: NSObject, UserInfoDataSource {
             }
             completion(true)
             return nil
+        }
+    }
+    
+    func searchUser(username: String?, completion: @escaping (Result<UserInfo, FailureReason>) -> Void) {
+        
+        guard let name = username else {
+            completion(.failure(.notAvailable))
+            return
+        }
+        
+        print("\(className) > \(#function) > name : \(name)")
+        
+        let queryExpression = AWSDynamoDBQueryExpression()
+        queryExpression.indexName = UserInfo.Schema.INDEX_USERNAME
+        queryExpression.keyConditionExpression = "\(UserInfo.Attribute.USERNAME) = :username"
+        queryExpression.expressionAttributeValues = [":username" : name]
+        
+        mapper.query(UserInfo.self, expression: queryExpression)
+            .continueWith(executor: AWSExecutor.mainThread()) { task in
+                
+                guard let result = task.result else {
+                    completion(.failure(.notAvailable))
+                    return nil
+                }
+                
+                if result.items.count == 0 {
+                    completion(.failure(.notAvailable))
+                    return nil
+                }
+                
+                guard let userInfo = result.items[0] as? UserInfo else {
+                    completion(.failure(.notAvailable))
+                    return nil
+                }
+                
+                completion(.success(object: userInfo))
+                return nil
+        }
+    }
+    
+    func searchUser(phone: String?, completion: @escaping (Result<UserInfo, FailureReason>) -> Void) {
+        guard let phone = phone else {
+            completion(.failure(.notAvailable))
+            return
+        }
+        
+        print("\(className) > \(#function) > phone : \(phone)")
+        
+        let queryExpression = AWSDynamoDBQueryExpression()
+        queryExpression.indexName = UserInfo.Schema.INDEX_PHONE_TIME
+        queryExpression.keyConditionExpression = "\(UserInfo.Attribute.PHONE) = :phone"
+        queryExpression.expressionAttributeValues = [":phone" : phone]
+        
+        mapper.query(UserInfo.self, expression: queryExpression)
+            .continueWith(executor: AWSExecutor.mainThread()) { task in
+               
+                guard let userInfo = task.result?.items[0] as? UserInfo else {
+                    completion(.failure(.notAvailable))
+                    return nil
+                }
+                
+                completion(.success(object: userInfo))
+                return nil
         }
     }
     
@@ -285,10 +351,89 @@ class UserInfoRepository: NSObject, UserInfoDataSource {
         }.resume()
     }
     
+    func validateReceipt(purchaseId: String?, completion: @escaping (Result<String, FailureReason>) -> Void) {
+        
+        print("\(className) > \(#function)")
+        
+        if let appStoreReceiptURL = Bundle.main.appStoreReceiptURL,
+            FileManager.default.fileExists(atPath: appStoreReceiptURL.path) {
+            
+            do {
+                let receiptData = try Data(contentsOf: appStoreReceiptURL, options: .alwaysMapped)
+                
+                print("\(self.className) > \(#function) > receiptData: \(receiptData)")
+                
+                let receiptString = receiptData.base64EncodedString(options: [])
+                
+                print("\(self.className) > \(#function) > receiptString: \(receiptString)")
+                
+                // TODO: send receiptString to server
+                // productId
+                // userId
+                // receiptString
+                // platform
+                
+                let apiClient = WEKENDAuthenticationAPIClient.default()
+                guard let request = WEKENDVerifyPurchaseRequest() else { return }
+                
+                request.userId = self.userId
+                request.platform = "sandbox"
+                request.purchaseId = purchaseId
+                request.purchaseToken = receiptString
+                
+                apiClient.verifypurchasePost(request).continueWith(executor: AWSExecutor.mainThread()) { task in
+                    
+                    guard let result = task.result as? WEKENDVerifyPurchaseResponse else {
+                        completion(.failure(.notAvailable))
+                        return nil
+                    }
+                    
+                    if let expiresTime = result.expiryTime, let purchaseTime = result.purchaseTime {
+                        print("\(#function) > expiresTime : \(expiresTime), purchaseTime : \(purchaseTime)")
+                    }
+                    
+                    if let state = result.state, state == "verified" {
+                        completion(.success(object: state))
+                    } else {
+                        completion(.failure(.notAvailable))
+                    }
+                    
+                    return nil
+                }
+            }
+            catch {
+                completion(.failure(.notAvailable))
+                print("Couldn't read receipt data with error: " + error.localizedDescription)
+            }
+        }
+    }
+    
     func confirmVerificationCode(code: String) -> Bool {
         if let verificationCode = verificationCode {
             return verificationCode == code
         }
         return false
+    }
+}
+
+extension UserInfoRepository {
+    
+    public var expirationDate: Date? {
+        set {
+            let expirationDateString = newValue?.iso8601
+            UserDefaults.Subscription.set(expirationDateString, forKey: .expirationDate)
+        }
+        get {
+            return UserDefaults.Subscription.string(forKey: .expirationDate)?.dateFromISO8601
+        }
+    }
+    
+    public func increaseExpirationDate(by months: Int) {
+        
+        print("\(className) > \(#function)")
+        
+        let lastDate = expirationDate ?? Date()
+        let newDate = Calendar.current.date(byAdding: .month, value: months, to: lastDate)
+        expirationDate = newDate
     }
 }

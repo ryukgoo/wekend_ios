@@ -8,37 +8,54 @@
 
 import Foundation
 
-struct LoginViewModel: UserLoggable, Alertable {
+struct LoginViewModel: UserLoggable {
     
     let userDataSource: UserInfoDataSource
     
-    var onLoggin: (() -> ())?
-    var onShowAlert: ((ButtonAlert) -> Void)?
-    var onShowMessage: (() -> Void)?
+    var onLoginPrepare: NonCompletionHandler?
+    var onLoginComplete: NonCompletionHandler?
+    var onLoginFailed: NonCompletionHandler?
+    var onLoginError: NonCompletionHandler?
+    
+    var notAvailableInput: NonCompletionHandler?
+    var notValidUsernameFormat: NonCompletionHandler?
+    var notValidPasswordFormar: NonCompletionHandler?
     
     init(dataSource: UserInfoDataSource) {
         self.userDataSource = dataSource
     }
     
-    func login(username: String, password: String) {
+    func login(username: String?, password: String?) {
+        
+        guard let username = username, let password = password else {
+            notAvailableInput?()
+            return
+        }
+        
+        if !validateUsername(username) {
+            notValidUsernameFormat?()
+            return
+        }
+        if !validatePassword(password) {
+            notValidPasswordFormar?()
+            return
+        }
+        
+        onLoginPrepare?()
+        
         AmazonClientManager.shared.devIdentityProvider?.loginUser(username: username, password: password).continueWith(executor: AWSExecutor.mainThread()) { task in
-            
-            let loginError = ButtonAlert(title: "로그인 실패",
-                                    message: "등록되지 않은 계정이거나\n비밀번호가 일치하지 않습니다",
-                                    actions: [AlertAction.done])
             
             if let error = task.error as? AuthenticateError {
                 if error == .unknown {
-                    let alert = ButtonAlert(title: nil, message: "Unknown Error", actions: [AlertAction.done])
-                    self.onShowAlert?(alert)
+                    self.onLoginError?()
                 } else {
-                    self.onShowAlert?(loginError)
+                    self.onLoginFailed?()
                 }
                 return nil
             }
             
             guard let enabled = task.result else {
-                self.onShowAlert?(loginError)
+                self.onLoginFailed?()
                 return nil
             }
             
@@ -46,9 +63,9 @@ struct LoginViewModel: UserLoggable, Alertable {
                 self.userDataSource.getOwnUserInfo() { result in
                     if case Result.success(object: _) = result {
                         self.userDataSource.registerEndpoint()
-                        self.onLoggin?()
+                        self.onLoginComplete?()
                     } else {
-                        self.onShowAlert?(loginError)
+                        self.onLoginFailed?()
                     }
                 }
             }
@@ -56,11 +73,11 @@ struct LoginViewModel: UserLoggable, Alertable {
         }
     }
     
-    func validateUsername(_ username: String) -> Bool {
+    private func validateUsername(_ username: String) -> Bool {
         return username.isValidEmailAddress()
     }
     
-    func validatePassword(_ password: String) -> Bool {
+    private func validatePassword(_ password: String) -> Bool {
         return password.isValidPassword()
     }
 }

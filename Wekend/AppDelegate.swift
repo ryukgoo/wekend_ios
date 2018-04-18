@@ -33,6 +33,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // FBSDKApplicationDelegate initialize --> For What?????
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
+        StoreProducts.store.requestProducts()
+        
         return AmazonClientManager.shared.didFinishLaunching(application: application, didFinishLaunchingWithOptions: launchOptions)
     }
     
@@ -116,7 +118,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //                    self.printLog("\(#function) > topView : \(String(describing: self.window?.rootViewController?.className))")
                     if self.window?.rootViewController?.className == "UIViewController" {
                         DispatchQueue.main.async {
-                            ApplicationNavigator.shared.showLoginViewController()
+                            let username = UserDefaults.Account.string(forKey: .userName)
+                            ApplicationNavigator.shared.showLoginViewController(with: username)
                         }
                     }
                 }

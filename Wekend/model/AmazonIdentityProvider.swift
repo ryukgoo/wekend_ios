@@ -208,6 +208,33 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
         return registerTask.task
     }
     
+    func resetPassword(userId: String, password: String) -> AWSTask<NSString> {
+        
+        let resetTask = AWSTaskCompletionSource<NSString>()
+        
+        let apiClient = WEKENDAuthenticationAPIClient.default();
+        
+        let request = WEKENDResetPasswordRequest()!
+        request.userId = userId
+        request.password = password
+        
+        apiClient.resetpasswordPost(request).continueWith(executor: AWSExecutor.mainThread()) { task in
+            
+            if task.error != nil {
+                resetTask.set(error: task.error!)
+                return nil
+            } else {
+                guard let response = task.result as? WEKENDResetPasswordResponse else { return nil }
+                
+                resetTask.set(result: response.userId as NSString?)
+                
+                return response
+            }
+        }
+        
+        return resetTask.task
+    }
+    
     func loginUser(username: String, password: String) -> AWSTask<NSString> {
         
         print("\(className) > \(#function) > username : " + username + ", password : " + password)
@@ -287,6 +314,7 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
         UserDefaults.NotificationCount.remove(forKey: .receiveMail)
         UserDefaults.NotificationCount.remove(forKey: .sendMail)
         UserDefaults.RemoteNotification.remove(forKey: .deviceToken)
+        UserDefaults.Subscription.remove(forKey: .expirationDate)
         
         UserInfoRepository.shared.destroy()
         ProductRepository.shared.destroy()
@@ -295,7 +323,7 @@ final class AmazonIdentityProvider : AWSCognitoCredentialsProviderHelper {
         SendMailRepository.shared.destroy()
         
         AmazonClientManager.shared.clearCredentials()
-        ApplicationNavigator.shared.showLoginViewController()
+        ApplicationNavigator.shared.showLoginViewController(with: nil)
     }
     
 }

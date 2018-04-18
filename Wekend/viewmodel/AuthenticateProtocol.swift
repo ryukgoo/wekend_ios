@@ -10,13 +10,23 @@ import Foundation
 
 protocol UserLoggable {
     
-    var onLoggin: (() -> ())? { get set }
+    var onLoginPrepare: NonCompletionHandler? { get set }
+    var onLoginComplete: NonCompletionHandler? { get set }
+    var onLoginFailed: NonCompletionHandler? { get set }
+    var onLoginError: NonCompletionHandler? { get set }
     
-    func login(username: String, password: String)
-    func validateUsername(_ username: String) -> Bool
-    func validatePassword(_ password: String) -> Bool
+    var notAvailableInput: NonCompletionHandler? { get set }
+    var notValidUsernameFormat: NonCompletionHandler? { get set }
+    var notValidPasswordFormar: NonCompletionHandler? { get set }
+    
+    func login(username: String?, password: String?)
 }
 
 protocol UserRegistable {
-    func register(username: String)
+    func register(username: String?, password: String?, nickname: String?, gender: String?, birth: Int?, phone: String?)
+    
+    var onRegisterPrepare: NonCompletionHandler? { get set }
+    var onRegisterComplete: ((String, String) -> Void)? { get set }
+    var onRegisterFailed: NonCompletionHandler? { get set }
+    var notAvailableInputs: NonCompletionHandler? { get set }
 }

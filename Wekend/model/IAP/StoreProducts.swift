@@ -8,7 +8,7 @@
 
 import Foundation
 
-class StoreProducts {
+struct StoreProducts {
     
     public static let Price1 = "com.entuition.wekend.purchase.point.1"
     public static let Price2 = "com.entuition.wekend.purchase.point.2"
@@ -16,15 +16,58 @@ class StoreProducts {
     public static let Price4 = "com.entuition.wekend.purchase.point.4"
     public static let Price5 = "com.entuition.wekend.purchase.point.5"
     
+    static let Subscription = "com.entuition.wekend.purchase.subscription.1monthly"
+    
+    static let productPoints = [Price1 : 1000,
+                                Price2 : 3000,
+                                Price3 : 5000,
+                                Price4 : 10000,
+                                Price5 : 30000]
+    
+    static let productBonuses = [Price1 : 0,
+                                 Price2 : 500,
+                                 Price3 : 1000,
+                                 Price4 : 2500,
+                                 Price5 : 8500]
+    
     fileprivate static let productIdentifiers: Set<ProductIdentifier> = [StoreProducts.Price1,
                                                                          StoreProducts.Price2,
                                                                          StoreProducts.Price3,
                                                                          StoreProducts.Price4,
                                                                          StoreProducts.Price5]
     
-    public static let store = IAPHelper(productIds: StoreProducts.productIdentifiers)
+    fileprivate static let subscribeIdentifiers: Set<ProductIdentifier> = [StoreProducts.Subscription]
+    
+    public static let store = IAPHelper(productIds: StoreProducts.productIdentifiers.union(subscribeIdentifiers))
+    
+    public static func resourceNameForProductIdentifier(_ productIdentifier: String) -> String? {
+        return productIdentifier.components(separatedBy: ".").last
+    }
+    
+    public static func handlePurchase(productId: String) {
+        // TODO: check non-consume or subscribe
+        print(#function)
+        
+        if productIdentifiers.contains(productId) {
+            store.purchasedProducts.insert(productId)
+            UserDefaults.standard.set(true, forKey: productId)
+            UserDefaults.standard.synchronize()
+            NotificationCenter.default.post(name: IAPHelper.PurchaseSuccessNotification, object: productId)
+        } else if subscribeIdentifiers.contains(productId) {
+            UserInfoRepository.shared.validateReceipt(purchaseId: productId) { result in
+                if case let Result.success(object: state) = result {
+                    // TODO: Notification purchase is verified
+                    print("\(#function) > state: \(state)")
+                    
+                    if state == "verified" {
+//                        NotificationCenter.default.post(name: IAPHelper.PurchaseSuccessNotification, object: productId)
+                        NotificationCenter.default.post(name: IAPHelper.SubcribeEnableNotification, object: nil)
+                        return
+                    }
+                }
+                NotificationCenter.default.post(name: IAPHelper.PurchaseFailedNotification, object: nil)
+            }
+        }
+    }
 }
 
-func resourceNameForProductIdentifier(_ productIdentifier: String) -> String? {
-    return productIdentifier.components(separatedBy: ".").last
-}

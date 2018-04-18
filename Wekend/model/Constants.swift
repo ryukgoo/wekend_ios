@@ -72,43 +72,6 @@ struct Constants {
             static let LOADING = "Loading.."
             static let PLEASE_WAIT = "Please wait"
         }
-        
-        enum Price: String, EnumCollection {
-            case price10 = "$9.99"
-            case price20 = "$19.99"
-            case price30 = "$29.99"
-            case price40 = "$39.99"
-            case price50 = "$49.99"
-            case price100 = "$99.99"
-            
-            var toString: String {
-                return self.rawValue
-            }
-        }
-        
-        enum Point: String, EnumCollection {
-            case point0 = "1000"
-            case point1 = "3000"
-            case point2 = "5000"
-            case point3 = "10000"
-            case point4 = "30000"
-            
-            var toString: String {
-                return self.rawValue
-            }
-        }
-        
-        enum Bonus: String, EnumCollection {
-            case bonus0 = ""
-            case bonus1 = "500"
-            case bonus2 = "1000"
-            case bonus3 = "2500"
-            case bonus4 = "8500"
-            
-            var toString: String {
-                return self.rawValue
-            }
-        }
     }
 }
 
@@ -150,6 +113,7 @@ struct Configuration {
         static let REGISTER_KEY = "WEKENDAuthenticationAPIClient"
         static let GETTOKEN_URL = "https://87tshy6nvg.execute-api.ap-northeast-1.amazonaws.com/beta/gettoken"
         static let VERIFICATION_URL = "https://87tshy6nvg.execute-api.ap-northeast-1.amazonaws.com/beta/verificationcode"
+        static let RESETPASSWORD_URL = "https://87tshy6nvg.execute-api.ap-northeast-1.amazonaws.com/beta/resetpassword"
     }
     
     static let GOOGLE_API_KEY = "AIzaSyCFIGoikZsGXBhiesMJjOW40tMMRd8_FtM"
@@ -188,3 +152,4 @@ enum NavigationType: Int {
         }
     }
 }
+

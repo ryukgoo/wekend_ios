@@ -23,9 +23,16 @@
 #import "WEKENDGetTokenRequestModel.h"
 #import "WEKENDGetTokenResponseModel.h"
 #import "WEKENDLoginRequestModel.h"
+#import "WEKENDError.h"
 #import "WEKENDLoginResponseModel.h"
 #import "WEKENDRegisterResponseModel.h"
 #import "WEKENDRegisterRequestModel.h"
+#import "WEKENDResetPasswordRequest.h"
+#import "WEKENDResetPasswordResponse.h"
+#import "WEKENDVerificationResponse.h"
+#import "WEKENDVerificationRequest.h"
+#import "WEKENDVerifyPurchaseResponse.h"
+#import "WEKENDVerifyPurchaseRequest.h"
 
 @interface AWSAPIGatewayClient()
 
@@ -217,6 +224,72 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
                   headerParameters:headerParameters
                               body:body
                      responseClass:[WEKENDRegisterResponseModel class]];
+}
+
+- (AWSTask *)resetpasswordPost:(WEKENDResetPasswordRequest *)body {
+    NSDictionary *headerParameters = @{
+                                       @"Content-Type": @"application/json",
+                                       @"Accept": @"application/json",
+                                       
+                                       };
+    NSDictionary *queryParameters = @{
+                                      
+                                      };
+    NSDictionary *pathParameters = @{
+                                     
+                                     };
+    
+    return [self invokeHTTPRequest:@"POST"
+                         URLString:@"/resetpassword"
+                    pathParameters:pathParameters
+                   queryParameters:queryParameters
+                  headerParameters:headerParameters
+                              body:body
+                     responseClass:[WEKENDResetPasswordResponse class]];
+}
+
+- (AWSTask *)verificationcodePost:(WEKENDVerificationRequest *)body {
+    NSDictionary *headerParameters = @{
+                                       @"Content-Type": @"application/json",
+                                       @"Accept": @"application/json",
+                                       
+                                       };
+    NSDictionary *queryParameters = @{
+                                      
+                                      };
+    NSDictionary *pathParameters = @{
+                                     
+                                     };
+    
+    return [self invokeHTTPRequest:@"POST"
+                         URLString:@"/verificationcode"
+                    pathParameters:pathParameters
+                   queryParameters:queryParameters
+                  headerParameters:headerParameters
+                              body:body
+                     responseClass:[WEKENDVerificationResponse class]];
+}
+
+- (AWSTask *)verifypurchasePost:(WEKENDVerifyPurchaseRequest *)body {
+    NSDictionary *headerParameters = @{
+                                       @"Content-Type": @"application/json",
+                                       @"Accept": @"application/json",
+                                       
+                                       };
+    NSDictionary *queryParameters = @{
+                                      
+                                      };
+    NSDictionary *pathParameters = @{
+                                     
+                                     };
+    
+    return [self invokeHTTPRequest:@"POST"
+                         URLString:@"/verifypurchase"
+                    pathParameters:pathParameters
+                   queryParameters:queryParameters
+                  headerParameters:headerParameters
+                              body:body
+                     responseClass:[WEKENDVerifyPurchaseResponse class]];
 }
 
 
