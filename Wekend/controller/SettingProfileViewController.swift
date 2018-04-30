@@ -25,6 +25,7 @@ class SettingProfileViewController: UIViewController {
     @IBOutlet weak var introduce: UILabel!
     @IBOutlet weak var introductUnderline: UIView!
     @IBOutlet weak var point: UILabel!
+    @IBOutlet weak var subcribe: UILabel!
     @IBOutlet weak var pagerViewOffsetY: NSLayoutConstraint!
     @IBOutlet weak var backViewOffsetY: NSLayoutConstraint!
     
@@ -41,6 +42,12 @@ class SettingProfileViewController: UIViewController {
         pagerView.pageFrame = CGRect(x: 0.0, y: 0.0, width: screenWidth, height: screenWidth)
         pagerView.delegate = self
         scrollView.delegate = self
+        
+        if StoreProducts.store.isSubscribed {
+            subcribe.isHidden = false
+        } else {
+            subcribe.isHidden = true
+        }
         
         bindViewModel()
     }

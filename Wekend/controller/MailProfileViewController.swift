@@ -87,8 +87,13 @@ class MailProfileViewController: UIViewController {
         guard let viewModel = viewModel else { return }
         
         viewModel.user.bindAndFire { [weak self] user in
-            if let point = user?.balloon as? Int {
-                self?.point.text = "보유포인트 \(point)P"
+            
+            if StoreProducts.store.isSubscribed {
+                self?.point.text = "정기 구독중"
+            } else {
+                if let point = user?.balloon as? Int {
+                    self?.point.text = "보유포인트 \(point)P"
+                }
             }
         }
         
@@ -210,8 +215,6 @@ class MailProfileViewController: UIViewController {
         }
         
         self.viewModel?.onProposePrepare = { [weak self] nickname in
-            
-            print("StoreProducts.store.isSubscribed: \(StoreProducts.store.isSubscribed)")
             
             if StoreProducts.store.isSubscribed {
                 self?.sendMessage()
@@ -357,7 +360,7 @@ extension MailProfileViewController: UIScrollViewDelegate {
 // MARK: - PagerViewDelegate
 extension MailProfileViewController: PagerViewDelegate {
     func loadPageViewItem(imageView: UIImageView, page: Int) {
-        guard let photos = viewModel?.friend.value?.photosArr else {
+        guard let photos = viewModel?.friend.value?.photosArr, photos.count > 0 else {
             imageView.image = #imageLiteral(resourceName: "default_profile")
             return
         }
@@ -378,20 +381,32 @@ extension MailProfileViewController {
     
     func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(MailProfileViewController.handleUpdatePointNotification(_:)),
-                                               name: Notification.Name(rawValue: UserNotification.Update),
-                                               object: nil)
+                                               name: UserNotification.Update, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(MailProfileViewController.handleSubcribeEnabled(_:)),
+                                               name: IAPHelper.SubcribeEnableNotification, object: nil)
     }
     
     func removeNotificationObservers() {
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: UserNotification.Update),
-                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: UserNotification.Update, object: nil)
+        NotificationCenter.default.removeObserver(self, name: IAPHelper.SubcribeEnableNotification, object: nil)
     }
     
     func handleUpdatePointNotification(_ notification: Notification) {
         guard let point = UserInfoRepository.shared.userInfo?.balloon as? Int else { return }
         
-        DispatchQueue.main.async {
-            self.point.text = "보유포인트 \(point)P"
+        DispatchQueue.main.async { [weak self] in
+            if StoreProducts.store.isSubscribed {
+                self?.point.text = "정기 구독중"
+            } else {
+                self?.point.text = "보유포인트 \(point)P"
+            }
+        }
+    }
+    
+    func handleSubcribeEnabled(_ notification: Notification) {
+        DispatchQueue.main.async { [weak self] in
+            self?.point.text = "정기 구독중"
         }
     }
 }

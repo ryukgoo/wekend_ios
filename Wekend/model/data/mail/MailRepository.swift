@@ -22,13 +22,13 @@ protocol MailDataSource {
 struct MailNotification {
     
     struct Receive {
-        static let Add = "com.entuition.wekend.mail.receive.Add"
-        static let New = "com.entuition.wekend.mail.receive.New"
+        static let Add = Notification.Name(rawValue: "com.entuition.wekend.mail.receive.Add")
+        static let New = Notification.Name(rawValue: "com.entuition.wekend.mail.receive.New")
     }
     
     struct Send {
-        static let Add = "com.entuition.wekend.mail.send.Add"
-        static let New = "com.entuition.wekend.mail.send.New"
+        static let Add = Notification.Name(rawValue: "com.entuition.wekend.mail.send.Add")
+        static let New = Notification.Name(rawValue: "com.entuition.wekend.mail.send.New")
     }
     
     static let Count = "com.entuition.wekend.mail.data.Count"

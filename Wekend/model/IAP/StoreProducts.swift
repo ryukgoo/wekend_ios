@@ -45,8 +45,8 @@ struct StoreProducts {
     }
     
     public static func handlePurchase(productId: String) {
-        // TODO: check non-consume or subscribe
-        print(#function)
+        
+        print("\(#function) : \(productId)")
         
         if productIdentifiers.contains(productId) {
             store.purchasedProducts.insert(productId)
@@ -54,18 +54,19 @@ struct StoreProducts {
             UserDefaults.standard.synchronize()
             NotificationCenter.default.post(name: IAPHelper.PurchaseSuccessNotification, object: productId)
         } else if subscribeIdentifiers.contains(productId) {
+            
             UserInfoRepository.shared.validateReceipt(purchaseId: productId) { result in
                 if case let Result.success(object: state) = result {
-                    // TODO: Notification purchase is verified
                     print("\(#function) > state: \(state)")
-                    
                     if state == "verified" {
-//                        NotificationCenter.default.post(name: IAPHelper.PurchaseSuccessNotification, object: productId)
+                        print("\(#function) > post SubscribeEnableNotification")
                         NotificationCenter.default.post(name: IAPHelper.SubcribeEnableNotification, object: nil)
+//                        NotificationCenter.default.post(name: IAPHelper.SubcribeEnableNotification, object: nil)
                         return
                     }
                 }
-                NotificationCenter.default.post(name: IAPHelper.PurchaseFailedNotification, object: nil)
+                // For closing progressbar
+                NotificationCenter.default.post(name: IAPHelper.SubcribeEnableNotification, object: nil)
             }
         }
     }

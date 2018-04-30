@@ -121,7 +121,7 @@ struct MailProfileViewModel: MailProfileViewModelProtocol {
                 
                 self.onProposeComplete?(nickname)
                 
-                NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Send.Add), object: nil)
+                NotificationCenter.default.post(name: MailNotification.Send.Add, object: nil)
             } else if case let Result.failure(error) = result {
                 if error == .notAvailable {
                     self.onProposeFailed?()
@@ -143,7 +143,7 @@ struct MailProfileViewModel: MailProfileViewModelProtocol {
                 self.mail.value = value
                 guard let nickname = self.friend.value?.nickname else { return }
                 self.onAcceptComplete?(nickname)
-                NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Receive.Add), object: nil)
+                NotificationCenter.default.post(name: MailNotification.Receive.Add, object: nil)
             } else {
                 self.onAcceptFailed?()
             }
@@ -163,7 +163,7 @@ struct MailProfileViewModel: MailProfileViewModelProtocol {
                 self.mail.value = value
                 guard let nickname = self.friend.value?.nickname else { return }
                 self.onRejectComplete?(nickname)
-                NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Receive.Add), object: nil)
+                NotificationCenter.default.post(name: MailNotification.Receive.Add, object: nil)
             } else {
                 self.onRejectFailed?()
             }

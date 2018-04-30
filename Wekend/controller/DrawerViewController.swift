@@ -89,7 +89,11 @@ class DrawerViewController: UIViewController {
         nicknameLabel.text = userInfo.nickname!
         usernameLabel.text = userInfo.username!
         
-        pointLabel.text = "보유포인트 : \(userInfo.balloon!)P"
+        if StoreProducts.store.isSubscribed {
+            pointLabel.text = "정기 구독중"
+        } else {
+            pointLabel.text = "보유포인트 : \(userInfo.balloon!)P"
+        }
         
         menuTableView.separatorColor = UIColor.clear
     }
@@ -258,13 +262,15 @@ extension DrawerViewController {
     
     func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(DrawerViewController.handleUpdateUserInfoNotification(_:)),
-                                               name: Notification.Name(rawValue: UserNotification.Update),
-                                               object: nil)
+                                               name: UserNotification.Update, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(DrawerViewController.handleSubcriptionEnable(_:)),
+                                               name: IAPHelper.SubcribeEnableNotification, object: nil)
     }
     
     func removeNotificationObservers() {
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: UserNotification.Update),
-                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: UserNotification.Update, object: nil)
+        NotificationCenter.default.removeObserver(self, name: IAPHelper.SubcribeEnableNotification, object: nil)
     }
     
     func handleUpdateUserInfoNotification(_ notification: Notification) {
@@ -289,6 +295,19 @@ extension DrawerViewController {
         
         guard let point = userInfo.balloon as? Int else { return }
         pointLabel.text = "보유포인트 : \(point)P"
+    }
+    
+    func handleSubcriptionEnable(_ notification: Notification) {
+        
+        guard let userInfo = UserInfoRepository.shared.userInfo else {
+            fatalError("\(className) > \(#function) > userInfo Error")
+        }
+        
+        if StoreProducts.store.isSubscribed {
+            pointLabel.text = "정기 구독중"
+        } else {
+            pointLabel.text = "보유포인트 : \(userInfo.balloon!)P"
+        }
     }
 }
 

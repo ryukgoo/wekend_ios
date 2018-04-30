@@ -225,21 +225,15 @@ extension CampaignViewController {
     func addNotificationObservers() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(CampaignViewController.handleLikeAddNotification(_:)),
-                                               name: Notification.Name(rawValue: LikeNotification.Add),
-                                               object: nil)
+                                               name: LikeNotification.Add, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(CampaignViewController.handleLikeDeleteNotification(_:)),
-                                               name: Notification.Name(rawValue: LikeNotification.Delete),
-                                               object: nil)
+                                               name: LikeNotification.Delete, object: nil)
     }
     
     func removeNotificationObservers() {
-        NotificationCenter.default.removeObserver(self,
-                                                  name: Notification.Name(rawValue: LikeNotification.Add),
-                                                  object: nil)
-        NotificationCenter.default.removeObserver(self,
-                                                  name: Notification.Name(rawValue: LikeNotification.Delete),
-                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: LikeNotification.Add, object: nil)
+        NotificationCenter.default.removeObserver(self, name: LikeNotification.Delete, object: nil)
     }
     
     func handleLikeAddNotification(_ notification: Notification) {

@@ -157,14 +157,12 @@ extension LikeCollectionViewController {
     func addNotificationObservers() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(LikeCollectionViewController.handleReadFriendNotification(_:)),
-                                               name: Notification.Name(rawValue: LikeNotification.Friend),
-                                               object: nil)
+                                               name: LikeNotification.Friend, object: nil)
         
     }
     
     func removeNotificationObservers() {
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeNotification.Friend),
-                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: LikeNotification.Friend, object: nil)
     }
     
     func handleReadFriendNotification(_ notification: Notification) {
@@ -189,7 +187,6 @@ extension LikeCollectionViewController: UICollectionViewDelegateFlowLayout {
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
-    
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let rowCount = datas?.count else { return 0 }

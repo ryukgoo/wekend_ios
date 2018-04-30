@@ -584,19 +584,15 @@ extension CampaignTableViewController {
     func addNotificationObservers() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.addLikeNotification(_:)),
-                                               name: Notification.Name(rawValue: LikeNotification.Add),
-                                               object: nil)
+                                               name: LikeNotification.Add, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.deleteLikeNotification(_:)),
-                                               name: NSNotification.Name(rawValue: LikeNotification.Delete),
-                                               object: nil)
+                                               name: LikeNotification.Delete, object: nil)
     }
     
     func removeNotificationObservers() {
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeNotification.Add),
-                                                  object: nil)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: LikeNotification.Delete),
-                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: LikeNotification.Add, object: nil)
+        NotificationCenter.default.removeObserver(self, name: LikeNotification.Delete, object: nil)
     }
     
     func addLikeNotification(_ notification: Notification) -> Void {

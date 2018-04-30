@@ -169,26 +169,18 @@ class NotificationParser {
         
         UserInfoRepository.shared.getOwnUserInfo() { result in
             if case let Result.success(object: value) = result {
-                NotificationCenter.default.post(name: Notification.Name(rawValue: AppDelegate.WillEnterForeground),
-                                                object: nil,
-                                                userInfo: nil)
+                NotificationCenter.default.post(name: AppDelegate.WillEnterForeground, object: nil, userInfo: nil)
                 
                 if value.NewLikeCount > likeCount {
-                    NotificationCenter.default.post(name: Notification.Name(rawValue: LikeNotification.Refresh),
-                                                    object: nil,
-                                                    userInfo: nil)
+                    NotificationCenter.default.post(name: LikeNotification.Refresh, object: nil, userInfo: nil)
                 }
                 
                 if value.NewReceiveCount > receiveCount {
-                    NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Receive.New),
-                                                    object: nil,
-                                                    userInfo: nil)
+                    NotificationCenter.default.post(name: MailNotification.Receive.New, object: nil, userInfo: nil)
                 }
                 
                 if value.NewSendCount > sendCount {
-                    NotificationCenter.default.post(name: Notification.Name(rawValue: MailNotification.Send.New),
-                                                    object: nil,
-                                                    userInfo: nil)
+                    NotificationCenter.default.post(name: MailNotification.Send.New, object: nil, userInfo: nil)
                 }
             }
         }

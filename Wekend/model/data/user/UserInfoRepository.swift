@@ -35,7 +35,7 @@ protocol UserInfoDataSource {
 }
 
 struct UserNotification {
-    static let Update = "com.entution.wekend.user.Update"
+    static let Update = Notification.Name(rawValue: "com.entution.wekend.user.Update")
 }
 
 class UserInfoRepository: NSObject, UserInfoDataSource {
@@ -388,12 +388,19 @@ class UserInfoRepository: NSObject, UserInfoDataSource {
                         return nil
                     }
                     
-                    if let expiresTime = result.expiryTime, let purchaseTime = result.purchaseTime {
-                        print("\(#function) > expiresTime : \(expiresTime), purchaseTime : \(purchaseTime)")
-                    }
-                    
                     if let state = result.state, state == "verified" {
-                        completion(.success(object: state))
+                        
+                        if let expiresTime = result.expiryTime, let purchaseTime = result.purchaseTime {
+                            print("\(#function) > expiresTime : \(expiresTime), purchaseTime : \(purchaseTime)")
+                        }
+                        
+                        self.getOwnUserInfo { userResult in
+                            if case Result.success(object: _) = userResult {
+                                completion(.success(object: state))
+                            } else {
+                                
+                            }
+                        }
                     } else {
                         completion(.failure(.notAvailable))
                     }

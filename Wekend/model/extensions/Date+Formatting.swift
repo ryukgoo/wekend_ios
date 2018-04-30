@@ -14,7 +14,7 @@ extension Formatter {
         formatter.calendar = Calendar(identifier: .iso8601)
 //        formatter.locale = Locale(identifier: "ko_KR")
         
-        formatter.timeZone = TimeZone.current
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"
         return formatter
     }()

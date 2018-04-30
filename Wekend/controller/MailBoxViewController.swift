@@ -313,31 +313,23 @@ extension MailBoxViewController {
     func addNotificationObservers() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(MailBoxViewController.handleAddReceiveMailNotification(_:)),
-                                               name: Notification.Name(rawValue: MailNotification.Receive.Add),
-                                               object: nil)
+                                               name: MailNotification.Receive.Add, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(MailBoxViewController.handleAddReceiveMailNotification(_:)),
-                                               name: Notification.Name(rawValue: MailNotification.Receive.New),
-                                               object: nil)
+                                               name: MailNotification.Receive.New, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(MailBoxViewController.handleAddSendMailNotification(_:)),
-                                               name: Notification.Name(rawValue: MailNotification.Send.Add),
-                                               object: nil)
+                                               name: MailNotification.Send.Add, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(MailBoxViewController.handleAddSendMailNotification(_:)),
-                                               name: Notification.Name(rawValue: MailNotification.Send.New),
-                                               object: nil)
+                                               name: MailNotification.Send.New, object: nil)
     }
     
     func removeNotificationObservers() {
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: MailNotification.Receive.Add),
-                                                  object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: MailNotification.Receive.New),
-                                                  object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: MailNotification.Send.Add),
-                                                  object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: MailNotification.Send.New),
-                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: MailNotification.Receive.Add, object: nil)
+        NotificationCenter.default.removeObserver(self, name: MailNotification.Receive.New, object: nil)
+        NotificationCenter.default.removeObserver(self, name: MailNotification.Send.Add, object: nil)
+        NotificationCenter.default.removeObserver(self, name: MailNotification.Send.New, object: nil)
     }
     
     func handleAddReceiveMailNotification(_ notification: Notification) {

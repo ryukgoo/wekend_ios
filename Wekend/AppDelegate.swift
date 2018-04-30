@@ -16,7 +16,7 @@ import Firebase
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    static let WillEnterForeground = "com.entuition.wekend.applicationWillEnterForeground"
+    static let WillEnterForeground = Notification.Name(rawValue: "com.entuition.wekend.applicationWillEnterForeground")
     
     var window: UIWindow?
 

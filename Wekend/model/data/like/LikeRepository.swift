@@ -10,12 +10,12 @@ import Foundation
 import AWSDynamoDB
 
 struct LikeNotification {
-    static let Add = "com.entuition.wekend.Like.Add"
-    static let Delete = "com.entuition.wekend.Like.Delete"
-    static let Read = "com.entution.wekend.Like.Read"
-    static let New = "com.entuition.wekend.Like.New"
-    static let Friend = "com.entuition.wekend.Like.Friend"
-    static let Refresh = "com.entuition.wekend.Like.Refresh"
+    static let Add = Notification.Name(rawValue: "com.entuition.wekend.Like.Add")
+    static let Delete = Notification.Name(rawValue: "com.entuition.wekend.Like.Delete")
+    static let Read = Notification.Name(rawValue: "com.entution.wekend.Like.Read")
+    static let New = Notification.Name(rawValue: "com.entuition.wekend.Like.New")
+    static let Friend = Notification.Name(rawValue: "com.entuition.wekend.Like.Friend")
+    static let Refresh = Notification.Name(rawValue: "com.entuition.wekend.Like.Refresh")
     
     struct Data {
         static let UserId = "com.entuition.wekend.Like.Data.UserId"
@@ -55,8 +55,7 @@ class LikeRepository : NSObject {
             }
         }
         
-        NotificationCenter.default.post(name: Notification.Name(rawValue: LikeNotification.New),
-                                        object: nil,
+        NotificationCenter.default.post(name: LikeNotification.New, object: nil,
                                         userInfo: [LikeNotification.Data.ProductId : id])
         
     }
@@ -126,8 +125,7 @@ class LikeRepository : NSObject {
                     
                     self.datas?.insert(likeItem, at: 0)
                     
-                    NotificationCenter.default.post(name: Notification.Name(rawValue: LikeNotification.Add),
-                                                    object: nil,
+                    NotificationCenter.default.post(name: LikeNotification.Add, object: nil,
                                                     userInfo: [LikeNotification.Data.ProductId : likeItem.ProductId])
                 }
                 
@@ -138,74 +136,15 @@ class LikeRepository : NSObject {
         }
     }
     
-    /*
-    func addLikeAtDetail(userInfo: UserInfo, productInfo: ProductInfo) {
-        
-        guard let likeItem = LikeItem() else {
-            fatalError("LikeItemManager > LikeItem initialize Error")
-        }
-        
-        likeItem.UserId = userInfo.userid
-        likeItem.Nickname = userInfo.nickname!
-        likeItem.ProductId = productInfo.ProductId
-        likeItem.Gender = userInfo.gender!
-        likeItem.ProductTitle = productInfo.TitleKor
-        likeItem.UpdatedTime = Date().iso8601
-        likeItem.LikeId = UUID().uuidString.lowercased()
-        likeItem.isRead = false
-        
-        if productInfo.SubTitle == nil || productInfo.SubTitle!.isEmpty {
-            likeItem.ProductDesc = productInfo.Description
-        } else {
-            likeItem.ProductDesc = productInfo.SubTitle
-        }
-        
-        mapper.save(likeItem).continueWith(executor: AWSExecutor.mainThread(), block: {
-            (task: AWSTask) -> Any! in
-            
-            if task.error != nil { return nil }
-            
-            LikeDBManager.sharedInstance.getFriendCount(productId: likeItem.ProductId, gender: likeItem.Gender).continueWith(block: {
-                (getCountTask: AWSTask) -> Any! in
-                
-                guard let likeCount = getCountTask.result as? Int else {
-                    self.printLog("addLike > getCount from Server Error")
-                    return nil
-                }
-                
-                if let index = ProductInfoManager.sharedInstance.datas?.index(where: { $0.ProductId == productInfo.ProductId }) {
-                    guard let newProductInfo = ProductInfoManager.sharedInstance.datas?[index] else {
-                        self.printLog("addLike > get ProductInfo from ProductInfoManager Error")
-                        return nil
-                    }
-                    
-                    newProductInfo.isLike = false
-                    newProductInfo.realLikeCount = likeCount
-                    
-                    self.datas?.insert(likeItem, at: 0)
-                    
-                    NotificationCenter.default.post(name: Notification.Name(rawValue: LikeDBManager.AddNotification),
-                                                    object: nil,
-                                                    userInfo: [LikeDBManager.NotificationDataProductId : likeItem.ProductId])
-                }
-                
-                return nil
-            })
-            
-            return nil
-        })
-    }
- */
-    
     func deleteLike(item : LikeItem) -> AWSTask<AnyObject> {
         
         return mapper.remove(item).continueWith(block: {
-            (task: AWSTask) -> Any! in
+            (task: AWSTask) -> Any? in
             
             if task.error != nil { return nil }
             
             LikeRepository.shared.getLikeCount(productId: item.ProductId).continueWith(block: {
-                (getCountTask: AWSTask) -> Any! in
+                (getCountTask: AWSTask) -> Any? in
                 
                 if task.error != nil {
                     print("\(self.className) > \(#function) > AWSTask > Error")
@@ -222,12 +161,10 @@ class LikeRepository : NSObject {
                     newProductInfo.isLike = false
                     newProductInfo.realLikeCount = likeCount
                     
-                    NotificationCenter.default.post(name: Notification.Name(rawValue: LikeNotification.Delete),
-                                                    object: nil,
+                    NotificationCenter.default.post(name: LikeNotification.Delete, object: nil,
                                                     userInfo: [LikeNotification.Data.ProductId : item.ProductId])
                     
                     self.datas?.remove(object: item)
-                    
                 }
                 
                 return nil
@@ -454,8 +391,7 @@ class LikeRepository : NSObject {
         queryExpression.filterExpression = "\(LikeItem.Attribute.GENDER) <> :gender"
         queryExpression.expressionAttributeValues = [":productId" : productId, ":gender" : gender]
         
-        mapper.query(LikeItem.self, expression: queryExpression).continueWith(executor: AWSExecutor.mainThread(), block: {
-            (task: AWSTask) -> Any! in
+        mapper.query(LikeItem.self, expression: queryExpression).continueWith(executor: AWSExecutor.mainThread()) { task in
             
             guard let result = task.result else {
                 fatalError("LikeDBManager > getFriendCount > Failed")
@@ -466,7 +402,7 @@ class LikeRepository : NSObject {
             getFriendTask.set(result: paginatedOutput.items.count as AnyObject)
             
             return nil
-        })
+        }
         
         return getFriendTask.task
     }
@@ -485,19 +421,18 @@ class LikeRepository : NSObject {
     
     func updateReadTime(likeItem: LikeItem) {
         likeItem.ReadTime = Utilities.getTimestamp()
-        mapper.save(likeItem).continueWith(block: {
-            (task: AWSTask) -> Any! in
+        
+        mapper.save(likeItem).continueWith(executor: AWSExecutor.mainThread()) { task in
             
             if task.error != nil { return nil }
             
             likeItem.isRead = true
             
-            NotificationCenter.default.post(name: Notification.Name(rawValue: LikeNotification.Read),
-                                            object: nil,
+            NotificationCenter.default.post(name: LikeNotification.Read, object: nil,
                                             userInfo: [LikeNotification.Data.ProductId : likeItem.ProductId])
             
             return nil
-        })
+        }
     }
     
     func updateReadState(id: String, userId: String, productId: Int, likeUserId: String) {
@@ -510,17 +445,14 @@ class LikeRepository : NSObject {
         readState?.LikeUserId = likeUserId
         readState?.ReadTime = Utilities.getTimestamp()
         
-        mapper.save(readState!).continueWith(block: {
-            (task: AWSTask) -> Any! in
-            
+        mapper.save(readState!).continueWith(executor: AWSExecutor.mainThread()) { task in
             if task.error == nil {
-                NotificationCenter.default.post(name: Notification.Name(rawValue: LikeNotification.Friend),
-                                                object: nil,
+                NotificationCenter.default.post(name: LikeNotification.Friend, object: nil,
                                                 userInfo: [LikeNotification.Data.UserId : likeUserId])
             }
             
             return nil
-        })
+        }
     }
     
     private func clearDatas() {

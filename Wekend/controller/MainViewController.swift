@@ -41,12 +41,6 @@ class MainViewController: UITabBarController {
         
         addNotificationObservers()
         UserInfoRepository.shared.registerEndpoint()
-        
-        print("isSubscribed : \(StoreProducts.store.isSubscribed)")
-        // ?????????
-//        if !StoreProducts.store.isSubscribed && StoreProducts.store.hasReceitpt {
-//            StoreProducts.store.restorePurchases()
-//        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -103,35 +97,23 @@ extension MainViewController {
     func addNotificationObservers() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleLikeRemoteNotification(_:)),
-                                               name: Notification.Name(rawValue: LikeNotification.New),
-                                               object: nil)
+                                               name: LikeNotification.New, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleMailNotification(_:)),
-                                               name: Notification.Name(rawValue: MailNotification.Receive.New),
-                                               object: nil)
+                                               name: MailNotification.Receive.New, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleMailNotification(_:)),
-                                               name: Notification.Name(MailNotification.Send.New),
-                                               object: nil)
+                                               name: MailNotification.Send.New, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.displayTabbarBadge),
-                                               name: Notification.Name(AppDelegate.WillEnterForeground),
-                                               object: nil)
+                                               name: AppDelegate.WillEnterForeground, object: nil)
     }
     
     func removeNotificationObservers() {
-        
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: LikeNotification.New),
-                                                  object: nil)
-        
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: MailNotification.Receive.New),
-                                                  object: nil)
-        
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(MailNotification.Send.New),
-                                                  object: nil)
-        
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(AppDelegate.WillEnterForeground),
-                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: LikeNotification.New, object: nil)
+        NotificationCenter.default.removeObserver(self, name: MailNotification.Receive.New, object: nil)
+        NotificationCenter.default.removeObserver(self, name: MailNotification.Send.New, object: nil)
+        NotificationCenter.default.removeObserver(self, name: AppDelegate.WillEnterForeground, object: nil)
     }
     
     func handleLikeRemoteNotification(_ notification: Notification) {

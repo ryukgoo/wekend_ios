@@ -21,7 +21,6 @@ open class IAPHelper: NSObject {
     
     fileprivate let productIdentifiers: Set<ProductIdentifier>
     fileprivate var productsRequest: SKProductsRequest?
-//    fileprivate var productsRequestCompletionHandler: ProductRequestCompletionHandler?
     
     public var purchasedProducts = Set<ProductIdentifier>()
     
@@ -45,9 +44,12 @@ open class IAPHelper: NSObject {
         let purchaseDate = Date(timeIntervalSince1970: purchaseTime / 1000.0)
         let expiresDate = Date(timeIntervalSince1970: expiresTime / 1000.0)
         
-        print("purchaseDate: \(purchaseDate), expiresDate: \(expiresDate), Date: \(Date())")
+        let result = (purchaseDate...expiresDate).contains(Date())
         
-        return (purchaseDate...expiresDate).contains(Date())
+        print("isSubscribed > purchaseDate: \(purchaseDate), expiresDate: \(expiresDate), Date: \(Date())")
+        print("isSubscribed > result: \(result)")
+        
+        return result
     }
     
     var hasReceitpt: Bool {
@@ -97,6 +99,7 @@ extension IAPHelper {
         
         let payment = SKMutablePayment(product: product)
         payment.applicationUsername = username
+        
         SKPaymentQueue.default().add(payment)
     }
     
@@ -123,7 +126,6 @@ extension IAPHelper: SKProductsRequestDelegate {
         let products = response.products
         print("\(className) > \(#function) > response : \(response.invalidProductIdentifiers.description)")
         print("\(className) > \(#function) > Loaded list of products...")
-//        productsRequestCompletionHandler?(true, products)
         clearRequestAndHandler()
         
         subscriptions = response.products
@@ -139,13 +141,11 @@ extension IAPHelper: SKProductsRequestDelegate {
         print("\(className) > \(#function) > Failed to load list of products")
         print("\(className) > \(#function) > Error: \(error.localizedDescription)")
         
-//        productsRequestCompletionHandler?(false, nil)
         clearRequestAndHandler()
     }
     
     private func clearRequestAndHandler() {
         productsRequest = nil
-//        productsRequestCompletionHandler = nil
     }
     
 }

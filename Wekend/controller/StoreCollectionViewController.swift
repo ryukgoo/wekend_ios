@@ -31,6 +31,12 @@ class StoreCollectionViewController: UICollectionViewController {
         self.products = products
         
         addNotificationObservers()
+        
+        // restore..
+        if !StoreProducts.store.isSubscribed && StoreProducts.store.hasReceitpt {
+//            StoreProducts.store.restorePurchases()
+//            showRestoreAlert()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -49,6 +55,31 @@ class StoreCollectionViewController: UICollectionViewController {
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    private func showRestoreAlert() {
+        
+        let restoreAction = AlertAction(buttonTitle: "갱신", style: .default) { [weak self] _ in
+            StoreProducts.store.restorePurchases()
+            self?.showRestoreInProgressAlert()
+        }
+        let alert = ButtonAlert(title: "구독갱신",
+                                message: "We are having a hard time finding your subscription. If you've recently reinstalled the app or got a new device please choose to restore your purchase. Otherwise go Back to Subscribe.",
+                                actions: [.cancel, restoreAction])
+        showButtonAlert(alert)
+    }
+    
+    private func showRestoreInProgressAlert() {
+        let alert = UIAlertController(title: "Restoring Purchase", message: "Your purchase history is being restored. Upon completion this dialog will close and you will be sent back to the previous screen where you can then comeback in to load your purchases.", preferredStyle: .alert)
+        present(alert, animated: true, completion: nil)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(StoreCollectionViewController.dismissRestoreInProgressAlert(_:)),
+                                               name: IAPHelper.RestoreSuccessNotification, object: nil)
+    }
+    
+    func dismissRestoreInProgressAlert(_ notification: Notification) {
+        
     }
 }
 
@@ -95,7 +126,11 @@ extension StoreCollectionViewController: UICollectionViewDelegateFlowLayout {
                 return headerView
             }
             
-            headerView.pointLabel.text = "보유포인트 \(userInfo.balloon!)P"
+            if StoreProducts.store.isSubscribed {
+                headerView.pointLabel.text = "정기 구독중"
+            } else {
+                headerView.pointLabel.text = "보유포인트 \(userInfo.balloon!)P"
+            }
             
             return headerView
         default:
@@ -174,7 +209,7 @@ extension StoreCollectionViewController {
     func handleSubcribeEnable(_ notification: Notification) {
         DispatchQueue.main.async { [weak self] in
             self?.tabBarController?.endLoading()
-            self?.alert(message: "상품을 구매하였습니다")
+//            self?.alert(message: "상품을 구매하였습니다")
             self?.collectionView?.reloadData()
         }
     }
